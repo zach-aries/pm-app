@@ -1,8 +1,111 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+html, body {
+  margin: 0;
+  padding: 0;
 }
 
-a {
-  color: #00B7FF;
+.hierarchy-list { text-indent: 1em; }
+.hierarchy-list .hierarchy-list { text-indent: 2em!important; }
+.hierarchy-list .hierarchy-list .hierarchy-list { text-indent: 3em!important; }
+.hierarchy-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
+  .hierarchy-list ul {
+    margin-top: 0.75em;
+  }
+
+  .hierarchy-list li {
+    padding-top: 0.75em;
+    padding-bottom: 0.75em;
+    border-bottom: solid 1px #cfcfcf;
+  }
+  .hierarchy-list .hierarchy-list > li:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  .hierarchy-list .hierarchy-list > li:first-child {
+    border-top: solid 1px #cfcfcf;
+  }
+/* Header Styles */
+#account {
+  display: flex;
+  align-items: center;
+}
+  #account > .name {
+    margin-right: 0.5em;
+  }
+
+
+.navbar.header {
+  padding: 0.75em 1em;
+  border-bottom: solid 1px #333;
+}
+
+.no-padding {
+  padding: 0;
+}
+
+/* Project Styles */
+#project, #todo-list {
+  border-right: solid 1px #cfcfcf;
+}
+  #project .navbar.header {
+    background: #335373;
+    color: #fff;
+  }
+
+/* Timeline Styles */
+.gaunt-chart {
+  text-align: center;
+}
+
+/* To-Do list styles */
+#todo-list .navbar.header {
+  background: #923122;
+  color: #fff;
+}
+
+/* Messenger Styles */
+.list-group-item { border-radius: 0!important; }
+#messenger .list-group-item {
+  padding: 0.5em;
+  display: flex;
+  align-items: center;
+}
+  #messenger .list-group-item svg {
+    margin-right: 0.25em;
+  }
+#chat {
+  min-height: 390px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+  #messages {
+    overflow-y: auto;
+    margin-bottom: 0;
+    padding: 0 7px;
+  }
+    #messages > li {
+      font-weight: 300;
+      line-height: 1em;
+      color: #555;
+      padding: 5px;
+    }
+      #messages > li .msg-info {
+        font-size: 0.8em;
+        font-weight: 700;
+        color: #111;
+      }
+
+        #messages > li .msg-info span.time {
+          font-size: 0.9em;
+          margin-left: 5px;
+          font-weight: 300;
+          color: #777;
+        }
+
+
+
