@@ -2,10 +2,16 @@
 
 console.log('This script populates some test tasks, features and projects to the database specified. Specified database as var mongoDB = \'mongodb://your_username:your_password@your_dabase_url\'');
 
-var async = require('async')
+var async = require('async');
 var Task = require('./models/task');
 var Feature = require('./models/feature');
 var Project = require('./models/project');
+
+dropCollections([Task,Feature,Project]);
+
+/*Task.collection.drop();
+Feature.collection.drop();
+Project.collection.drop();*/
 
 
 var mongoose = require('mongoose');
@@ -18,6 +24,12 @@ mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection 
 var tasks = [];
 var features = [];
 var projects = [];
+
+function dropCollections(collections) {
+    for (var i = 0; i < collections.length; i++) {
+        collections[i].collection.drop();
+    }
+}
 
 function taskCreate(name, desc, est_start_date, est_end_date, status, cb) {
     var task = new Task({
@@ -76,10 +88,16 @@ function projectCreate(name, features, cb) {
 function createTasks(cb) {
     async.parallel([
         function(callback) {
-            taskCreate('Task 1', 'You have to do the following stuff!', '2018-06-06', '2018-06-21', 'Pending', callback);
+            taskCreate('Task Pending', 'This is a pending task.', '2018-06-06', '2018-06-21', 'Pending', callback);
         },
         function(callback) {
-            taskCreate('Task 2', 'Create the project!', '2018-08-06', '2018-08-21', 'Pending', callback);
+            taskCreate('Task Started', 'This is a started task.', '2018-08-06', '2018-08-21', 'Started', callback);
+        },
+        function(callback) {
+            taskCreate('Task Complete', 'This is a complete task.', '2018-08-06', '2018-08-21', 'Complete', callback);
+        },
+        function(callback) {
+            taskCreate('Task Overdue', 'This is an overdue task.', '2018-08-06', '2018-08-21', 'Overdue', callback);
         }
     ], cb);
 
@@ -89,6 +107,12 @@ function createFeatures(cb) {
     async.parallel([
         function (callback) {
             featureCreate('Feature 1', [tasks[0], tasks[1]], callback);
+        },
+        function (callback) {
+            featureCreate('Feature 2', null, callback);
+        },
+        function (callback) {
+            featureCreate('Feature 3', null, callback);
         }
     ], cb);
 }
@@ -106,6 +130,7 @@ async.series([
     createFeatures,
     createProjects
 ],
+
 // Optional callback
 function(err, results) {
     if (err) {
