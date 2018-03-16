@@ -13,6 +13,9 @@ var http = require('http');
  */
 
 var port = normalizePort(process.env.PORT || '8080');
+// localhost: 192.168.0.13
+// localnetwork: 192.168.0.13
+// unknown: 0.0.0.0
 var server_ip_address = process.env.IP || '192.168.0.13';
 
 app.set('port', port);
@@ -87,6 +90,7 @@ function onError(error) {
 function onListening() {
   var host = server.address().address;
   var port = server.address().port;
+
   debug('Listening at http://' + host + ':' + port);
 
   /*  Default debug code
@@ -97,6 +101,4 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
   */
-
-
 }

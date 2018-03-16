@@ -9,7 +9,7 @@ var TaskSchema = new Schema({
     est_end_date: {type: Date, required: true},
     start_date: {type: Date},
     end_date: {type: Date},
-    status: {type: String, required: true, enum: ['Pending','In Progress','Complete']}
+    status: {type: String, required: true, enum: ['Pending', 'Started', 'Complete', 'Overdue']}
 });
 
 module.exports = mongoose.model('Task', TaskSchema);

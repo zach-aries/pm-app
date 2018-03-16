@@ -1,111 +1,30 @@
-<!-- views/pages/index.ejs -->
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <% include ../partials/head %>
+        <% include ../partials/head.ejs %>
     </head>
     <body>
 
         <header>
-            <% include ../partials/header %>
+            <% include ../partials/header.ejs %>
         </header>
 
         <main class="container-fluid">
             <div class="row">
                 <div id="project" class="col-sm-4 no-padding">
-                    <nav class="navbar header">
-                        <%= project.name %>
-                    </nav>
-                    <ul class="hierarchy-list">
-                        <li><i class="fas fa-caret-right"></i> Feature 1
-                            <ul class="hierarchy-list">
-                                <li><i class="fas fa-caret-right"></i> Sub-Feature 1</li>
-                                <li><i class="fas fa-caret-down"></i> Sub-Feature 2
-                                    <ul class="hierarchy-list">
-                                        <li><i class="far fa-calendar"></i> Task Pending</li>
-                                        <li><i class="fa fa-calendar"></i> Task Started</li>
-                                        <li><i class="fa fa-calendar-check"></i> Task Complete</li>
-                                        <li><i class="fa fa-calendar-times"></i> Task Overdue</li>
-                                    </ul>
-                                </li>
-                                <li><i class="fas fa-caret-right"></i> Sub-Feature 3</li>
-                            </ul>
-                        </li>
-                        <li><i class="fas fa-caret-right"></i> Feature 2</li>
-                        <li><i class="fas fa-caret-right"></i> Feature 3</li>
-                    </ul>
+                    <% include ../components/project.ejs %>
                 </div>
                 <div id="timeline" class="col-sm-8 no-padding">
-                    <nav class="navbar header">
-                        Temp Timeline Filler
-                    </nav>
-                    <ul class="gaunt-chart hierarchy-list">
-                        <li>1</li>
-                        <li>2</li>
-                        <li>3</li>
-                        <li>4</li>
-                        <li>5</li>
-                        <li>6</li>
-                        <li>7</li>
-                        <li>8</li>
-                        <li>9</li>
-                        <li>10</li>
-                    </ul>
+                    <% include ../components/timeline.ejs %>
                 </div>
             </div>
 
             <div class="row">
                 <div id="todo-list" class="col-sm-4 no-padding">
-                    <nav class="navbar header">
-                        To-Do List
-                    </nav>
-                    <ul id="user-list" class="list-group">
-                        <li class="list-group-item">Task Name 1</li>
-                        <li class="list-group-item">Task Name 2</li>
-                        <li class="list-group-item">Task Name 3</li>
-                        <li class="list-group-item">Task Name 4</li>
-                    </ul>
+                    <% include ../components/todo.ejs %>
                 </div>
                 <div id="messenger" class="col-sm-8 no-padding">
-                    <nav class="navbar header">
-                        Messenger
-                    </nav>
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div id="chat" class="col-sm-8">
-                                <ul id="messages" class="list-unstyled">
-                                    <li>
-                                        <div class="msg-info">Kelly<span class="time">12:11 AM</span></div>
-                                        Morbi vehicula hendrerit arcu nec sodales. Aliquam et cursus lorem. Aenean sed erat quis ex blandit tincidunt nec quis lacus. In vitae magna nec sapien placerat consequat in vel mauris.                                    </li>
-                                    <li>
-                                        <div class="msg-info">Michael<span class="time">12:11 AM</span></div>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum non porttitor magna. Cras dictum est at tortor rhoncus, eget lacinia justo lobortis.
-                                    </li>
-                                </ul>
-                                <form id="chat-input">
-                                    <div class="input-group mb-3" style="margin-bottom: 0!important;">
-                                        <input id="msg" autocomplete="off" placeholder="Message" type="text" class="form-control" aria-label="message" aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button id="frm-submit" class="btn btn-outline-secondary" type="button">Send</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="col-sm-4 no-padding">
-                                <ul id="user-list" class="list-group">
-                                    <li class="list-group-item"><i class="fas fa-user-circle fa-2x"></i> Jim</li>
-                                    <li class="list-group-item"><i class="fas fa-user-circle fa-2x"></i> Kelly</li>
-                                    <li class="list-group-item"><i class="fas fa-user-circle fa-2x"></i> Stanley</li>
-                                    <li class="list-group-item"><i class="fas fa-user-circle fa-2x"></i> Meredith</li>
-                                    <li class="list-group-item"><i class="fas fa-user-circle fa-2x"></i> Ryan</li>
-                                    <li class="list-group-item"><i class="fas fa-user-circle fa-2x"></i> Bob</li>
-                                    <li class="list-group-item"><i class="fas fa-user-circle fa-2x"></i> Toby</li>
-                                    <li class="list-group-item"><i class="fas fa-user-circle fa-2x"></i> Kevin</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                    <% include ../components/messenger.ejs %>
                 </div>
             </div>
         </main>
