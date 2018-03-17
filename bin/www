@@ -13,9 +13,6 @@ var http = require('http');
  */
 
 var port = normalizePort(process.env.PORT || '8080');
-// localhost: 127.0.0.1
-// localnetwork: 192.168.0.13
-// unknown: 0.0.0.0
 const localhost = '127.0.0.1';
 const localnetwork = '192.168.0.13';
 const unkown = '0.0.0.0';
