@@ -5,12 +5,14 @@ var router = express.Router();
 // Require Controller Modules
 var dashboard_controller = require('../controllers/dashboardController');
 
+router.get('/projects', dashboard_controller.project_selector);
+
+router.get('/new-project', dashboard_controller.new_project);
+
 /* GET dashboard page. */
 router.get('/', dashboard_controller.index);
 
-router.get('/:username/projects', function(req, res) {
-    res.send('projects page');
-});
+
 
 router.get('/:username/:project', function(req, res) {
     res.send(req.params);

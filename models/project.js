@@ -5,7 +5,9 @@ var Schema = mongoose.Schema;
 
 var ProjectSchema = new Schema({
     name: {type: String, required: true},
-    features: [{ type: Schema.ObjectId, ref: 'Feature'}]
+    description: {type: String, required: true},
+    features: [{ type: Schema.ObjectId, ref: 'Feature'}],
+    users: [{ type: Schema.ObjectId, ref: 'User'}]
 });
 
 ProjectSchema

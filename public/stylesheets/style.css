@@ -3,6 +3,12 @@ html, body {
   padding: 0;
 }
 
+.display-5 {
+  font-size: 2.25rem;
+  font-weight: 300;
+  line-height: 1.2;
+}
+
 .hierarchy-list { text-indent: 1em; }
 .hierarchy-list .hierarchy-list { text-indent: 2em!important; }
 .hierarchy-list .hierarchy-list .hierarchy-list { text-indent: 3em!important; }
@@ -106,6 +112,21 @@ html, body {
           font-weight: 300;
           color: #777;
         }
+
+.project-box {
+  border-radius: 5px;
+  text-align: center;
+  justify-content:center;
+  padding: 2em;
+  height: 100%;
+  box-shadow: 0 0 5px rgba(0,0,0,0.3);
+
+  display: flex;
+  align-items: center;
+}
+  .project-box.shadow {
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+  }
 
 
 

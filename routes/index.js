@@ -23,7 +23,7 @@ router.post('/register', function(req, res) {
         }
 
         passport.authenticate('local')(req, res, function () {
-            res.redirect('/dashboard/'+req.user.username + '/projects');
+            res.redirect('/dashboard/projects');
         });
     });
 });
@@ -33,7 +33,7 @@ router.get('/login', function(req, res) {
 });
 
 router.post('/login',  passport.authenticate('local'), function(req, res) {
-    res.redirect('/dashboard/'+req.user.username + '/projects');
+    res.redirect('/dashboard/projects');
 });
 
 router.get('/logout', function(req, res) {
