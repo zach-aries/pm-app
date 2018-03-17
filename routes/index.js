@@ -4,9 +4,6 @@ var User = require('../models/user');
 
 var router = express.Router();
 
-// Middleware to require login/auth
-const requireLogin = passport.authenticate('local');
-
 /* GET home page. */
 router.get('/', function(req, res) {
     res.render('index', { title: 'Home', user: req.user });
@@ -41,11 +38,11 @@ router.get('/logout', function(req, res) {
     res.redirect('/');
 });
 
-router.use('/dashboard', loggedIn, function(req, res, next) {
+router.use('/dashboard', is_logged_in, function(req, res, next) {
     next();
 });
 
-function loggedIn(req, res, next) {
+function is_logged_in(req, res, next) {
     if (req.user) {
         next();
     } else {
