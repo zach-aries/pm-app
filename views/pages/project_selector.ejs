@@ -8,30 +8,28 @@
             <% include ../partials/header.ejs %>
         </header>
 
-
-        <!-- Main jumbotron for a primary marketing message or call to action -->
-        <div class="jumbotron">
+        <div class="title-box">
             <div class="container">
-                <h1 class="display-4"><%= title %></h1>
+                <h1><%= title %></h1>
             </div>
         </div>
 
         <div class="container">
             <div class="row">
                 <% projects.forEach(function(project){ %>
-                    <div class="col-md-3 mb-3">
+                    <div class="col-md-3 mt-4">
                         <div class="project-box">
                             <div>
                                 <h1 class="display-5 text-left"><%= project.name %></h1>
                                 <p class="lead text-left"><%= project.description %></p>
-                                <a href="#">
+                                <a href="/dashboard">
                                     <button type="button" class="btn btn-outline-primary">Open Project</button>
                                 </a>
                             </div>
                         </div>
                     </div>
                 <% }); %>
-                <div class="col-md-3 mb-3">
+                <div class="col-md-3 mt-4">
                     <div class="project-box">
                         <a href="/dashboard/new-project">
                             <button type="button" class="btn btn-outline-primary">New Project</button>

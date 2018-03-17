@@ -20,7 +20,7 @@ exports.index = function (req, res) {
 
         var data = {
             title: 'Dashboard',
-            username: 'Micheal',
+            user: req.user,
             project: project,
             tasks: results.tasks
         };
