@@ -4,36 +4,42 @@
 // auto re-run on save command:
 // DEBUG=pm-app:* npm run devstart
 
+// Imports ==============================================================
+// application
 var express = require('express');
+var mongoose = require('mongoose');
 var path = require('path');
-var favicon = require('serve-favicon');
+
+// http-helpers
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
+var validator = require('express-validator');
 
-// default routes
-var index = require('./routes/index');
-var users = require('./routes/users');
+// authentication
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy
 
-// added routes
-var dashboard = require('./routes/dashboard');
+// helpers
+var favicon = require('serve-favicon');
+var debug = require('debug')('pm-app:server');
+var configDB = require('./config/database');
 
 var app = express();
 
-// Set up mongoose connection
-var mongoose = require('mongoose');
-var mongoDB = 'mongodb://group8:seng513@seng513-shard-00-00-zscro.mongodb.net:27017,seng513-shard-00-01-zscro.mongodb.net:27017,seng513-shard-00-02-zscro.mongodb.net:27017/test?ssl=true&replicaSet=seng513-shard-0&authSource=admin';
-mongoose.connect(mongoDB);
+// Config ===============================================================
+// db connection
 mongoose.Promise = global.Promise;
+mongoose.connect(configDB.url);
 var db = mongoose.connection;
 
 // Bind connection to error event (to get notification of connection errors)
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 // Open event is fired when mongoose successfully connects to the db
 db.on('open', function () {
-   console.log("Succesfully connected to seng513 mongoDB");
+    debug("Succesfully connected to:", db.host);
 });
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -45,11 +51,28 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(validator());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// default routes
+var index = require('./routes/index');
+var dashboard = require('./routes/dashboard');
+
 app.use('/', index);
-app.use('/users', users);
 app.use('/dashboard', dashboard);
+
+// passport config
+var User = require('./models/user');
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -58,15 +81,26 @@ app.use(function(req, res, next) {
   next(err);
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: err
+        });
+    });
+}
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+        error: {}
+    });
 });
 
 module.exports = app;

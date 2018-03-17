@@ -68,10 +68,11 @@ function featureCreate(name, tasks, cb) {
     });
 }
 
-function projectCreate(name, features, cb) {
+function projectCreate(name, features, users, cb) {
     var project = new Project({
         name: name,
-        features: features
+        features: features,
+        users: users
     });
 
     project.save(function (err) {
@@ -120,7 +121,7 @@ function createFeatures(cb) {
 function createProjects(cb) {
     async.parallel([
         function (callback) {
-            projectCreate('Project 1', [features[0]], callback);
+            projectCreate('Project 1', [features[0]], ['zach'] , callback);
         }
     ], cb);
 }
