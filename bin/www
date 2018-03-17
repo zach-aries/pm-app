@@ -15,7 +15,7 @@ var http = require('http');
 var port = normalizePort(process.env.PORT || '8080');
 const localhost = '127.0.0.1';
 const localnetwork = '192.168.0.13';
-const unkown = '0.0.0.0';
+const unknown = '0.0.0.0';
 var server_ip_address = process.env.IP || localhost;
 
 app.set('port', port);
@@ -35,7 +35,7 @@ var server = http.createServer(app);
 // server.listen(port, server_ip_address);
 
 /* ---------- UNCOMMENT LINE BELOW FOR SERVER ---------- */
-server.listen(port, server_ip_address);
+server.listen(port);
 
 server.on('error', onError);
 server.on('listening', onListening);
