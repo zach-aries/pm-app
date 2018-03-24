@@ -1,12 +1,15 @@
-<nav class="navbar header">
+<nav class="navbar header" >
     <%= project.name %>
+    <button class="menu">
+        <i class="fa fa-bars fa-lg"></i>
+    </button>
 </nav>
 
-<ul class="hierarchy-list">
-    <li><i class="fas fa-caret-right"></i> Feature 1
+<ul class="hierarchy-list main">
+    <li><a href="#"><i class="fas fa-caret-right"></i>Feature 1</a>
         <ul class="hierarchy-list">
-            <li><i class="fas fa-caret-right"></i> Sub-Feature 1</li>
-            <li><i class="fas fa-caret-down"></i> Sub-Feature 2
+            <li><a href="#"><i class="fas fa-caret-right test"></i>Sub-Feature 1</a></li>
+            <li><a href="#"><i class="fas fa-caret-down"></i>Sub-Feature 2</a>
                 <ul class="hierarchy-list">
                     <% tasks.forEach(function(task){ %>
                         <li>
@@ -22,15 +25,15 @@
 
                         <%- task.name %></li>
                     <% }); %>
-                    <!--<li><i class="far fa-calendar"></i> Task Pending</li>
-                    <li><i class="fa fa-calendar"></i> Task Started</li>
-                    <li><i class="fa fa-calendar-check"></i> Task Complete</li>
-                    <li><i class="fa fa-calendar-times"></i> Task Overdue</li>-->
+                    <li><a href="#"><i class="far fa-calendar"></i> Task Pending</a></li>
+                    <li><a href="#"><i class="fa fa-calendar"></i> Task Started</a></li>
+                    <li><a href="#"><i class="fa fa-calendar-check"></i> Task Complete</a></li>
+                    <li><a href="#"><i class="fa fa-calendar-times"></i> Task Overdue</a></li>
                 </ul>
             </li>
-            <li><i class="fas fa-caret-right"></i> Sub-Feature 3</li>
+            <li><a href="#"><i class="fas fa-caret-right"></i>Sub-Feature 3</a></li>
         </ul>
     </li>
-    <li><i class="fas fa-caret-right"></i> Feature 2</li>
-    <li><i class="fas fa-caret-right"></i> Feature 3</li>
+    <li><a href="#"><i class="fas fa-caret-right"></i>Feature 2</a></li>
+    <li><a href="#"><i class="fas fa-caret-right"></i>Feature 3</a></li>
 </ul>

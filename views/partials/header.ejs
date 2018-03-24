@@ -1,43 +1,39 @@
 <!-- views/partials/header.ejs -->
-<nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-    <a class="navbar-brand" href="/">PM</a>
+<nav class="navbar navbar-expand-sm">
+    <a class="navbar-brand" href="/"><img src="/images/avocado_logo.png"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <% if(typeof user === "undefined") { %>
     <div id="navbarNavDropdown" class="navbar-collapse collapse">
         <ul class="navbar-nav mr-auto"></ul>
-        <ul class="navbar-nav">
+        <ul id="account" class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-item nav-link" href="/register">
-                    <i class="fa fa-user"></i> Sign Up
-                </a>
+                <a class="nav-item nav-link sign-up" href="/register">Sign Up</a>
             </li>
             <li class="nav-item">
-                <a class="nav-item nav-link" href="/login">
-                    <i class="fa fa-sign-in-alt"></i> Login
-                </a>
+                <a class="nav-item nav-link login" href="/login">Login</a>
             </li>
         </ul>
     </div>
     <% } else { %>
     <div id="navbarNavDropdown" class="navbar-collapse collapse">
         <ul class="navbar-nav mr-auto"></ul>
-        <ul class="navbar-nav">
+        <ul id="account" class="navbar-nav">
             <li class="nav-item">
-                <a id="account" class="nav-item nav-link" href="#" >
-                    <span class="name"><%= user.username %></span>
-                    <i class="fa fa-user-circle fa-lg"></i>
+                <a class="nav-item nav-link settings" href="#" >
+                    <span class="name">Michael</span>
+                    <div class="user-profile">
+                        <img src="/images/user-profile/michael.jpg">
+                    </div>
                 </a>
             </li>
             <li class="nav-item">
-                <a id="account" class="nav-item nav-link" href="/logout" >
-                    <i class="fa fa-sign-out-alt"></i> Logout
+                <a class="nav-item nav-link" href="/logout" >
+                    <i class="fa fa-sign-out-alt fa-lg"></i>
                 </a>
             </li>
         </ul>
     </div>
-
-
     <% } %>
 </nav>

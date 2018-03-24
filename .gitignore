@@ -4,3 +4,5 @@
 .idea/pm-app.iml
 .idea/vcs.xml
 .idea/workspace.xml
+.DS_Store
+.idea/codeStyleSettings.xml

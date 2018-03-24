@@ -12,12 +12,37 @@ html, body {
 /*========================
        Main Styles
  =========================*/
+
+body { background: #f4f7fa; }
+
+/* custom lists */
+ul.hierarchy-list.main {
+  padding: 0.5em;
+}
+  ul.hierarchy-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+    .hierarchy-list li {
+      position: relative;
+      padding-left: 1em;
+    }
+      .hierarchy-list li:last-child {
+        padding-bottom: 0;
+      }
+      .hierarchy-list svg {
+        position: absolute;
+        left: 0;
+        top: 13px;
+      }
+
 .title-box, .jumbotron {
   color: #f4f4f4;
+  background: #141E30;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #141E30, #243B55);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #141E30, #243B55); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
-  background: #36D1DC;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to right, #5B86E5, #36D1DC);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to right, #5B86E5, #36D1DC); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 .title-box {  padding: 2em 0;  }
   .title-box h1 {
@@ -26,88 +51,195 @@ html, body {
     line-height: 1.2;
   }
 
+
 .jumbotron {  border-radius: 0;  }
 
+.no-padding { padding: 0; }
 
-.hierarchy-list { text-indent: 1em; }
-.hierarchy-list .hierarchy-list { text-indent: 2em!important; }
-.hierarchy-list .hierarchy-list .hierarchy-list { text-indent: 3em!important; }
-.hierarchy-list {
-  list-style: none;
+/*========================
+          Buttons
+ =========================*/
+button.menu {
+  background: none;
   padding: 0;
-  margin: 0;
+  border: none;
 }
-  .hierarchy-list ul {
-    margin-top: 0.75em;
-  }
 
-  .hierarchy-list li {
-    padding-top: 0.75em;
-    padding-bottom: 0.75em;
-    border-bottom: solid 1px #cfcfcf;
-  }
-  .hierarchy-list .hierarchy-list > li:last-child {
-    padding-bottom: 0;
-    border-bottom: 0;
-  }
+button:hover { cursor: pointer; }
 
-  .hierarchy-list .hierarchy-list > li:first-child {
-    border-top: solid 1px #cfcfcf;
-  }
-/* Header Styles */
-#account {
+/*========================
+          Header
+ =========================*/
+/* get items to take 100% of navbar height */
+.navbar-nav, .navbar-collapse { height: 100%; }
+
+.navbar-brand {
+  padding: 0 0.5em;
+  height: 100%;
   display: flex;
   align-items: center;
 }
-  #account > .name {
-    margin-right: 0.5em;
+
+.navbar-brand img {
+  height: 28px;
+}
+
+header {
+  background: #fff;
+}
+  header > nav {
+    -moz-box-shadow: 0px 0px 2px rgba(0,0,0,0.2);
+    -webkit-box-shadow: 0px 0px 2px rgba(0,0,0,0.2);
+    box-shadow: 0px 0px 2px rgba(0,0,0,0.2);
+    padding: 0!important;
+    height: 56px;
+  }
+  /* user profile */
+  #account li a {
+    display: flex;
+    align-items: center;
+    padding: 0 1em;
+    height: 100%;
+    color: rgba(255,255,255,0.75);
+    background: #282c37;
   }
 
+  #account li .settings {
+    background: #e6614f;
+  }
+
+  #account li .sign-up {
+    background: #28bd8b;
+  }
+
+  #account li .login {
+    background: #282c37;
+  }
+
+
+
+  #account li a:hover {
+    background: #6f7d95!important;
+    color: rgba(255,255,255,1);!important;
+  }
+
+
+    #account li a > .name {
+      margin-right: 0.5em;
+    }
+
+    .user-profile {
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .user-profile > img {
+      max-width: 40px;
+      opacity: 0.9;
+    }
 
 .navbar.header {
-  padding: 0.75em 1em;
-  border-bottom: solid 1px #333;
+  height: 48px;
+  font-weight: 600;
+  background: #ffffff;
 }
 
-.no-padding {
-  padding: 0;
+/*========================
+        Left Panel
+ =========================*/
+.left-panel {
+  background: #282c37;
+  color: #aeaeb0;
 }
 
-/* Project Styles */
-#project, #todo-list {
-  border-right: solid 1px #cfcfcf;
-}
-  #project .navbar.header {
-    background: #335373;
-    color: #fff;
+  .left-panel button.menu {
+    color: #282c37;
   }
 
-/* Timeline Styles */
-.gaunt-chart {
-  text-align: center;
+.left-panel .navbar.header {
+  color: #f7fafc;
 }
+/* project component */
+#project .navbar.header {
+  background: #28bd8b;
+}
+  .left-panel li a {
+    color: #aeaeb0;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    padding: 0 0.5em;
+  }
+  .left-panel li a:hover {
+    text-decoration: none;
+    cursor: pointer;
+    background: #1f222d;
+    color: #ffffff;
+  }
 
-/* To-Do list styles */
+/* to-do list component */
 #todo-list .navbar.header {
-  background: #923122;
-  color: #fff;
+  background: #ea5a5a;
 }
 
-/* Messenger Styles */
-.list-group-item { border-radius: 0!important; }
-#messenger .list-group-item {
+#todo-list > ul > li > a {
   padding: 0.5em;
-  display: flex;
-  align-items: center;
+  display: block;
 }
-  #messenger .list-group-item svg {
-    margin-right: 0.25em;
+
+/*========================
+        Right Panel
+ =========================*/
+.right-panel .navbar.header {
+  -moz-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.05);
+  -webkit-box-shadow: 0 2px 1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 1px rgba(0, 0, 0, 0.05);
+
+  border-top: solid 1px #e9eef3;
+}
+
+
+/*      Right Panel
+=========================*/
+
+/*  user list */
+#messenger .user-list {
+  background: #ffffff;
+  border-top: solid 1px #e9eef3;
+}
+
+  .user-list ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
   }
+
+    .user-list ul li {
+      padding: 0.5em;
+      border-bottom: solid 1px #eeeeee;
+      margin: 0 1.5em;
+    }
+    .user-list ul li.offline {
+      color: #777777;
+    }
+
+    #messenger .user-list li.online:before {
+      content: "•";
+      color: #51d2b7;
+    }
+
+    #messenger .user-list li:before {
+     content: "◦";
+      margin-right: 0.5em;
+    }
+
+/*  chat area */
 #chat {
   min-height: 390px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  background: #f7f7f7;
 }
   #messages {
     overflow-y: auto;
@@ -133,6 +265,10 @@ html, body {
           color: #777;
         }
 
+#chat-input {
+  margin-bottom: 0.5em;
+}
+
 .project-box {
   border-radius: 5px;
   text-align: center;
@@ -147,6 +283,86 @@ html, body {
   .project-box.shadow {
     box-shadow: 0 0 5px rgba(0,0,0,0.3);
   }
+
+/*========================
+          Gantt
+ =========================*/
+#gantt {
+  overflow-x: auto;
+}
+#gantt-container {
+  min-width: 100%;
+}
+#gantt .navbar.header {
+  padding: 0;
+}
+#gantt #gantt-container {
+  height: 100%;
+  position: relative;
+}
+
+#calendar {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+  #calendar li {
+    float: left;
+    width: 50px;
+    text-align: center;
+    padding: 0.25em;
+    font-size: 0.75em;
+    line-height: 1.25em;
+    font-weight: 300;
+    color: #8e9aa9;
+  }
+
+  #gantt #status-bar {
+    width: 2px;
+    background: #1ba8ed;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 500px;
+    z-index: 9999;
+  }
+  #gantt-chart {
+    padding: 0.5em 0;
+    width: 100%;
+  }
+
+  /* collapsing margins fix */
+    #gantt-chart,
+    #gantt-chart .task-list,
+    #gantt-chart .task-list .task {
+      float: left;
+      clear: both;
+    }
+  /* ------------------------ */
+
+  #gantt-chart .task-list {
+    width: 100%;
+  }
+    #gantt-chart .task-list.closed {
+      height: 42px;
+      overflow: hidden;
+    }
+      #gantt-chart .task-list .task {
+        background: #5a6779;
+        height: 38px;
+        width: 350px;
+        border-radius: 5px;
+        margin: 2px 0;
+        position: relative;
+      }
+        #gantt-chart .task-list .task .task-status {
+          height: 100%;
+          background: #28bd8b;
+          border-radius: 5px;
+          opacity: 0.8;
+          position: absolute;
+        }
+
 
 
 
