@@ -354,7 +354,16 @@ header {
         border-radius: 5px;
         margin: 2px 0;
         position: relative;
+
+        box-shadow: 0 0 5px rgba(0,0,0,0.3);
       }
+
+      #gantt-chart .task-list .task:hover {
+        box-shadow: -2px 2px 7px rgba(0,0,0,0.5);
+        cursor: pointer;
+        bottom: 2px;
+      }
+
         #gantt-chart .task-list .task .task-status {
           height: 100%;
           background: #28bd8b;
