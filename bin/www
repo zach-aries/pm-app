@@ -16,7 +16,7 @@ var port = normalizePort(process.env.PORT || '8080');
 const localhost = '127.0.0.1';
 const localnetwork = '192.168.0.13';
 const unknown = '0.0.0.0';
-var server_ip_address = process.env.IP || localhost;
+var server_ip_address = process.env.IP || unknown;
 
 app.set('port', port);
 
@@ -24,7 +24,6 @@ app.set('port', port);
 /**
  * Create HTTP server.
  */
-
 var server = http.createServer(app);
 
 /**
@@ -32,13 +31,19 @@ var server = http.createServer(app);
  */
 
 /* ---------- UNCOMMENT LINE BELOW FOR LOCALHOST ---------- */
-// server.listen(port, server_ip_address);
+server.listen(port, server_ip_address);
 
 /* ---------- UNCOMMENT LINE BELOW FOR SERVER ---------- */
-server.listen(port);
+// server.listen(port);
 
 server.on('error', onError);
 server.on('listening', onListening);
+
+/**
+ * Create Socket.
+ */
+var io = require('socket.io').listen(server);
+require('../sockets/base')(io);
 
 /**
  * Normalize a port into a number, string, or false.
