@@ -1,8 +1,5 @@
 $(function () {
     const socket = io();
-
-    console.log('user: ', $('#username').text());
-
     /*===========================================
                     Send Events
     ===========================================*/
@@ -65,7 +62,6 @@ $(function () {
      * @param data
      */
     function addMessage(data) {
-        console.log(data);
 
         var date = new Date(data.timestamp);
         var time = $('<span class="time"></span>').text(date.toLocaleString('en-US', {
