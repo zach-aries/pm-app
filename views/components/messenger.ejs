@@ -4,26 +4,18 @@
 <div class="container-fluid">
     <div class="row">
         <div id="chat" class="col-sm-9">
-            <ul id="messages" class="list-unstyled">
-                <li>
-                    <div class="msg-info">Kelly<span class="time">12:11 AM</span></div>
-                    Morbi vehicula hendrerit arcu nec sodales. Aliquam et cursus lorem. Aenean sed erat quis ex blandit tincidunt nec quis lacus. In vitae magna nec sapien placerat consequat in vel mauris.                                    </li>
-                <li>
-                    <div class="msg-info">Michael<span class="time">12:11 AM</span></div>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum non porttitor magna. Cras dictum est at tortor rhoncus, eget lacinia justo lobortis.
-                </li>
-            </ul>
-            <form id="chat-input">
+            <ul id="messages" class="list-unstyled"></ul>
+            <form id="chat-input" action="">
                 <div class="input-group mb-3" style="margin-bottom: 0!important;">
                     <input id="msg" autocomplete="off" placeholder="Message" type="text" class="form-control" aria-label="message" aria-describedby="basic-addon2">
                     <div class="input-group-append">
-                        <button id="frm-submit" class="btn btn-outline-secondary" type="button">Send</button>
+                        <button id="frm-submit" class="btn btn-outline-secondary" type="submit">Send</button>
                     </div>
                 </div>
             </form>
         </div>
-        <div class="col-sm-3 no-padding user-list">
-            <ul>
+        <div class="col-sm-3 no-padding user-list-container">
+            <ul id="user-list">
                 <li class="online">Jim</li>
                 <li class="online">Kevin</li>
                 <li class="offline">Kelly</li>

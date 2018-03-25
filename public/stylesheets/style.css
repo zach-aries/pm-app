@@ -203,39 +203,40 @@ header {
 =========================*/
 
 /*  user list */
-#messenger .user-list {
+#messenger .user-list-container {
   background: #ffffff;
   border-top: solid 1px #e9eef3;
 }
 
-  .user-list ul {
+  .user-list-container #user-list {
     padding: 0;
     margin: 0;
     list-style: none;
   }
 
-    .user-list ul li {
+    .user-list-container #user-list li {
       padding: 0.5em;
       border-bottom: solid 1px #eeeeee;
       margin: 0 1.5em;
     }
-    .user-list ul li.offline {
+    .user-list-container #user-list li.offline {
       color: #777777;
     }
 
-    #messenger .user-list li.online:before {
+    #messenger .user-list-container #user-list li.online:before {
       content: "•";
       color: #51d2b7;
     }
 
-    #messenger .user-list li:before {
+    #messenger .user-list-container #user-list li:before {
      content: "◦";
       margin-right: 0.5em;
     }
 
 /*  chat area */
 #chat {
-  min-height: 390px;
+  padding: 0;
+  height: 400px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -266,7 +267,7 @@ header {
         }
 
 #chat-input {
-  margin-bottom: 0.5em;
+  margin: 0.25em;
 }
 
 .project-box {
