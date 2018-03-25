@@ -1,4 +1,4 @@
-var Project = require('../models/project')
+var Project = require('../models/project');
 
 exports.project_list = function (id, cb) {
 

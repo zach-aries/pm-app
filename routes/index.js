@@ -38,9 +38,9 @@ router.get('/logout', function(req, res) {
     res.redirect('/');
 });
 
-router.use('/dashboard', is_logged_in, function(req, res, next) {
+/*router.use('/dashboard', is_logged_in, function(req, res, next) {
     next();
-});
+});*/
 
 function is_logged_in(req, res, next) {
     if (req.user) {

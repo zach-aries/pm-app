@@ -5,7 +5,7 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <% if(typeof user === "undefined") { %>
-    <div id="navbarNavDropdown" class="navbar-collapse collapse">
+   <div id="navbarNavDropdown" class="navbar-collapse collapse">
         <ul class="navbar-nav mr-auto"></ul>
         <ul id="account" class="navbar-nav">
             <li class="nav-item">
@@ -22,7 +22,7 @@
         <ul id="account" class="navbar-nav">
             <li class="nav-item">
                 <a class="nav-item nav-link settings" href="#" >
-                    <span class="name">Michael</span>
+                    <span id="username" class="name"><%= user.username %></span>
                     <div class="user-profile">
                         <img src="/images/user-profile/michael.jpg">
                     </div>
