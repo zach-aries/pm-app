@@ -29,9 +29,30 @@ router.get('/login', function(req, res) {
     res.render('pages/login', { title: 'Login', user : req.user });
 });
 
-router.post('/login',  passport.authenticate('local'), function(req, res) {
-    res.redirect('/dashboard/projects');
+router.post('/login', function(req, res, next) {
+    passport.authenticate('local', function(err, user, info) {
+        if (err)
+            return next(err);
+
+        if (!user)
+            return res.render('pages/login', { title: 'Login', error : info.message });
+
+        req.logIn(user, function(err) {
+            if (err) {
+                return next(err);
+            }
+            return res.redirect('/dashboard/projects');
+        });
+    })(req, res, next);
 });
+
+    //});
+
+    //res.redirect('/login');
+
+    //const err_message = 'Username or password does not exist';
+    //res.render('pages/login', { title: 'Login', error : err_message });
+//});
 
 router.get('/logout', function(req, res) {
     req.logout();
