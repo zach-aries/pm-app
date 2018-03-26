@@ -71,7 +71,7 @@ button:hover { cursor: pointer; }
           Header
  =========================*/
 /* get items to take 100% of navbar height */
-.navbar-nav, .navbar-collapse { height: 100%; }
+.navbar-nav, .navbar-collapse, #account .dropdown { height: 100%; }
 
 .navbar-brand {
   padding: 0 0.5em;
@@ -95,7 +95,7 @@ header {
     height: 56px;
   }
   /* user profile */
-  #account li a {
+  #account li a.nav-link {
     display: flex;
     align-items: center;
     padding: 0 1em;
@@ -104,26 +104,13 @@ header {
     background: #282c37;
   }
 
-  #account li .settings {
-    background: #e6614f;
-  }
-
-  #account li .sign-up {
-    background: #28bd8b;
-  }
-
-  #account li .login {
-    background: #282c37;
-  }
-
-
-
+  #account li .nav-link.settings {  background: #e6614f;  }
+  #account li .nav-link.sign-up {  background: #28bd8b;  }
+  #account li .nav-link.login {  background: #282c37;  }
   #account li a:hover {
     background: #6f7d95!important;
     color: rgba(255,255,255,1);!important;
   }
-
-
     #account li a > .name {
       margin-right: 0.5em;
     }
@@ -137,6 +124,15 @@ header {
       max-width: 40px;
       opacity: 0.9;
     }
+
+    .settings span.settings-icon {
+      position: absolute;
+      top: -5px;
+      visibility: hidden;
+      right: 5px;
+    }
+      .settings:hover span.settings-icon { visibility: visible; }
+
 
 .navbar.header {
   height: 48px;
@@ -325,7 +321,7 @@ header {
     position: absolute;
     top: 0;
     left: 500px;
-    z-index: 9999;
+    z-index: 100;
   }
   #gantt-chart {
     padding: 0.5em 0;
@@ -348,6 +344,7 @@ header {
       height: 42px;
       overflow: hidden;
     }
+
       #gantt-chart .task-list .task {
         background: #5a6779;
         height: 38px;
@@ -355,14 +352,13 @@ header {
         border-radius: 5px;
         margin: 2px 0;
         position: relative;
-
-        box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
       }
 
       #gantt-chart .task-list .task:hover {
-        box-shadow: -2px 2px 7px rgba(0,0,0,0.5);
+        box-shadow: 3px 3px 1px rgba(0,0,0,0.15);
         cursor: pointer;
-        bottom: 2px;
+        bottom: 1px;
       }
 
         #gantt-chart .task-list .task .task-status {
