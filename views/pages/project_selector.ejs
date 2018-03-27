@@ -15,30 +15,41 @@
         </div>
 
         <div class="container">
+            <% if( typeof errors !== "undefined") { %>
+                <div class="row">
+                    <div class="col-lg-12 mt-2">
+                        <% errors.forEach(function(error){ %>
+                            <div class="alert alert-danger alert-dismissible fade show">
+                                <%= error.msg %>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            <% } %>
             <div class="row">
                 <% projects.forEach(function(project){ %>
-                    <div class="col-md-3 mt-4">
-                        <div class="project-box">
-                            <div>
+                    <div class="col-lg-3 mt-4">
+                        <a class="project-box" href="/dashboard">
+                            <div class="project-group">
                                 <h1 class="display-5 text-left"><%= project.name %></h1>
+                                <hr />
                                 <p class="lead text-left"><%= project.description %></p>
-                                <a href="/dashboard">
-                                    <button type="button" class="btn btn-outline-primary">Open Project</button>
-                                </a>
                             </div>
-                        </div>
-                    </div>
-                <% }); %>
-                <div class="col-md-3 mt-4">
-                    <div class="project-box">
-                        <a href="/dashboard/new-project">
-                            <button type="button" class="btn btn-outline-primary">New Project</button>
                         </a>
                     </div>
+                <% }); %>
+                <div class="col-lg-3 mt-4">
+                    <a id="new-project" class="project-box" data-toggle="modal" data-target="#exampleModal">
+                        New Project
+                    </a>
                 </div>
             </div>
         </div>
 
+        <% include ../components/modals/new_project.ejs %>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>

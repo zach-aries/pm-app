@@ -2,7 +2,7 @@ var Project = require('../models/project');
 
 exports.project_list = function (id, cb) {
 
-    console.log(id);
+    //console.log(id);
 
     Project.find({ users:id}, '_id name description')
         .exec(function (err, projects) {

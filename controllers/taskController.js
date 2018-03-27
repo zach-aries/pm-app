@@ -2,7 +2,7 @@ var Task = require('../models/task')
 
 exports.task_list = function (feature_id, cb) {
 
-    console.log("feature id: " + feature_id);
+    // console.log("feature id: " + feature_id);
 
     Task.find({}, 'name status')
         .exec(function (err, tasks) {
@@ -29,7 +29,7 @@ exports.create_task = function (name, desc, est_start_date, est_end_date, status
             cb(err, null);
             return;
         }
-        console.log('New Task: ' + task);
+        // console.log('New Task: ' + task);
         cb(null, task);
     });
 };

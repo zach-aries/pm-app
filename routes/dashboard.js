@@ -7,7 +7,7 @@ var dashboard_controller = require('../controllers/dashboardController');
 
 router.get('/projects', dashboard_controller.project_selector);
 
-router.get('/new-project', dashboard_controller.new_project);
+router.post('/new-project', dashboard_controller.new_project);
 
 /* GET dashboard page. */
 router.get('/', dashboard_controller.index);

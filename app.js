@@ -12,7 +12,8 @@ var path = require('path');
 
 // http-helpers
 // uncomment to log requests to console
-var logger = require('morgan');
+//var logger = require('morgan');
+var flash = require('connect-flash');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
@@ -50,7 +51,7 @@ app.set('view engine', 'ejs');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 // uncomment to log requests to console
-//app.use(logger('dev'));
+// app.use(logger('dev'));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -63,6 +64,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(validator());
+app.use(flash());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // default routes

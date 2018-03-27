@@ -15,8 +15,11 @@
 
         <div class="container mt-4">
             <% if(typeof error !== "undefined") { %>
-            <div class="alert alert-danger">
+            <div class="alert alert-danger alert-dismissible fade show">
                 <%= error %>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <% } %>
 
