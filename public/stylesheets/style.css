@@ -3,6 +3,13 @@ html, body {
   padding: 0;
 }
 
+/*========================
+       Main Styles
+ =========================*/
+
+body { background: #f4f7fa; }
+
+/* text layout */
 .display-5 {
   font-size: 1.75rem;
   font-weight: 300;
@@ -12,11 +19,7 @@ html, body {
   font-size: 1rem;
 }
 
-/*========================
-       Main Styles
- =========================*/
-
-body { background: #f4f7fa; }
+a:hover { cursor: pointer; }
 
 /* custom lists */
 ul.hierarchy-list.main {
