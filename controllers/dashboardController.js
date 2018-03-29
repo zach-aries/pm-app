@@ -25,15 +25,15 @@ exports.index = function (req, res) {
 
 exports.project_selector = function (req, res) {
     async.parallel({
-        projects: function(callback) {
-            project_controller.project_list(req.user._id, callback);
-        },
+        user: function (callback) {
+            user_controller.get_projectList(req.user._id, callback);
+        }
     }, function(err, results) {
 
         var data = {
             title: 'Project Selector',
             user: req.user,
-            projects: results.projects,
+            projects: results.user.projects,
             errors: req.flash('error')
         };
 
@@ -44,6 +44,7 @@ exports.project_selector = function (req, res) {
 exports.new_project = function (req, res) {
     const name = req.body.name;
     const desc = req.body.description;
+    var project;
 
     req.checkBody('name', 'Please enter a project name').not().isEmpty();
 
@@ -52,11 +53,20 @@ exports.new_project = function (req, res) {
         req.flash('error', errors);
         res.redirect('/dashboard/projects');
     } else {
-        async.series({
-            project: function(callback) {
-                project_controller.create_project(name, desc, req.user._id, [req.user._id], callback);
+        async.waterfall([
+            function (callback) {
+                project_controller.create_project(name, desc, req.user._id, callback);
+            },
+            function(p, callback) {
+                if(p){
+                    project = p;
+                    user_controller.add_project(req.user._id, p._id, callback);
+                    //project_controller.add_user(projectID, user._id, callback);
+                } else {
+                    callback(null, 'error');
+                }
             }
-        }, function(err, results) {
+        ], function (err, result) {
             if (err) {
                 var error = {
                     msg: err._message,
@@ -65,7 +75,7 @@ exports.new_project = function (req, res) {
                 req.flash('error', [error]);
                 res.redirect('/dashboard/projects');
             } else {
-                res.redirect('/dashboard/' + results.project._id);
+                res.redirect('/dashboard/' + project._id);
             }
         });
     }

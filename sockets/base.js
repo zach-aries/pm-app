@@ -1,4 +1,6 @@
 var message_controller = require('../controllers/messengerController');
+var user_controller = require('../controllers/userController');
+var project_controller = require('../controllers/projectController');
 var feature_controller = require('../controllers/featureController');
 var task_controller = require('../controllers/taskController');
 
@@ -15,6 +17,9 @@ module.exports = function (io) {
                 },
                 features: function (callback) {
                     feature_controller.get_featuresByProjectID(projectID, callback);
+                },
+                users: function (callback) {
+                    user_controller.get_projectUserList(projectID, callback)
                 }
             }, function(err, results) {
 
@@ -41,10 +46,12 @@ module.exports = function (io) {
                         test(results.features, f);
                     }
                 });
+
                 var data = {
                     messages: results.messages,
                     project: project,
-                    features: results.features
+                    features: results.features,
+                    project_users: results.users
                 };
 
                 // send confirmation to sending client only
@@ -92,18 +99,41 @@ module.exports = function (io) {
         });
 
         socket.on('add task', function (name, description, featureID, est_start_date, est_end_date, status) {
-            var t;
+            var return_task;
             async.waterfall([
                 function (callback) {
                     task_controller.store_task(name, description, featureID, est_start_date, est_end_date, status, callback);
                 },
                 function(task, callback) {
-                    t = task;
+                    return_task = task;
                     feature_controller.add_taskToFeature(featureID, task._id, callback);
                 }
             ], function (err, result) {
                 // TODO Error handling
-                io.emit('add task', t, featureID);
+                io.emit('add task', return_task, featureID);
+            });
+        });
+
+        socket.on('add user', function (username, projectID) {
+            var user;
+            async.waterfall([
+                function (callback) {
+                    user_controller.get_userByUsername(username, callback);
+                },
+                function(u, callback) {
+                    if(u){
+                        user = u;
+                        user_controller.add_project(u._id, projectID, callback);
+                    } else {
+                        callback(null, 'error');
+                    }
+                }
+            ], function (err, result) {
+                // TODO Error handling
+                console.log('added project to user: ', result);
+                if (!err) {
+                    io.emit('add user', user);
+                }
             });
         });
 

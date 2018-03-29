@@ -65,6 +65,18 @@ $(function () {
 
         return false;
     });
+
+    $('#add-users').click(function () {
+        const user = $('#projectSettingsAddUser').val();
+
+        // check to make sure the username includes a character
+        if (user.match(/\S/)) {
+            socket.emit('add user', user, projectID);
+
+            // clear chat entry
+            $('#projectSettingsAddUser').val('');
+        }
+    });
     /*===========================================
                     Catch Events
      ===========================================*/
@@ -123,6 +135,10 @@ $(function () {
         addTask(parentEl, task);
     });
 
+    socket.on('add user', function (user) {
+        $('#settings-user-list').append($('<li>').text(user.username));
+    });
+
     /*===========================================
                   General Functions
      ===========================================*/
@@ -136,6 +152,10 @@ $(function () {
         // populate project directory with features & tasks
         data.project.forEach(function (feature) {
             addFeature($('#project-directory'), feature);
+        });
+
+        data.project_users.forEach(function (user) {
+            $('#settings-user-list').append($('<li>').text(user.username));
         });
 
         // clear newFeatureModal select and add a null option

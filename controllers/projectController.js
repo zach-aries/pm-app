@@ -12,24 +12,11 @@ exports.projectByID = function (id, cb) {
         });
 };
 
-exports.project_list = function (id, cb) {
-    Project.find({ users:id}, '_id name description')
-        .exec(function (err, projects) {
-            if (err) {
-                cb(err,null);
-                return;
-            }
-            //Successful, so return query
-            cb(null, projects);
-        });
-};
-
-exports.create_project = function (name, desc, owner, users, cb) {
+exports.create_project = function (name, desc, owner, cb) {
     var project = new Project({
         name: name,
         description: desc,
-        owner: owner,
-        users: users
+        owner: owner
     });
 
     project.save(function (err) {

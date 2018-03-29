@@ -18,9 +18,8 @@ exports.get_message = function (_id, cb) {
 };
 
 exports.get_projectMessages = function (projectID, cb) {
-    // TODO uncomment to get messages from specific project only
-    //Message.find({ project:projectID})
-    Message.find()
+    Message.find({ project:projectID})
+        .lean()
         .populate('user')
         .exec(function (err, messages) {
             if (err) {
