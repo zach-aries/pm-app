@@ -21,6 +21,12 @@ body { background: #f4f7fa; }
 
 a:hover { cursor: pointer; }
 
+/* bootstrap fix, class not being called */
+.dropdown-menu-right {
+  right: -1rem;
+  left: auto;
+}
+
 /* custom lists */
 ul.hierarchy-list.main {
   padding: 0.5em;

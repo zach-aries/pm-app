@@ -1,10 +1,7 @@
 var Task = require('../models/task')
 
-exports.task_list = function (feature_id, cb) {
-
-    // console.log("feature id: " + feature_id);
-
-    Task.find({}, 'name status')
+exports.task_list = function (featureID, cb) {
+    Task.find({ feature:featureID})
         .exec(function (err, tasks) {
             if (err) {
                 cb(err,null);
@@ -15,10 +12,25 @@ exports.task_list = function (feature_id, cb) {
         });
 };
 
-exports.create_task = function (name, desc, est_start_date, est_end_date, status, cb) {
+exports.add_responsible = function (userID, taskID, cb) {
+    Task.findOneAndUpdate({ _id: taskID}, {$push: {responsible: userID}})
+        .exec(function (err, task) {
+            if (err) {
+                console.log(err);
+                cb(err,null);
+                return;
+            }
+            // Successful, so return query
+            // console.log('Update Feature: ' + feature);
+            cb(null, task);
+        });
+};
+
+exports.store_task = function (name, desc, featureID, est_start_date, est_end_date, status, cb) {
     var task = new Task({
         name: name,
         description: desc,
+        feature: featureID,
         est_start_date: est_start_date,
         est_end_date: est_end_date,
         status: status
@@ -29,7 +41,7 @@ exports.create_task = function (name, desc, est_start_date, est_end_date, status
             cb(err, null);
             return;
         }
-        // console.log('New Task: ' + task);
+        console.log('New Task:\n' + task);
         cb(null, task);
     });
 };

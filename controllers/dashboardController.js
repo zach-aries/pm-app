@@ -4,25 +4,19 @@ var project_controller = require('../controllers/projectController');
 var user_controller = require('../controllers/userController');
 
 var async = require('async');
-var body = require('express-validator/check');
-
 
 exports.index = function (req, res) {
-
     async.parallel({
-        tasks: function(callback) {
-            task_controller.task_list(123, callback);
+        project: function(callback) {
+            project_controller.projectByID(req.params.projectID, callback);
         },
     }, function(err, results) {
-        var project = {
-            name: 'Project 1'
-        };
 
         var data = {
             title: 'Dashboard',
             user: req.user,
-            project: project,
-            tasks: results.tasks
+            project: results.project,
+            errors: req.flash('error')
         };
 
         res.render('pages/dashboard', data);
@@ -60,7 +54,7 @@ exports.new_project = function (req, res) {
     } else {
         async.series({
             project: function(callback) {
-                project_controller.create_project(name, desc, null, [req.user._id], callback);
+                project_controller.create_project(name, desc, req.user._id, [req.user._id], callback);
             }
         }, function(err, results) {
             if (err) {
@@ -71,8 +65,7 @@ exports.new_project = function (req, res) {
                 req.flash('error', [error]);
                 res.redirect('/dashboard/projects');
             } else {
-                console.log('after: ', results.users);
-                res.redirect('/dashboard');
+                res.redirect('/dashboard/' + results.project._id);
             }
         });
     }

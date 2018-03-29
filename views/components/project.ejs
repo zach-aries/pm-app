@@ -1,39 +1,19 @@
 <nav class="navbar header" >
     <%= project.name %>
-    <button class="menu">
-        <i class="fa fa-bars fa-lg"></i>
-    </button>
+
+
+    <div class="dropdown">
+        <!--<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Dropdown button
+        </button>-->
+        <button class="menu" id="projectMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-bars fa-lg"></i>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="projectMenuButton">
+            <a class="dropdown-item" data-toggle="modal" data-target="#newFeatureModal">Add Feature</a>
+            <a class="dropdown-item" data-toggle="modal" data-target="#newTaskModal">Add Task</a>
+        </div>
+    </div>
 </nav>
 
-<ul class="hierarchy-list main">
-    <li><a href="#"><i class="fas fa-caret-right"></i>Feature 1</a>
-        <ul class="hierarchy-list">
-            <li><a href="#"><i class="fas fa-caret-right test"></i>Sub-Feature 1</a></li>
-            <li><a href="#"><i class="fas fa-caret-down"></i>Sub-Feature 2</a>
-                <ul class="hierarchy-list">
-                    <% tasks.forEach(function(task){ %>
-                        <li>
-                        <% if (task.status === "Pending") { %>
-                            <i class="far fa-calendar"></i>
-                        <% } else if (task.status === "Started") { %>
-                            <i class="fa fa-calendar"></i>
-                        <% } else if (task.status === "Complete") { %>
-                            <i class="fa fa-calendar-check"></i>
-                        <% } else if (task.status === "Overdue") { %>
-                            <i class="fa fa-calendar-times"></i>
-                        <% } %>
-
-                        <%- task.name %></li>
-                    <% }); %>
-                    <li><a href="#"><i class="far fa-calendar"></i> Task Pending</a></li>
-                    <li><a href="#"><i class="fa fa-calendar"></i> Task Started</a></li>
-                    <li><a href="#"><i class="fa fa-calendar-check"></i> Task Complete</a></li>
-                    <li><a href="#"><i class="fa fa-calendar-times"></i> Task Overdue</a></li>
-                </ul>
-            </li>
-            <li><a href="#"><i class="fas fa-caret-right"></i>Sub-Feature 3</a></li>
-        </ul>
-    </li>
-    <li><a href="#"><i class="fas fa-caret-right"></i>Feature 2</a></li>
-    <li><a href="#"><i class="fas fa-caret-right"></i>Feature 3</a></li>
-</ul>
+<ul id="project-directory" class="hierarchy-list main" data-projectID="<%= project._id %>"></ul>

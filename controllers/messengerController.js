@@ -3,11 +3,10 @@ var async = require('async');
 
 var Message = require('../models/message');
 
-// TODO add project id for get
-exports.message_list = function (project_id, cb) {
-    //console.log("feature id: " + project_id);
-
-    Message.find()
+exports.get_message = function (_id, cb) {
+    Message.findOne({_id:_id})
+        .lean()
+        .populate('user')
         .exec(function (err, messages) {
             if (err) {
                 cb(err,null);
@@ -18,12 +17,28 @@ exports.message_list = function (project_id, cb) {
         });
 };
 
-exports.store_message = function (data, cb) {
-    var date = new Date(data.timestamp);
+exports.get_projectMessages = function (projectID, cb) {
+    // TODO uncomment to get messages from specific project only
+    //Message.find({ project:projectID})
+    Message.find()
+        .populate('user')
+        .exec(function (err, messages) {
+            if (err) {
+                cb(err,null);
+                return;
+            }
+            //Successful, so return query
+            cb(null, messages);
+        });
+};
+
+exports.store_message = function (userID, projectID, msg, timestamp, cb) {
+    var date = new Date(timestamp);
 
     var message = new Message({
-        user: data.user,
-        message: data.message,
+        user: userID,
+        message: msg,
+        project: projectID,
         timestamp: date
     });
 
@@ -33,6 +48,8 @@ exports.store_message = function (data, cb) {
             cb(err,null);
             return;
         }
+
+        console.log('New Message:\n' + message);
         cb(null, message);
     });
 };

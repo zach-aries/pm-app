@@ -10,7 +10,7 @@ router.get('/projects', dashboard_controller.project_selector);
 router.post('/new-project', dashboard_controller.new_project);
 
 /* GET dashboard page. */
-router.get('/', dashboard_controller.index);
+router.get('/:projectID', dashboard_controller.index);
 
 
 

@@ -3,8 +3,9 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var MessageSchema = new Schema({
-    user: {type: String, required: true}, //type: Schema.ObjectId, ref: 'User', required: true},
+    user: { type: Schema.ObjectId, ref: 'User', required: true }, //type: Schema.ObjectId, ref: 'User', required: true},
     message: {type: String, required: true},
+    project: { type: Schema.ObjectId, ref: 'Project', required: true},
     timestamp: {type: Date, required: false}
 });
 
