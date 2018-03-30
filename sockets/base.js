@@ -8,6 +8,7 @@ var async = require('async');
 
 module.exports = function (io) {
 
+
     io.on('connection', function(socket){
 
         socket.on('user connected', function (projectID) {
@@ -54,6 +55,10 @@ module.exports = function (io) {
                     project_users: results.users
                 };
 
+                //io.socket.in(projectID).emit('init', data);
+
+                // joing room with project ID
+                socket.join(projectID);
                 // send confirmation to sending client only
                 socket.emit('init', data);
             });
@@ -73,7 +78,9 @@ module.exports = function (io) {
                 }
             ], function (err, result) {
                 // TODO Error handling
-                io.emit('message', result);
+
+                // emit message to users in room
+                io.sockets.in(projectID).emit('message', result);
             });
         });
 
@@ -94,7 +101,7 @@ module.exports = function (io) {
                 }
             }, function(err, result) {
                 //TODO Error handling
-                io.emit('add feature', result.feature);
+                io.sockets.in(projectID).emit('add feature', result.feature);
             });
         });
 
@@ -110,7 +117,7 @@ module.exports = function (io) {
                 }
             ], function (err, result) {
                 // TODO Error handling
-                io.emit('add task', return_task, featureID);
+                io.sockets.in(result.project).emit('add task', return_task, featureID);
             });
         });
 
@@ -132,7 +139,7 @@ module.exports = function (io) {
                 // TODO Error handling
                 console.log('added project to user: ', result);
                 if (!err) {
-                    io.emit('add user', user);
+                    io.sockets.in(projectID).emit('add user', user);
                 }
             });
         });
