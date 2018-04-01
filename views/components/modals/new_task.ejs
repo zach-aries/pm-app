@@ -2,10 +2,6 @@
 
 <!DOCTYPE html>
 <html>
-    <head>
-
-    </head>
-    
     <body>
         <div class="modal fade" id="newTaskModal" tabindex="-1" role="dialog" aria-labelledby="newTaskModal" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -48,23 +44,22 @@
                                 </div>
 
                                 <div class="row">
-                                    <form method="post">
-                                            <div  class="col-xs-6" class="form-group"> <!-- Date input -->
-                                            <label class="col-xs-6" class="control-label" for="date">Estimated Start: </label>
+                                        <div class="col-sm-5">
+                                            <label class="col" class="control-label" for="date">Estimated Start: </label>
                                             <input class="form-control" id="date" name="date" placeholder="MM/DD/YYY" type="text"/>
-                                            </div>
-                                            <div class="col-xs-6" class="form-group"> <!-- Date input -->
-                                                <label class="col-xs-6" class="control-label" for="date">Estimated Finish: </label>
-                                                <input class="form-control" id="date" name="date" placeholder="MM/DD/YYY" type="text"/>
-                                            </div>
-                                    </form>
-                                </div>
+                                        </div>
+                                        
+                                        <div class="col-sm-5">
+                                            <label class="col" class="control-label" for="date">Estimated Finish: </label>
+                                            <input class="form-control" id="date" name="date" placeholder="MM/DD/YYY" type="text"/>
+                                        </div>
+                                   </div>
                             </div>
                             <br />
                             <br />
                             <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary pull-left">Save Task</button>
-                                <button type="button" class="btn btn-secondary pull-left" data-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary float-left">Save Task</button>
+                                <button type="button" class="btn btn-secondary float-left" data-dismiss="modal">Cancel</button>
                                 <button type="submit" class="btn btn-primary">Start Task</button>
                                 <button type="submit" class="btn btn-success">Complete</button>
                             </div>
@@ -73,9 +68,5 @@
                 </div>
             </div>
         </div>
-        
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
     </body>
 </html>
