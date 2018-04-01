@@ -30,9 +30,25 @@
                             </div>
                         </form>
                         <div class="form-group">
-                                <label for="newFeatureFormControlSelect1">Assign task to: </label>
-                                <select class="form-control" id="assignTo"></select>
-                         </div>
+                            <label for="text">Description:</label>
+                            <textarea class="form-control" rows="5" id="comment"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                                <label for="newAssignToFormControlSelect1">Assign task to: </label>
+                                <select class="form-control" id="newAssignToFormControlSelect1"></select>
+                        </div>
+
+                        <form method="post">
+                                <div class="form-group"> <!-- Date input -->
+                                  <label class="control-label" for="date">Estimated Start: </label>
+                                  <input class="form-control" id="date" name="date" placeholder="MM/DD/YYY" type="text"/>
+                                </div>
+                                <div class="form-group"> <!-- Date input -->
+                                    <label class="control-label" for="date">Estimated Finish: </label>
+                                    <input class="form-control" id="date" name="date" placeholder="MM/DD/YYY" type="text"/>
+                                </div>
+                        </form>
                     </div>
                     <br />
                     <br />
