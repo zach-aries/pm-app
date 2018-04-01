@@ -2,8 +2,16 @@
     To-Do List
 </nav>
 <ul id="task-list" class="list-unstyled">
-    <li><a href="#">Task Name 1</a></li>
+    <li><a href="javascript:AlertIt();">click me</a></li>
     <li><a href="#">Task Name 2</a></li>
     <li><a href="#">Task Name 3</a></li>
     <li><a href="#">Task Name 4</a></li>
 </ul>
+
+<script type="text/javascript">
+    function AlertIt() {
+    var answer = confirm ("Please click on OK to continue.")
+    if (answer)
+    window.location="http://www.continue.com";
+    }
+</script>
