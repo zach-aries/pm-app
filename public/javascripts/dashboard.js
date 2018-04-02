@@ -51,17 +51,17 @@ $(function () {
      * Task form submit
      */
     $('#newTaskForm').submit(function(){
-        const name = "task test";
-        const description = "This is a task";
-        const featureID = $('#newTaskFormControlSelect1').val();
-        const est_start_date = new Date('2018-03-28T02:00:00');
-        const est_end_date = new Date('2018-04-01T02:00:00');
-        const status = "Pending";
+        // const name = "task test";
+        // const description = "This is a task";
+        // const featureID = $('#newTaskFormControlSelect1').val();
+        // const est_start_date = new Date('2018-03-28T02:00:00');
+        // const est_end_date = new Date('2018-04-01T02:00:00');
+        // const status = "Pending";
 
 
-        socket.emit('add task', name, description, featureID, est_start_date, est_end_date, status);
+        // socket.emit('add task', name, description, featureID, est_start_date, est_end_date, status);
 
-        $('#newTaskModal').modal('toggle');
+        // $('#newTaskModal').modal('toggle');
 
         return false;
     });
@@ -75,6 +75,60 @@ $(function () {
 
             // clear chat entry
             $('#projectSettingsAddUser').val('');
+        }
+    });
+
+    $('#add-task').click(function () {
+        const taskName = $('#taskName').val();
+        const description = $('#description').val();
+        // const featureID = $('#feature').val;
+        const featureID = 1;
+        // const assignedTo = $('#assignedTo').val;
+        const assignedTo = 1;
+        const fromDate = $('#fromDate').val();
+        const toDate = $('#toDate').val();
+
+        const est_start_date = new Date(fromDate);
+        const est_end_date = new Date(toDate);
+        const status = "Pending";
+
+        if (taskName.length < 1) {
+            alert('task name cannot be empty');
+        }
+
+        const fromDateMonth = Number(fromDate.substring(0,2));
+        const toDateMonth = Number(toDate.substring(0,2));
+        const fromDateDay = Number(fromDate.substring(3,5));
+        const toDateDay = Number(toDate.substring(3,5));
+        const fromDateYear = Number(fromDate.substring(6,10));
+        const toDateYear = Number(toDate.substring(6,10));
+        const dateError = 'To date cannot be less than From date';
+        var allGood = 1;
+        
+        if (fromDate.length > 10 || toDate.length > 10){
+            alert('date cannot be longer than 10 characters');
+            allGood = 0;
+        } else if (fromDateMonth > 12 || toDateMonth > 12){
+            alert('month cannot greater than 12');
+            allGood = 0;
+        } else if (fromDateDay > 31 || toDateDay > 31){
+            alert('days cannot greater than 31');
+            allGood = 0;
+        } else if (fromDateYear < 2018 || toDateYear < 2018){
+            alert('year cannot be less than 2018');
+            allGood = 0;
+        } else if (toDateYear < fromDateYear) {
+            alert(date);
+            allGood = 0;
+        } else if (toDate < fromDate) {
+            alert(dateError);
+            allGood = 0;
+        }
+
+        if (Boolean(allGood)) {
+            socket.emit('add task', taskName, description, featureID, est_start_date, est_end_date, status);
+            $('#newTaskModal').modal('toggle');
+            alert("Task added!");
         }
     });
     /*===========================================
