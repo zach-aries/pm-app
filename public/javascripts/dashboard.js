@@ -135,6 +135,7 @@ $(function () {
                     Catch Events
      ===========================================*/
     socket.on('init', function (data) {
+        console.log(data);
         // prevent double initiate on lost connection
         // there is probably a better solution?
         if (!initiated) {
@@ -302,7 +303,9 @@ $(function () {
     }
 
     function addFeatureToTaskModal(feature) {
-        const select1 = $('#newTaskFormControlSelect1');
+        console.log('this is task:', feature);
+
+        const select1 = $('#select3');
         select1.append( $('<option>').text(feature.name).val(feature._id));
     }
 
