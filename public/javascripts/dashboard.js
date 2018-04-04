@@ -305,7 +305,7 @@ $(function () {
     function addFeatureToTaskModal(feature) {
         console.log('this is task:', feature);
 
-        const select1 = $('#select3');
+        const select1 = $('#featureIDForTask');
         select1.append( $('<option>').text(feature.name).val(feature._id));
     }
 

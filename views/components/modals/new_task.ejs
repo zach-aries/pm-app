@@ -1,67 +1,91 @@
 <!-- Modal -->
-
-<!DOCTYPE html>
 <html>
-    <body>
-        <div class="modal fade" id="newTaskModal" tabindex="-1" role="dialog" aria-labelledby="newTaskModal" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="newTaskLabel">New Task</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="newTaskForm" action="">
-                            <div class="form-group">
-                                <form>
-                                    <div class="form-group">
-                                        <label for="featureName">Feature:</label>
-                                        <select class="form-control" id="select3">
-                                            <option>Feature 1</option>
-                                            <option>Feature 2</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="taskName">Task Name:</label>
-                                        <input type="text" class="form-control" id="taskName">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="description">Description:</label>
-                                        <textarea class="form-control" rows="5" id="description"></textarea>
-                                    </div>
-                                </form>
-                                <div class="form-group">
-                                        <label for="assignedTo">Assign task to: </label>
-                                        <select class="form-control" id="assignedTo">
-                                            <option>Person 1</option>
-                                            <option>Person 2</option>
-                                        </select>
-                                </div>
 
+<head>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+    <!-- Include Date Range Picker -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"
+    />
+
+    <script>
+        $(document).ready(function () {
+            var date_input = $('input[name="date"]'); //our date input has the name "date"
+            var container = $('.bootstrap-iso form').length > 0 ? $('.bootstrap-iso form').parent() : "body";
+            date_input.datepicker({
+                format: 'mm/dd/yyyy',
+                container: container,
+                todayHighlight: true,
+                autoclose: true,
+            })
+        })
+    </script>
+</head>
+
+<body>
+    <div class="modal fade" id="newTaskModal" tabindex="-1" role="dialog" aria-labelledby="newTaskModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newTaskLabel">New Task</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="newTaskForm" action="">
+                        <div class="form-group">
+                            <form>
+                                <div class="form-group">
+                                    <label for="featureName">Feature:</label>
+                                    <select class="form-control" id="featureIDForTask">
+                                        <option>Feature 1</option>
+                                        <option>Feature 2</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="taskName">Task Name:</label>
+                                    <input type="text" class="form-control" id="taskName">
+                                </div>
+                                <div class="form-group">
+                                    <label for="description">Description:</label>
+                                    <textarea class="form-control" rows="5" id="description"></textarea>
+                                </div>
+                            </form>
+                            <div class="form-group">
+                                <label for="assignedTo">Assign task to: </label>
+                                <select class="form-control" id="assignedTo">
+                                    <option>Person 1</option>
+                                    <option>Person 2</option>
+                                </select>
+                            </div>
+
+                            <from method="post">
                                 <div class="row">
-                                        <div class="col-sm-5">
-                                            <label class="col" class="control-label" for="date">Estimated Start: </label>
-                                            <input class="form-control" id="fromDate" name="date" placeholder="MM/DD/YYYY" type="text"/>
-                                        </div>
-                                        
-                                        <div class="col-sm-5">
-                                            <label class="col" class="control-label" for="date">Estimated Finish: </label>
-                                            <input class="form-control" id="toDate" name="date" placeholder="MM/DD/YYYY" type="text"/>
-                                        </div>
-                                   </div>
-                            </div>
-                            <br />
-                            <br />
-                            <div class="modal-footer">
-                                <button id="add-task" type="submit" class="btn btn-primary">Save Task</button>
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            </div>
-                        </form>
-                    </div>
+                                    <div class="col-sm-5" class="form-group">
+                                        <label class="col" class="control-label" for="date">Estimated Start: </label>
+                                        <input class="form-control" id="fromDate" name="date" placeholder="MM/DD/YYYY" type="text" />
+                                    </div>
+
+                                    <div class="col-sm-5">
+                                        <label class="col" class="control-label" for="date">Estimated Finish: </label>
+                                        <input class="form-control" id="toDate" placeholder="MM/DD/YYYY" type="text" />
+                                    </div>
+                                </div>
+                            </from>
+                        </div>
+                        <br />
+                        <br />
+                        <div class="modal-footer">
+                            <button id="add-task" type="submit" class="btn btn-primary">Save Task</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-    </body>
+    </div>
+</body>
+
 </html>
