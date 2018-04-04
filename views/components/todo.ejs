@@ -6,45 +6,41 @@
         <li>
             <a data-toggle="modal" data-target="#todoListModal">Task 1</a>
         </li>
-<div class="modal fade" id="todoListModal" tabindex="-1" role="dialog" aria-labelledby="newTaskModal" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="todoListModal">Task</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
+        <div class="modal fade" id="todoListModal" tabindex="-1" role="dialog" aria-labelledby="newTaskModal" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="todoListModal">Task</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
 
-            <div class="modal-body">
-                <form id="newTaskForm" action="">
-                    <div class="form-group">
-                        <form>
+                    <div class="modal-body">
+                        <form id="newTaskForm" action="">
                             <div class="form-group">
-                                <label for="featureName">Feature:</label>
-                                <select class="form-control" id="featureIDForTask">
-                                    <option>Feature 1</option>
-                                    <option>Feature 2</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="taskName">Task Name:</label>
-                                <input type="text" class="form-control" id="taskName">
-                            </div>
-                            <div class="form-group">
-                                <label for="description">Description:</label>
-                                <textarea class="form-control" rows="5" id="description"></textarea>
-                            </div>
-                        </form>
-                        <div class="form-group">
-                            <label for="assignedTo">Assign task to: </label>
-                            <select class="form-control" id="assignedTo">
-                                <option>Person 1</option>
-                                <option>Person 2</option>
-                            </select>
-                        </div>
+                                <form>
+                                    <div class="form-group">
+                                        <label for="featureName">Feature:</label>
+                                        <p>Testing</p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="taskName">Task Name:</label>
+                                        <p>Testing UI</p>
 
-                        <from method="post">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="description">Description:</label>
+                                        <p>Some description</p>
+
+                                    </div>
+                                </form>
+                                <div class="form-group">
+                                    <label for="assignedTo">Assign task to: </label>
+                                    <p>Peter</p>
+                                </div>
+
+                                <!-- <from method="post">
                             <div class="row">
                                 <div class="col-sm-5" class="form-group">
                                     <label class="col" class="control-label" for="date">Estimated Start: </label>
@@ -56,18 +52,30 @@
                                     <input class="form-control" id="toDate" placeholder="MM/DD/YYYY" type="text" />
                                 </div>
                             </div>
-                        </from>
+                        </from> -->
+                                <div class="row">
+                                    <div class="col-sm-5" class="form-group">
+                                        <label class="col" class="control-label" for="date">Estimated Start: </label>
+                                        <output class="form-control" id="fromDate" name="date" placeholder="MM/DD/YYYY" type="text" />
+                                    </div>
+
+                                    <div class="col-sm-5">
+                                        <label class="col" class="control-label" for="date">Estimated Finish: </label>
+                                        <output class="form-control" id="toDate" placeholder="MM/DD/YYYY" type="text" />
+                                    </div>
+                                </div>
+
+                            </div>
+                            <br />
+                            <br />
+                            <div class="modal-footer">
+                                <button id="start-task" type="submit" class="btn btn-primary">Start Task</button>
+                                <button id="complete-task" type="submit" class="btn btn-success">Complete</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </form>
                     </div>
-                    <br />
-                    <br />
-                    <div class="modal-footer">
-                        <button id="start-task" type="submit" class="btn btn-primary">Start Task</button>
-                        <button id="complete-task" type="submit" class="btn btn-success">Complete</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 </ul>
