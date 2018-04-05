@@ -36,8 +36,8 @@ $(function () {
      * Feature form submit
      */
     $('#newFeatureForm').submit(function(){
-        const parentID = $('#newFeatureFormControlSelect1').val();
-        const name = 'Test Feature';
+        const parentID = $('#newFeatureParent').val();
+        const name = $('#newFeatureName').val();;
 
 
         socket.emit('add feature', name, projectID, parentID);
