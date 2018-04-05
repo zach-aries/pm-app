@@ -43,18 +43,22 @@ $(function () {
             alert("Must provide a name for new feature");
         }
 
+        console.log("feature parent: " + parentID);
+
         // If no parent specified, send null
-        if (parentID == "(None)") {
+        if (parentID.trim() == "(None)") {
             console.log("Yay! NONE!");
             parentID = null;
         }
 
-        // Clear name fields
+        // Clear name field
         document.getElementById("newFeatureName").value = "";        
 
         socket.emit('add feature', name, projectID, parentID);
 
         $('#newFeatureModal').modal('toggle');
+
+        alert("Feature Added!");
 
         return false;
     });
