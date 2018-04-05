@@ -37,9 +37,19 @@ $(function () {
      */
     $('#newFeatureForm').submit(function(){
         const parentID = $('#newFeatureParent').val();
-        const name = $('#newFeatureName').val();;
+        const name = $('#newFeatureName').val();
 
-        // Clear fields
+        if (name.length < 1) {
+            alert("Must provide a name for new feature");
+        }
+
+        // If no parent specified, send null
+        if (parentID == "(None)") {
+            console.log("Yay! NONE!");
+            parentID = null;
+        }
+
+        // Clear name fields
         document.getElementById("newFeatureName").value = "";        
 
         socket.emit('add feature', name, projectID, parentID);
@@ -109,8 +119,8 @@ $(function () {
         
         //console.log("fromDate" + fromDate.length);
         //console.log("toDate" + toDate.length);
-
-        if (fromDate.length > 37 || toDate.length > 37){
+/*
+        if (fromDate.length > 10 || toDate.length > 10){
             alert('date cannot be longer than 10 characters');
             allGood = 0;
         } else if (fromDateMonth > 12 || toDateMonth > 12){
@@ -129,7 +139,7 @@ $(function () {
             alert(dateError);
             allGood = 0;
         }
-
+*/
         if (Boolean(allGood)) {
             socket.emit('add task', taskName, description, featureID, est_start_date, est_end_date, status);
             $('#newTaskModal').modal('toggle');
