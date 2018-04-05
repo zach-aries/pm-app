@@ -298,7 +298,7 @@ $(function () {
 
 
     function addFeatureToFeatureModal(feature) {
-        const select1 = $('#newFeatureFormControlSelect1');
+        const select1 = $('#newFeatureParent');
         select1.append( $('<option>').text(feature.name).val(feature._id));
     }
 
