@@ -40,7 +40,7 @@ $(function () {
         const name = $('#newFeatureName').val();;
 
         // Clear fields
-        document.getElementById("newFeatureName").textContent = "";        
+        document.getElementById("newFeatureName").value = "";        
 
         socket.emit('add feature', name, projectID, parentID);
 
@@ -107,11 +107,10 @@ $(function () {
         const dateError = 'To date cannot be less than From date';
         var allGood = 1;
         
-        console.log("fromDate" + fromDate.length);
-        console.log("toDate" + toDate.length);
+        //console.log("fromDate" + fromDate.length);
+        //console.log("toDate" + toDate.length);
 
-
-        if (fromDate.length > 10 || toDate.length > 10){
+        if (fromDate.length > 37 || toDate.length > 37){
             alert('date cannot be longer than 10 characters');
             allGood = 0;
         } else if (fromDateMonth > 12 || toDateMonth > 12){
