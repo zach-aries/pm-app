@@ -36,7 +36,7 @@ $(function () {
      * Feature form submit
      */
     $('#newFeatureForm').submit(function(){
-        let parentID = $('#newFeatureParent').val();
+        var parentID = $('#newFeatureParent').val();
         const name = $('#newFeatureName').val();
 
         console.log("featureParent: "+parentID);
