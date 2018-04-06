@@ -43,8 +43,8 @@ $(function () {
         console.log("featureName: " + name);
 
         // Dates
-        const fromDate = $('#datepickerFeatureS').val();
-        const toDate = $('#datepickerFeatureF').val();
+        const fromDate = $('#datepickerFeatureS').find("input").val();;
+        const toDate = $('#datepickerFeatureF').find("input").val();;
 
         console.log("StartDate: " + fromDate);
         console.log("EndDate: " + toDate);
