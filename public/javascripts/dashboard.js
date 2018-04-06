@@ -43,8 +43,8 @@ $(function () {
         console.log("featureName: " + name);
 
         // Dates
-        const fromDate = $('#datepickerFeatureS').data("datepicker").getFormattedDate('yyyy-mm-dd');
-        const toDate = $('#datepickerFeatureF').data("datepicker").getFormattedDate('yyyy-mm-dd');
+        const fromDate = $('#datepickerFeatureS').val();  //.data("datepicker").getFormattedDate('yyyy-mm-dd');
+        const toDate = $('#datepickerFeatureF').val(); //.data("datepicker").getFormattedDate('yyyy-mm-dd');
 
         console.log("StartDate: " + fromDate);
         console.log("EndDate: " + toDate);
