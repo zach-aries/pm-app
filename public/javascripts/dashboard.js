@@ -43,11 +43,11 @@ $(function () {
         console.log("featureName: " + name);
 
         // Dates
-        //const fromDate = $('#datepickerFeatureS').data("DateTimePicker").getDate();
-        //const toDate = $('#datepickerFeatureF').data("DateTimePicker").getDate();
+        const fromDate = $('#datepickerFeatureS').data("DateTimePicker").getDate();
+        const toDate = $('#datepickerFeatureF').data("DateTimePicker").getDate();
 
-        console.log("StartDate: " + fromDate);
-        console.log("EndDate: " + toDate);
+        console.log("StartDate: " + JSON.stringify(fromDate));
+        console.log("EndDate: " + JSON.stringify(toDate));
 
         if (name.length < 1) {
             alert("Must provide a name for new feature");
