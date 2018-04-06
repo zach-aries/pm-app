@@ -36,30 +36,40 @@ $(function () {
      * Feature form submit
      */
     $('#newFeatureForm').submit(function(){
-        const parentID = $('#newFeatureParent').val();
+        let parentID = $('#newFeatureParent').val();
         const name = $('#newFeatureName').val();
+
+        console.log("featureParent: "+parentID);
+        console.log("featureName: " + name);
+
+        // Dates
+        const fromDate = $('#datepickerFeatureS').val();
+        const toDate = $('#datepickerFeatureF').val();
+
+        console.log("StartDate: " + fromDate);
+        console.log("EndDate: " + toDate);
 
         if (name.length < 1) {
             alert("Must provide a name for new feature");
         }
+        else {
+            console.log("feature parent: " + parentID);
 
-        console.log("feature parent: " + parentID);
+            // If no parent specified, send null
+            if (parentID.trim() === "(None)") {
+                console.log("Yay! NONE!");
+                parentID = null;
+            }
+        
+            // Clear name field
+            document.getElementById("newFeatureName").value = "";        
 
-        // If no parent specified, send null
-        if (parentID.trim() == "(None)") {
-            console.log("Yay! NONE!");
-            parentID = null;
+            socket.emit('add feature', name, projectID, parentID);
+
+            $('#newFeatureModal').modal('toggle');
+
+            alert("Feature Added!");
         }
-
-        // Clear name field
-        document.getElementById("newFeatureName").value = "";        
-
-        socket.emit('add feature', name, projectID, parentID);
-
-        $('#newFeatureModal').modal('toggle');
-
-        alert("Feature Added!");
-
         return false;
     });
 
