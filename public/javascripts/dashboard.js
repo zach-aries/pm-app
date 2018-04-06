@@ -46,8 +46,8 @@ $(function () {
         const fromDate = $('#datepickerFeatureS').data("datepicker").getFormattedDate('yyyy-mm-dd');
         const toDate = $('#datepickerFeatureF').data("datepicker").getFormattedDate('yyyy-mm-dd');
 
-        console.log("StartDate: " + JSON.stringify(fromDate));
-        console.log("EndDate: " + JSON.stringify(toDate));
+        console.log("StartDate: " + fromDate);
+        console.log("EndDate: " + toDate);
 
         if (name.length < 1) {
             alert("Must provide a name for new feature");
