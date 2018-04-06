@@ -64,31 +64,12 @@ $(function () {
             // Clear name field
             document.getElementById("newFeatureName").value = "";        
 
-            socket.emit('add feature', name, projectID, parentID);
+            socket.emit('add feature', name, projectID, parentID, fromDate, toDate);
 
             $('#newFeatureModal').modal('toggle');
 
             alert("Feature Added!");
         }
-        return false;
-    });
-
-    /**
-     * Task form submit
-     */
-    $('#newTaskForm').submit(function(){
-        // const name = "task test";
-        // const description = "This is a task";
-        // const featureID = $('#newTaskFormControlSelect1').val();
-        // const est_start_date = new Date('2018-03-28T02:00:00');
-        // const est_end_date = new Date('2018-04-01T02:00:00');
-        // const status = "Pending";
-
-
-        // socket.emit('add task', name, description, featureID, est_start_date, est_end_date, status);
-
-        // $('#newTaskModal').modal('toggle');
-
         return false;
     });
 
@@ -107,8 +88,7 @@ $(function () {
     $('#add-task').click(function () {
         const taskName = $('#taskName').val();
         const description = $('#description').val();
-        // const featureID = $('#feature').val;
-        const featureID = 1;
+        const featureID = $('#featureIDForTask').val();
         // const assignedTo = $('#assignedTo').val;
         const assignedTo = 1;
         const fromDate = $('#fromDate').val();
@@ -160,11 +140,11 @@ $(function () {
             alert("Task added!");
         }
     });
+
     /*===========================================
                     Catch Events
      ===========================================*/
     socket.on('init', function (data) {
-        console.log(data);
         // prevent double initiate on lost connection
         // there is probably a better solution?
         if (!initiated) {
@@ -326,14 +306,22 @@ $(function () {
     }
 
 
+    /**
+     * Creates the options for the feature dropdown in the create feature modal
+     *
+     * @param feature
+     */
     function addFeatureToFeatureModal(feature) {
         const select1 = $('#newFeatureParent');
         select1.append( $('<option>').text(feature.name).val(feature._id));
     }
 
+    /**
+     * Creates the options for the feature dropdown in the create task modal
+     *
+     * @param feature
+     */
     function addFeatureToTaskModal(feature) {
-        console.log('this is task:', feature);
-
         const select1 = $('#featureIDForTask');
         select1.append( $('<option>').text(feature.name).val(feature._id));
     }

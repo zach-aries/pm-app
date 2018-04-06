@@ -12,6 +12,8 @@ module.exports = function (io) {
     io.on('connection', function(socket){
 
         socket.on('user connected', function (projectID) {
+            // get all data for dashboard
+            // done in parallel as order does not matter
             async.parallel({
                 messages: function(callback) {
                     message_controller.get_projectMessages(projectID, callback);
@@ -23,30 +25,8 @@ module.exports = function (io) {
                     user_controller.get_projectUserList(projectID, callback)
                 }
             }, function(err, results) {
-
-                // TODO cleanup
-
-                var project = [];
-                results.features.forEach(function (feature) {
-                    // create feature object
-                    /**
-                        must create custom object because cannot search for _id with 'find' method,
-                        also allows creation of children array in each object
-                    */
-                    var f = {
-                        name: feature.name,
-                        _id: String(feature._id),
-                        children: [],
-                        tasks: feature.tasks
-                    };
-                    // add root nodes
-                    if (feature.parent === null){
-                        // if no parent, then root node. Push to main array
-                        //console.log('Add f: ', f)
-                        project.push(f);
-                        test(results.features, f);
-                    }
-                });
+                // create a tree structure out of features/tasks
+                var project = project_controller.create_project_tree(results.features);
 
                 var data = {
                     messages: results.messages,
@@ -55,8 +35,6 @@ module.exports = function (io) {
                     project_users: results.users
                 };
 
-                //io.socket.in(projectID).emit('init', data);
-
                 // joing room with project ID
                 socket.join(projectID);
                 // send confirmation to sending client only
@@ -64,9 +42,15 @@ module.exports = function (io) {
             });
         });
 
+        /**
+         * Stores new message in datatbase and emits it to the
+         * other clients in same room
+         *
+         */
         socket.on('message', function (userID, projectID, msg) {
             var timestamp = new Date();
 
+            // must use waterfall as get message depends on storing the message first.
             async.waterfall([
                 function (callback) {
                     // save message in db
@@ -91,13 +75,13 @@ module.exports = function (io) {
          * @param projectID
          * @param parentID - pass null for root feature
          */
-        socket.on('add feature', function (name, projectID, parentID) {
+        socket.on('add feature', function (name, projectID, parentID, est_start_date, est_end_date) {
             if (!parentID) {
                 parentID = null;
             }
             async.series({
                 feature: function (callback) {
-                    feature_controller.store_feature(name, projectID, parentID, callback)
+                    feature_controller.store_feature(name, projectID, parentID, est_start_date, est_end_date,  callback)
                 }
             }, function(err, result) {
                 //TODO Error handling
@@ -105,7 +89,25 @@ module.exports = function (io) {
             });
         });
 
+        /**
+         * adds task to database
+         *
+         * return_task:
+         * {
+         *      name: {type: String, required: true, max: 100},
+         *      description: {type: String, required: true, max: 512},
+         *      responsible: [{type: Schema.ObjectId, ref: 'User', required: true}],
+         *      feature: {type: Schema.ObjectId, ref: 'Feature', required: true},
+         *      est_start_date: {type: Date, required: true},
+         *      est_end_date: {type: Date, required: true},
+         *      start_date: {type: Date},
+         *      end_date: {type: Date},
+         *      status: {type: String, required: true, enum: ['Pending', 'Started', 'Complete', 'Overdue']}
+         * }
+         */
         socket.on('add task', function (name, description, featureID, est_start_date, est_end_date, status) {
+            // creates var for return value
+            // lose access to task after second waterfall call
             var return_task;
             async.waterfall([
                 function (callback) {
@@ -121,6 +123,12 @@ module.exports = function (io) {
             });
         });
 
+        /**
+         * Adds user to database
+         * finds user by username and pushes their id to
+         * project.
+         *
+         */
         socket.on('add user', function (username, projectID) {
             var user;
             async.waterfall([
@@ -144,6 +152,10 @@ module.exports = function (io) {
             });
         });
 
+        /**
+         * Adds responsible user to task
+         *
+         */
         socket.on('add responsible', function (userID, taskID) {
             async.series({
                 task: function (callback) {
@@ -156,21 +168,3 @@ module.exports = function (io) {
         });
     });
 };
-
-function test(data, parent) {
-    data.forEach(function (obj) {
-        if (obj.parent !== null){
-            if (parent._id === String(obj.parent)){
-                var feature = {
-                    name: obj.name,
-                    _id: String(obj._id),
-                    children: [],
-                    tasks: obj.tasks
-                };
-                test(data, feature);
-
-                parent.children.push(feature);
-            }
-        }
-    });
-}

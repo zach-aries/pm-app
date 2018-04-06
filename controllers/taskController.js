@@ -4,6 +4,7 @@ exports.task_list = function (featureID, cb) {
     Task.find({ feature:featureID})
         .exec(function (err, tasks) {
             if (err) {
+                console.log(err);
                 cb(err,null);
                 return;
             }
@@ -21,7 +22,7 @@ exports.add_responsible = function (userID, taskID, cb) {
                 return;
             }
             // Successful, so return query
-            // console.log('Update Feature: ' + feature);
+            console.log('Update Feature: ' + feature);
             cb(null, task);
         });
 };
@@ -31,13 +32,14 @@ exports.store_task = function (name, desc, featureID, est_start_date, est_end_da
         name: name,
         description: desc,
         feature: featureID,
-        est_start_date: est_start_date,
-        est_end_date: est_end_date,
+        est_start_date: new Date(est_start_date),
+        est_end_date: new Date(est_end_date),
         status: status
     });
 
     task.save(function (err) {
         if (err) {
+            console.log(err);
             cb(err, null);
             return;
         }

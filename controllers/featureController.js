@@ -4,6 +4,7 @@ exports.get_feature = function (_id, cb) {
   Feature.findOne({_id:_id})
       .exec(function (err, feature) {
          if (err) {
+             console.log(err);
              cb(err, null);
              return
          }
@@ -11,11 +12,13 @@ exports.get_feature = function (_id, cb) {
       });
 };
 
-exports.store_feature = function (name, projectID, parentID, cb) {
+exports.store_feature = function (name, projectID, parentID, est_start_date, est_end_date, cb) {
     var feature = new Feature({
         name: name,
         project: projectID,
-        parent: parentID
+        parent: parentID,
+        est_start_date: new Date(est_start_date),
+        est_end_date: new Date(est_end_date)
     });
 
     feature.save(function (err) {
@@ -33,11 +36,12 @@ exports.add_taskToFeature = function (featureID, taskID, cb) {
     Feature.findOneAndUpdate({ _id: featureID}, {$push: {tasks: taskID}})
         .exec(function (err, feature) {
             if (err) {
+                console.log(err);
                 cb(err,null);
                 return;
             }
             //Successful, so return query
-            // console.log('Update Feature: ' + feature);
+            console.log('Update Feature: ' + feature);
             cb(null, feature);
         });
 };
@@ -47,6 +51,7 @@ exports.get_featureByID = function (_id, cb) {
         .lean()
         .exec(function (err, feature) {
             if (err) {
+                console.log(err);
                 cb(err,null);
                 return;
             }
@@ -61,6 +66,7 @@ exports.get_featuresByProjectID = function (_id, cb) {
         .populate('tasks')
         .exec(function (err, feature) {
             if (err) {
+                console.log(err);
                 cb(err,null);
                 return;
             }

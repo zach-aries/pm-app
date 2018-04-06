@@ -28,3 +28,47 @@ exports.create_project = function (name, desc, owner, cb) {
         cb(null, project);
     });
 };
+
+exports.create_project_tree = function(features){
+    var project = [];
+
+    features.forEach(function (feature) {
+        // create feature object
+        /**
+         must create custom object because cannot search for _id with 'find' method,
+         also allows creation of children array in each object
+         */
+        var f = {
+            name: feature.name,
+            _id: String(feature._id),
+            children: [],
+            tasks: feature.tasks
+        };
+        // add root nodes
+        if (feature.parent === null){
+            // if no parent, then root node. Push to main array
+            project.push(f);
+            tree_helper(features, f);
+        }
+    });
+
+    return project;
+};
+
+function tree_helper(data, parent) {
+    data.forEach(function (obj) {
+        if (obj.parent !== null){
+            if (parent._id === String(obj.parent)){
+                var feature = {
+                    name: obj.name,
+                    _id: String(obj._id),
+                    children: [],
+                    tasks: obj.tasks
+                };
+                tree_helper(data, feature);
+
+                parent.children.push(feature);
+            }
+        }
+    });
+}
