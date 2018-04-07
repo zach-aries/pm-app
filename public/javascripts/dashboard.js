@@ -1,4 +1,12 @@
 $(function () {
+    /*
+
+    function drawChart() {
+
+
+    }*/
+
+
     const socket = io();
 
     var initiated = false;
@@ -91,23 +99,26 @@ $(function () {
         const featureID = $('#featureIDForTask').val();
         // const assignedTo = $('#assignedTo').val;
         const assignedTo = 1;
-        const fromDate = $('#fromDate').val();
-        const toDate = $('#toDate').val();
 
-        const est_start_date = new Date(fromDate);
-        const est_end_date = new Date(toDate);
+        // Dates
+        const est_start_date = $('#datepickerTaskS').val();  //.data("datepicker").getFormattedDate('yyyy-mm-dd');
+        const est_end_date = $('#datepickerTaskF').val(); //.data("datepicker").getFormattedDate('yyyy-mm-dd');
+
+        console.log(est_start_date, est_end_date);
+
+
         const status = "Pending";
 
         if (taskName.length < 1) {
             alert('task name cannot be empty');
         }
 
-        const fromDateMonth = Number(fromDate.substring(0,2));
-        const toDateMonth = Number(toDate.substring(0,2));
-        const fromDateDay = Number(fromDate.substring(3,5));
-        const toDateDay = Number(toDate.substring(3,5));
-        const fromDateYear = Number(fromDate.substring(6,10));
-        const toDateYear = Number(toDate.substring(6,10));
+        const fromDateMonth = Number(est_start_date.substring(0,2));
+        const toDateMonth = Number(est_end_date.substring(0,2));
+        const fromDateDay = Number(est_start_date.substring(3,5));
+        const toDateDay = Number(est_end_date.substring(3,5));
+        const fromDateYear = Number(est_start_date.substring(6,10));
+        const toDateYear = Number(est_end_date.substring(6,10));
         const dateError = 'To date cannot be less than From date';
         var allGood = 1;
         
@@ -231,6 +242,8 @@ $(function () {
             addFeatureToFeatureModal(feature);
             addFeatureToTaskModal(feature);
         });
+
+        GanttChart.init(data.project);
     }
 
     /*===========================================

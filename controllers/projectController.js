@@ -38,11 +38,14 @@ exports.create_project_tree = function(features){
          must create custom object because cannot search for _id with 'find' method,
          also allows creation of children array in each object
          */
+
         var f = {
             name: feature.name,
             _id: String(feature._id),
             children: [],
-            tasks: feature.tasks
+            tasks: feature.tasks,
+            est_start_date: feature.est_start_date,
+            est_end_date: feature.est_end_date
         };
         // add root nodes
         if (feature.parent === null){
@@ -62,8 +65,11 @@ function tree_helper(data, parent) {
                 var feature = {
                     name: obj.name,
                     _id: String(obj._id),
+                    parent: parent._id,
                     children: [],
-                    tasks: obj.tasks
+                    tasks: obj.tasks,
+                    est_start_date: obj.est_start_date,
+                    est_end_date: obj.est_end_date
                 };
                 tree_helper(data, feature);
 

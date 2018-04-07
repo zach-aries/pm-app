@@ -47,7 +47,7 @@
                                 </select>
                             </div>
 
-                            <from method="post">
+                            <!--<form method="post">
                                 <div class="row">
                                     <div class="col-sm-5" class="form-group">
                                         <label class="col" class="control-label" for="date">Estimated Start: </label>
@@ -58,12 +58,26 @@
                                         <input id="datepicker2" class="form-control" id="toDate" placeholder="MM/DD/YYYY" type="text" />
                                     </div>
                                 </div>
-                            </from>
+                            </form>-->
+
+                            <form method="post">
+                                <div class="row">
+                                    <div class="col-sm-5" class="form-group">
+                                        <label class="col" class="control-label" for="date">Estimated Start: </label>
+                                        <input id="datepickerTaskS" class="form-control" id="fromDate" name="date" placeholder="MM/DD/YYYY" type="text" />
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <label class="col" class="control-label" for="date">Estimated Finish: </label>
+                                        <input id="datepickerTaskF" class="form-control" id="toDate" placeholder="MM/DD/YYYY" type="text" />
+                                    </div>
+                                </div>
+                            </form>
+
                             <script>
-                                    $('#datepicker1').datepicker({
+                                    $('#datepickerTaskS').datepicker({
                                         uiLibrary: 'bootstrap4'
                                     });
-                                    $('#datepicker2').datepicker({
+                                    $('#datepickerTaskF').datepicker({
                                         uiLibrary: 'bootstrap4'
                                     });
                             </script>   
