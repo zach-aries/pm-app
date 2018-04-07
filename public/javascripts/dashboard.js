@@ -152,6 +152,19 @@ $(function () {
         }
     });
 
+
+
+    // TODO remove the following and replace with correct calls
+    $('#project-directory').on('click', 'a.feature', function() {
+        const featureID = $(this).attr('id');
+        socket.emit('remove feature', projectID, featureID);
+    });
+
+    $('#project-directory').on('click', 'a.task', function() {
+        const taskID = $(this).attr('id');
+        socket.emit('remove task', projectID, taskID);
+    });
+
     /*===========================================
                     Catch Events
      ===========================================*/
@@ -199,6 +212,10 @@ $(function () {
         addFeatureToTaskModal(feature);
     });
 
+    socket.on('remove feature', function (featureID) {
+        console.log('remove feature:', featureID);
+    });
+
     socket.on('add task', function (task, featureID) {
         // get task-list to add task to
         var parentEl = $('#'+featureID).parent().children('.task-list:first');
@@ -212,6 +229,10 @@ $(function () {
 
         // add task to DOM
         addTask(parentEl, task);
+    });
+
+    socket.on('remove task', function (taskID) {
+        console.log('remove task:', taskID);
     });
 
     socket.on('add user', function (user) {

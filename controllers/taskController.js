@@ -47,3 +47,19 @@ exports.store_task = function (name, desc, featureID, est_start_date, est_end_da
         cb(null, task);
     });
 };
+
+exports.remove_task = function (_id) {
+    Task.find({ _id:_id }).remove().exec();
+};
+
+exports.remove_task = function (_id, cb) {
+    Task.find({ _id:_id }).remove().exec(function (err, task) {
+        if (err) {
+            console.log(err);
+            cb(err, null);
+            return
+        }
+        console.log('Removed Task:\n' + task);
+        cb(null, task);
+    });
+};

@@ -29,6 +29,10 @@ exports.create_project = function (name, desc, owner, cb) {
     });
 };
 
+exports.remove_project = function (_id) {
+    Project.find({ _id:_id }).remove().exec();
+};
+
 exports.create_project_tree = function(features){
     var project = [];
 

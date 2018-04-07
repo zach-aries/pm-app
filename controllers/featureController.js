@@ -32,6 +32,18 @@ exports.store_feature = function (name, projectID, parentID, est_start_date, est
     });
 };
 
+exports.remove_feature = function (_id, cb) {
+    Feature.find({ _id:_id }).remove().exec(function (err, feature) {
+        if (err) {
+            console.log(err);
+            cb(err, null);
+            return
+        }
+        console.log('Removed Feature:\n' + feature);
+        cb(null, feature);
+    });
+};
+
 exports.add_taskToFeature = function (featureID, taskID, cb) {
     Feature.findOneAndUpdate({ _id: featureID}, {$push: {tasks: taskID}})
         .exec(function (err, feature) {

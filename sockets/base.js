@@ -95,6 +95,22 @@ module.exports = function (io) {
         });
 
         /**
+         * Removes feature from database
+         *
+         * @param _id - feature id
+         */
+        socket.on('remove feature', function (projectID, featureID) {
+            async.series({
+                task: function (callback) {
+                    feature_controller.remove_feature(featureID, callback);
+                }
+            }, function(err, result) {
+                // TODO error handling
+                io.sockets.in(projectID).emit('remove feature', featureID);
+            });
+        });
+
+        /**
          * adds task to database
          *
          * return_task:
@@ -125,6 +141,22 @@ module.exports = function (io) {
             ], function (err, result) {
                 // TODO Error handling
                 io.sockets.in(result.project).emit('add task', return_task, featureID);
+            });
+        });
+
+        /**
+         * Removes task from database
+         *
+         * @param _id - task id
+         */
+        socket.on('remove task', function (projectID, taskID) {
+            async.series({
+                task: function (callback) {
+                    task_controller.remove_task(taskID, callback);
+                }
+            }, function(err, result) {
+                //TODO Error handling
+                io.sockets.in(projectID).emit('remove task', taskID);
             });
         });
 
