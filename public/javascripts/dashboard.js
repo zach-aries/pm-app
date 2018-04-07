@@ -18,7 +18,7 @@ $(function () {
     ===========================================*/
     socket.on('connect', function() {
         // connect function
-        socket.emit('user connected', projectID);
+        socket.emit('user connected', projectID, userID);
     });
 
     /**
@@ -164,6 +164,10 @@ $(function () {
         }
     });
 
+    socket.on('user connected', function (user) {
+        console.log('user connected:', user);
+    });
+
     socket.on('message', function (message) {
         // add message to DOM
         addMessage(message);
@@ -218,7 +222,6 @@ $(function () {
                   General Functions
      ===========================================*/
     function init(data) {
-
         // populate chat with messages
         data.messages.forEach(function (message) {
            addMessage(message);

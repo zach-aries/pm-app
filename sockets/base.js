@@ -11,7 +11,7 @@ module.exports = function (io) {
 
     io.on('connection', function(socket){
 
-        socket.on('user connected', function (projectID) {
+        socket.on('user connected', function (projectID, userID) {
             // get all data for dashboard
             // done in parallel as order does not matter
             async.parallel({
@@ -23,6 +23,9 @@ module.exports = function (io) {
                 },
                 users: function (callback) {
                     user_controller.get_projectUserList(projectID, callback)
+                },
+                connected_user: function (callback) {
+                    user_controller.get_userByID(userID, callback)
                 }
             }, function(err, results) {
                 // create a tree structure out of features/tasks
@@ -39,6 +42,8 @@ module.exports = function (io) {
                 socket.join(projectID);
                 // send confirmation to sending client only
                 socket.emit('init', data);
+                // send user connected notification to all clients in room
+                io.sockets.in(projectID).emit('user connected', results.connected_user);
             });
         });
 
