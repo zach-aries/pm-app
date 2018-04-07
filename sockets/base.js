@@ -106,7 +106,7 @@ module.exports = function (io) {
                 }
             }, function(err, result) {
                 // TODO error handling
-                io.sockets.in(projectID).emit('remove feature', featureID);
+                io.sockets.in(projectID).emit('remove feature', [featureID]);
             });
         });
 
@@ -156,7 +156,7 @@ module.exports = function (io) {
                 }
             }, function(err, result) {
                 //TODO Error handling
-                io.sockets.in(projectID).emit('remove task', taskID);
+                io.sockets.in(projectID).emit('remove task', [taskID]);
             });
         });
 
