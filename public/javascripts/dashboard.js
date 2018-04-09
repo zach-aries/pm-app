@@ -146,13 +146,14 @@ $(function () {
         //const featureName = $(this).val();
         //socket.emit('remove feature', featureID);
         //let feature = get_feature(featureID);
+        $('.store-id').attr("id", featureID);
+
         $('#readFeatureModal').modal('toggle');
-        
     });
     
     //delete feature from feature section
     $('#delete-featureBtn').click(function() {
-        const featureID = $(this).attr('id');
+        const featureID = $('.store-id').attr('id');
         socket.emit('remove feature', featureID);
     });
 
