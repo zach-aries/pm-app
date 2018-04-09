@@ -366,10 +366,10 @@ $(function () {
      */
     function addFeatureToReadFeatureDom(feature) {
         $('#readFeatureModal').modal('toggle');
-        $('rem-feat-mod-id').text("Feature: " + feature.name);
-        $('read-parent').text("" + feature.parent);
-        $('read-start').text("" + feature.est_start_date);
-        $('read-end').text("" + feature.est_end_date);
+        $('#rem-feat-mod-id').text("Feature: " + feature.name);
+        $('#read-parent').text("" + feature.parent);
+        $('#read-start').text("" + feature.est_start_date);
+        $('#read-end').text("" + feature.est_end_date);
         
         /*
         read-parent
