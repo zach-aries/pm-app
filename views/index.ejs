@@ -9,12 +9,18 @@
     </header>
 
     <div class="jumbotron">
-      <div class="container">
+      <div class="container" id="initial-info">
         <h1 class="display-4">Avocado - Project Management Made Easier!</h1>
         <p> </p>
-        <p><a class="btn btn-primary btn-lg" href="#" role="learnButton">Learn more &raquo;</a></p>
+        <p><a class="btn btn-primary btn-lg" href="#" role="learnButton" id="learn-more-btn" onclick="changeText(this.value)">Learn more &raquo;</a></p>
       </div>
     </div>
+
+    <script type="text/javascript">
+      function changeText(value) {
+          document.getElementById('initial-info').innerHTML = "<h1>Changed!</h1>";
+      }
+    </script>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
