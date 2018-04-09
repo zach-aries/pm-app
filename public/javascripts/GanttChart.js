@@ -80,7 +80,7 @@ var GanttChart = (function () {
 
 
 
-
+        chart.clearChart();
         chart.draw(data, options);
     };
 
