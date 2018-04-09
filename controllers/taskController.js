@@ -76,3 +76,17 @@ exports.get_taskByTaskID = function (_id, cb) {
             cb(null, task);
         });
 };
+
+exports.update_status = function (_id, newStatus, cb) {
+    Task.findOneAndUpdate({ _id: taskID}, {$push: {status: newStatus}})
+        .exec(function (err, task) {
+            if (err) {
+                console.log(err);
+                cb(err,null);
+                return;
+            }
+            // Successful, so return query
+            console.log('Update Feature: ' + feature);
+            cb(null, task);
+        });
+};

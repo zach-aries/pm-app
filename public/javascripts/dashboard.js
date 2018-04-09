@@ -99,12 +99,9 @@ $(function () {
         const featureID = $('#featureIDForTask').val();
         // const assignedTo = $('#assignedTo').val;
         const assignedTo = 1;
-        const est_start_date = $('#datepickerTaskS').val();  //.data("datepicker").getFormattedDate('yyyy-mm-dd');
-        const est_end_date = $('#datepickerTaskF').val(); //.data("datepicker").getFormattedDate('yyyy-mm-dd');
+        const est_start_date = $('#datepickerTaskS').val();
+        const est_end_date = $('#datepickerTaskF').val();
 
-        const fromDateYear = Number(est_start_date.substring(6,10));
-        const toDateYear = Number(est_end_date.substring(6,10));
-        const dateError = 'To date cannot be less than From date';
         var allGood = 1;
         const status = "Pending";
 
@@ -114,13 +111,13 @@ $(function () {
         }
         if(description.length < 1){
             alert('description cannot be empty');
-            allGood = 1;
-        }
-        if (toDateYear < fromDateYear) {
-            alert(date);
             allGood = 0;
-        } else if (toDate < fromDate) {
-            alert(dateError);
+        }
+        if (est_end_date < est_start_date) {
+            alert('To date cannot be less than From date');
+            allGood = 0;
+        } else if (est_end_date == est_start_date) {
+            alert('To date cannot be the same as From date');
             allGood = 0;
         }
 
@@ -134,8 +131,8 @@ $(function () {
     // Read task from project menu
     $('#project-directory').on('click', 'a.task', function() {
         const taskID = $(this).attr('id');
-        $('#readTaskModal').modal('toggle');
         socket.emit('get task', taskID);
+        // $('#readTaskModal').modal('toggle');
     });
 
     // TODO remove the following and replace with correct calls
@@ -144,9 +141,32 @@ $(function () {
         socket.emit('remove feature', projectID, featureID);
     });
 
+    //delete task from feature section
     $('#delete-taskBtn').on('click', 'a.task', function() {
         const taskID = $(this).attr('id');
         socket.emit('remove task', projectID, taskID);
+    });
+
+    //delete task from todo section
+    $('#delete-button-todo').on('click', 'a.task', function() {
+        const taskID = $(this).attr('id');
+        socket.emit('remove task', projectID, taskID);
+    });
+
+    //change status of a pending task into in process
+    $('#start-task').on('click', 'a.task', function() {
+        const taskID = $(this).attr('id');
+        const status = "Started";
+        socket.emit('update status', taskID, status);
+        $('#')
+    });
+
+    //change status of a pending task into in process
+    $('#complete-task').on('click', 'a.task', function() {
+        const taskID = $(this).attr('id');
+        const status = "Complete";
+        socket.emit('update status', taskID, status);
+        $('#')
     });
 
     /*===========================================
@@ -194,6 +214,11 @@ $(function () {
         // add feature to both task/feature modals
         addFeatureToFeatureModal(feature);
         addFeatureToTaskModal(feature);
+    });
+
+    socket.on('get task', function(task) {
+        //add task to DOM
+        addTaskToReadTaskDom(task);
     });
 
     socket.on('remove feature', function (featureID) {
@@ -299,6 +324,17 @@ $(function () {
 
         // append list item to the project list
         el.append(li);
+    }
+
+    /**
+     *
+     * @param task
+     */
+    function addTaskToReadTaskDom(task) {
+        $('#readTaskModal').modal('toggle');
+        var parentEl = $('#read_task_form_id');
+        var form = "<%= " + task + " %>";
+        parentEl.append(form);
     }
 
     function addTask(el, task) {

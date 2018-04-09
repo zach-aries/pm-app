@@ -179,6 +179,24 @@ module.exports = function (io) {
         });
 
         /**
+         * update task's status
+         * 
+         * @param _id - task id
+         */
+
+        socket.on('update status', function (taskID, newStatus) {
+            async.series({
+                task: function (callback) {
+                    task_controller.update_status(taskID, newStatus, callback)
+                }
+            }, function (err, result) {
+                console.log(result);
+                socket.emit('update status', taskID, newStatus);
+                io.sockets.in(taskID).emit('update status', result.task);
+            });
+        });
+
+        /**
          * Adds user to database
          * finds user by username and pushes their id to
          * project.

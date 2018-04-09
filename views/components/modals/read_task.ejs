@@ -1,44 +1,17 @@
 <ul id="task-list" class="list-unstyled">
     <div class="container">
-        <li>
-        </li>
         <div class="modal fade" id="readTaskModal" tabindex="-1" role="dialog" aria-labelledby="newTaskModal" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="readTaskModal">Task</h5>
+                        <h5 class="modal-title">Task</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
                         <form id="newTaskForm" action="">
-                            <div class="form-group">
-                                <form>
-                                    <div class="form-group">
-                                        <label for="featureName">Feature:</label>
-                                        
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="description">Description:</label>
-                                        <!-- <p>Some description</p> -->
-                                    </div>
-                                </form>
-                                <div class="form-group">
-                                    <label for="assignedTo">Assign task to: </label>
-                                    <p>Sonny</p>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-5" class="form-group">
-                                        <label class="col" class="control-label" for="date">Estimated Start: </label>
-                                        <output class="form-control" id="fromDate" name="date" placeholder="MM/DD/YYYY" type="text" />
-                                    </div>
-                                    <div class="col-sm-5">
-                                        <label class="col" class="control-label" for="date">Estimated Finish: </label>
-                                        <output class="form-control" id="toDate" placeholder="MM/DD/YYYY" type="text" />
-                                    </div>
-                                </div>
-                            </div>
+                            <div id="read_task_form_id" class="form-group"> </div>
                             <br />
                             <br />
                             <div class="modal-footer">
