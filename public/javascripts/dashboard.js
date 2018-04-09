@@ -132,13 +132,19 @@ $(function () {
     $('#project-directory').on('click', 'a.task', function() {
         const taskID = $(this).attr('id');
         socket.emit('get task', taskID);
-        // $('#readTaskModal').modal('toggle');
+        $('#readFeatureModal').modal('toggle');
     });
 
     // TODO remove the following and replace with correct calls
     $('#project-directory').on('click', 'a.feature', function() {
         const featureID = $(this).attr('id');
-        socket.emit('remove feature', projectID, featureID);
+        socket.emit('remove feature', featureID);
+    });
+    
+    //delete feature from feature section
+    $('#delete-FeatureBtn').on('click', 'a.feature', function() {
+        const featureID = $(this).attr('id');
+        socket.emit('remove task', projectID, taskID);
     });
 
     //delete task from feature section
