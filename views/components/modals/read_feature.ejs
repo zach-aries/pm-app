@@ -6,7 +6,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="rem-feat-mod-id">Remove Feature</h5>
+                        <h5 class="modal-title" id="rem-feat-mod-id">Feature</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -14,13 +14,16 @@
                     <div class="modal-body">
                         <form id="viewFeatureForm" action="">
                             <h5>Parent</h5>
-                            <p>[FEATURE]    <a href="#"><h6>Edit</h6></a></p>
+                            <p id="read-parent">[FEATURE]    <a href="#"><h6>Edit</h6></a></p>
+                            <br>
                             <h5>Start Date</h5>
-                            <p>[YYYY/MM/DD] <a href="#"><h6>Edit</h6></a></p>
+                            <p id="read-start">[YYYY/MM/DD] <a href="#"><h6>Edit</h6></a></p>
+                            <br>
                             <h5>Finish Date</h5>
-                            <p>[YYYY/MM/DD] <a href="#"><h6>Edit</h6></a></p>
+                            <p id="read-end">[YYYY/MM/DD] <a href="#"><h6>Edit</h6></a></p>
+                            <br>
                             <h5>Tasks:</h5>
-                            <ul></ul>
+                            <ul id="read-task-list"></ul>
                             <div id="read-feature-form-id" class="form-group"> </div>
 
                             <br />
