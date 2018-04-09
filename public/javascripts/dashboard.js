@@ -142,10 +142,11 @@ $(function () {
     // TODO remove the following and replace with correct calls
     $('#project-directory').on('click', 'a.feature', function() {
         const featureID = $(this).attr('id');
+        socket.emit('get feature', featureID);
         //const featureName = $(this).val();
         //socket.emit('remove feature', featureID);
-        let feature = get_feature(featureID);
-        //$('#readFeatureModal').modal('toggle');
+        //let feature = get_feature(featureID);
+        $('#readFeatureModal').modal('toggle');
         
     });
     
@@ -403,7 +404,7 @@ $(function () {
     function addFeatureToFeatureModal(feature) {
         const select1 = $('#newFeatureParent');
         select1.append( $('<option>').text(feature.name).val(feature._id));
-        $('rem-feat-mod-id').innerHTML("Feature: <strong>" + feature.name + "</strong>");
+        $('rem-feat-mod-id').text("Feature: " + feature.name);
     }
 
     /**
