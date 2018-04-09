@@ -1,15 +1,12 @@
-<nav class="navbar header">
-    To-Do List
-</nav>
 <ul id="task-list" class="list-unstyled">
     <div class="container">
         <li>
         </li>
-        <div class="modal fade" id="todoListModal" tabindex="-1" role="dialog" aria-labelledby="newTaskModal" aria-hidden="true">
+        <div class="modal fade" id="readTaskModal" tabindex="-1" role="dialog" aria-labelledby="newTaskModal" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="todoListModal">Task</h5>
+                        <h5 class="modal-title" id="readTaskModal">Task</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -20,7 +17,7 @@
                                 <form>
                                     <div class="form-group">
                                         <label for="featureName">Feature:</label>
-                                        <p> </p>
+                                        
                                     </div>
                                     <div class="form-group">
                                         <label for="description">Description:</label>
@@ -45,7 +42,8 @@
                             <br />
                             <br />
                             <div class="modal-footer">
-                                <button id="complete-task" type="submit" class="btn btn-success">Complete</button>
+                                <button id="start-task" type="submit" class="btn btn-primary">Start Task</button>
+                                <button id="delete-taskBtn" type="submit" class="btn btn-danger">Delete</button>
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                             </div>
                         </form>

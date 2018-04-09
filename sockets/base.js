@@ -9,13 +9,13 @@ var async = require('async');
 module.exports = function (io) {
 
 
-    io.on('connection', function(socket){
+    io.on('connection', function (socket) {
 
         socket.on('user connected', function (projectID, userID) {
             // get all data for dashboard
             // done in parallel as order does not matter
             async.parallel({
-                messages: function(callback) {
+                messages: function (callback) {
                     message_controller.get_projectMessages(projectID, callback);
                 },
                 features: function (callback) {
@@ -27,7 +27,7 @@ module.exports = function (io) {
                 connected_user: function (callback) {
                     user_controller.get_userByID(userID, callback)
                 }
-            }, function(err, results) {
+            }, function (err, results) {
                 // create a tree structure out of features/tasks
                 var project = project_controller.create_project_tree(results.features);
 
@@ -61,7 +61,7 @@ module.exports = function (io) {
                     // save message in db
                     message_controller.store_message(userID, projectID, msg, timestamp, callback);
                 },
-                function(m, callback) {
+                function (m, callback) {
                     // query stored message so we can get username
                     message_controller.get_message(m._id, callback);
                 }
@@ -86,9 +86,9 @@ module.exports = function (io) {
             }
             async.series({
                 feature: function (callback) {
-                    feature_controller.store_feature(name, projectID, parentID, est_start_date, est_end_date,  callback)
+                    feature_controller.store_feature(name, projectID, parentID, est_start_date, est_end_date, callback)
                 }
-            }, function(err, result) {
+            }, function (err, result) {
                 //TODO Error handling
                 io.sockets.in(projectID).emit('add feature', result.feature);
             });
@@ -104,7 +104,7 @@ module.exports = function (io) {
                 task: function (callback) {
                     feature_controller.remove_feature(featureID, callback);
                 }
-            }, function(err, result) {
+            }, function (err, result) {
                 // TODO error handling
                 io.sockets.in(projectID).emit('remove feature', [featureID]);
             });
@@ -134,7 +134,7 @@ module.exports = function (io) {
                 function (callback) {
                     task_controller.store_task(name, description, featureID, est_start_date, est_end_date, status, callback);
                 },
-                function(task, callback) {
+                function (task, callback) {
                     return_task = task;
                     feature_controller.add_taskToFeature(featureID, task._id, callback);
                 }
@@ -154,9 +154,27 @@ module.exports = function (io) {
                 task: function (callback) {
                     task_controller.remove_task(taskID, callback);
                 }
-            }, function(err, result) {
+            }, function (err, result) {
                 //TODO Error handling
                 io.sockets.in(projectID).emit('remove task', taskID);
+            });
+        });
+
+        /**
+         * Select task form db
+         * 
+         * @param _id - task id
+         */
+
+        socket.on('get task', function (taskID) {
+            async.series({
+                task: function (callback) {
+                    task_controller.get_taskByTaskID(taskID, callback)
+                }
+            }, function (err, result) {
+                console.log(result);
+                socket.emit('get task', taskID);
+                io.sockets.in(taskID).emit('get task', result.task);
             });
         });
 
@@ -172,8 +190,8 @@ module.exports = function (io) {
                 function (callback) {
                     user_controller.get_userByUsername(username, callback);
                 },
-                function(u, callback) {
-                    if(u){
+                function (u, callback) {
+                    if (u) {
                         user = u;
                         user_controller.add_project(u._id, projectID, callback);
                     } else {
@@ -198,7 +216,7 @@ module.exports = function (io) {
                 task: function (callback) {
                     task_controller.add_responsible(userID, taskID, callback);
                 }
-            }, function(err, results) {
+            }, function (err, results) {
                 //TODO Error handling
                 console.log('Added User:\n', results.task);
             });

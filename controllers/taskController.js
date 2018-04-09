@@ -63,3 +63,16 @@ exports.remove_task = function (_id, cb) {
         cb(null, task);
     });
 };
+
+exports.get_taskByTaskID = function (_id, cb) {
+    Task.findOne({ _id:_id})
+        .exec(function (err, task) {
+            if (err) {
+                console.log(err);
+                cb(err,null);
+                return;
+            }
+            //Successful, so return query
+            cb(null, task);
+        });
+};

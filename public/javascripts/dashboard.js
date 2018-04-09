@@ -99,52 +99,31 @@ $(function () {
         const featureID = $('#featureIDForTask').val();
         // const assignedTo = $('#assignedTo').val;
         const assignedTo = 1;
-
-        // Dates
         const est_start_date = $('#datepickerTaskS').val();  //.data("datepicker").getFormattedDate('yyyy-mm-dd');
         const est_end_date = $('#datepickerTaskF').val(); //.data("datepicker").getFormattedDate('yyyy-mm-dd');
 
-        console.log(est_start_date, est_end_date);
-
-
-        const status = "Pending";
-
-        if (taskName.length < 1) {
-            alert('task name cannot be empty');
-        }
-
-        const fromDateMonth = Number(est_start_date.substring(0,2));
-        const toDateMonth = Number(est_end_date.substring(0,2));
-        const fromDateDay = Number(est_start_date.substring(3,5));
-        const toDateDay = Number(est_end_date.substring(3,5));
         const fromDateYear = Number(est_start_date.substring(6,10));
         const toDateYear = Number(est_end_date.substring(6,10));
         const dateError = 'To date cannot be less than From date';
         var allGood = 1;
-        
-        //console.log("fromDate" + fromDate.length);
-        //console.log("toDate" + toDate.length);
-/*
-        if (fromDate.length > 10 || toDate.length > 10){
-            alert('date cannot be longer than 10 characters');
+        const status = "Pending";
+
+        if (taskName.length < 1) {
+            alert('task name cannot be empty');
             allGood = 0;
-        } else if (fromDateMonth > 12 || toDateMonth > 12){
-            alert('month cannot greater than 12');
-            allGood = 0;
-        } else if (fromDateDay > 31 || toDateDay > 31){
-            alert('days cannot greater than 31');
-            allGood = 0;
-        } else if (fromDateYear < 2018 || toDateYear < 2018){
-            alert('year cannot be less than 2018');
-            allGood = 0;
-        } else if (toDateYear < fromDateYear) {
+        }
+        if(description.length < 1){
+            alert('description cannot be empty');
+            allGood = 1;
+        }
+        if (toDateYear < fromDateYear) {
             alert(date);
             allGood = 0;
         } else if (toDate < fromDate) {
             alert(dateError);
             allGood = 0;
         }
-*/
+
         if (Boolean(allGood)) {
             socket.emit('add task', taskName, description, featureID, est_start_date, est_end_date, status);
             $('#newTaskModal').modal('toggle');
@@ -152,7 +131,12 @@ $(function () {
         }
     });
 
-
+    // Read task from project menu
+    $('#project-directory').on('click', 'a.task', function() {
+        const taskID = $(this).attr('id');
+        $('#readTaskModal').modal('toggle');
+        socket.emit('get task', taskID);
+    });
 
     // TODO remove the following and replace with correct calls
     $('#project-directory').on('click', 'a.feature', function() {
@@ -160,7 +144,7 @@ $(function () {
         socket.emit('remove feature', projectID, featureID);
     });
 
-    $('#project-directory').on('click', 'a.task', function() {
+    $('#delete-taskBtn').on('click', 'a.task', function() {
         const taskID = $(this).attr('id');
         socket.emit('remove task', projectID, taskID);
     });
