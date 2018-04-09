@@ -76,7 +76,11 @@ $(function () {
 
             $('#newFeatureModal').modal('toggle');
 
-            alert("Feature Added!");
+            let newAlertMsg = "<strong>Success!</strong> Feature \"" + name + "\" added.";
+            $('#alert-msg').html(newAlertMsg);
+            $('#added-alert').modal('toggle');
+
+            //alert("Feature Added!");
         }
         return false;
     });
@@ -139,7 +143,7 @@ $(function () {
     $('#project-directory').on('click', 'a.feature', function() {
         const featureID = $(this).attr('id');
         //socket.emit('remove feature', featureID);
-        socket.emit('get feature', featureID);
+        //socket.emit('get feature', featureID);
         $('#readFeatureModal').modal('toggle');
     });
     
