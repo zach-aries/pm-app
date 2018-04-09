@@ -76,9 +76,9 @@ $(function () {
 
             $('#newFeatureModal').modal('toggle');
 
-            let newAlertMsg = "<strong>Success!</strong> Feature \"" + name + "\" added.";
-            $('#alert-msg').html(newAlertMsg);
+            let newAlertMsg = "Feature \"" + name + "\" added.";
             $('#added-alert').modal('toggle');
+            $('#alert-msg').html(newAlertMsg);
 
             //alert("Feature Added!");
         }
@@ -146,7 +146,7 @@ $(function () {
         //socket.emit('remove feature', featureID);
         let feature = get_feature(featureID);
         $('rem-feat-mod-id').innerHTML("Delete Feature <strong>" + feature.name + "</strong>");
-        
+
         $('#readFeatureModal').modal('toggle');
     });
     
