@@ -145,9 +145,8 @@ $(function () {
         //const featureName = $(this).val();
         //socket.emit('remove feature', featureID);
         let feature = get_feature(featureID);
-        $('rem-feat-mod-id').innerHTML("Delete Feature <strong>" + feature.name + "</strong>");
-
-        $('#readFeatureModal').modal('toggle');
+        //$('#readFeatureModal').modal('toggle');
+        
     });
     
     //delete feature from feature section
@@ -235,6 +234,11 @@ $(function () {
     socket.on('get task', function(task) {
         //add task to DOM
         addTaskToReadTaskDom(task);
+    });
+    
+    socket.on('get feature', function(feature) {
+        //add task to DOM
+        addFeatureToReadFeatureDom(feature);
     });
 
     socket.on('remove feature', function (featureID) {
@@ -353,6 +357,18 @@ $(function () {
         parentEl.append(form);
     }
 
+    /**
+     *
+     * @param feature
+     */
+    function addFeatureToReadFeatureDom(feature) {
+        $('#readFeatureModal').modal('toggle');
+
+        //var parentEl = $('#read_task_form_id');
+        //var form = "<%= " + feature + " %>";
+        //parentEl.append(form);
+    }
+
     function addTask(el, task) {
         var classname = '';
         if (task.status === "Pending")
@@ -387,6 +403,7 @@ $(function () {
     function addFeatureToFeatureModal(feature) {
         const select1 = $('#newFeatureParent');
         select1.append( $('<option>').text(feature.name).val(feature._id));
+        $('rem-feat-mod-id').innerHTML("Feature: <strong>" + feature.name + "</strong>");
     }
 
     /**
