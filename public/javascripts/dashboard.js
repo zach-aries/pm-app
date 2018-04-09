@@ -151,7 +151,7 @@ $(function () {
     });
     
     //delete feature from feature section
-    $('#delete-featureBtn').on('click', 'a.feature', function() {
+    $('#delete-featureBtn').click(function() {
         const featureID = $(this).attr('id');
         socket.emit('remove feature', featureID);
     });
