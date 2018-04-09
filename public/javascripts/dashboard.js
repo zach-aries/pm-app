@@ -154,6 +154,7 @@ $(function () {
     //delete feature from feature section
     $('#delete-featureBtn').click(function() {
         const featureID = $('.store-id').attr('id');
+        console.log("Deleting: " + featureID);
         socket.emit('remove feature', featureID);
     });
 
@@ -365,7 +366,17 @@ $(function () {
      */
     function addFeatureToReadFeatureDom(feature) {
         $('#readFeatureModal').modal('toggle');
-
+        $('rem-feat-mod-id').text("Feature: " + feature.name);
+        $('read-parent').text("" + feature.parent);
+        $('read-start').text("" + feature.est_start_date);
+        $('read-end').text("" + feature.est_end_date);
+        
+        /*
+        read-parent
+        read-start
+        read-end
+        read-task-list
+        */
         //var parentEl = $('#read_task_form_id');
         //var form = "<%= " + feature + " %>";
         //parentEl.append(form);
@@ -405,7 +416,7 @@ $(function () {
     function addFeatureToFeatureModal(feature) {
         const select1 = $('#newFeatureParent');
         select1.append( $('<option>').text(feature.name).val(feature._id));
-        $('rem-feat-mod-id').text("Feature: " + feature.name);
+        
     }
 
     /**
