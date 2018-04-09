@@ -142,10 +142,11 @@ $(function () {
     // TODO remove the following and replace with correct calls
     $('#project-directory').on('click', 'a.feature', function() {
         const featureID = $(this).attr('id');
-        const featureName = $(this).val();
+        //const featureName = $(this).val();
         //socket.emit('remove feature', featureID);
-        //socket.emit('get feature', featureID);
-        $('rem-feat-mod-id').text("Delete Feature <strong>" + featureName + "</strong>");
+        let feature = get_feature(featureID);
+        $('rem-feat-mod-id').innerHTML("Delete Feature <strong>" + feature.name + "</strong>");
+        
         $('#readFeatureModal').modal('toggle');
     });
     
