@@ -142,13 +142,15 @@ $(function () {
     // TODO remove the following and replace with correct calls
     $('#project-directory').on('click', 'a.feature', function() {
         const featureID = $(this).attr('id');
+        const featureName = $(this).val();
         //socket.emit('remove feature', featureID);
         //socket.emit('get feature', featureID);
+        $('rem-feat-mod-id').text("Delete Feature <strong>" + featureName + "</strong>");
         $('#readFeatureModal').modal('toggle');
     });
     
     //delete feature from feature section
-    $('#delete-FeatureBtn').on('click', 'a.feature', function() {
+    $('#delete-featureBtn').on('click', 'a.feature', function() {
         const featureID = $(this).attr('id');
         socket.emit('remove feature', featureID);
     });
@@ -196,6 +198,7 @@ $(function () {
     socket.on('user connected', function (user) {
         console.log('user connected:', user);
     });
+
 
     socket.on('message', function (message) {
         // add message to DOM
