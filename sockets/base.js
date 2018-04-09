@@ -179,6 +179,24 @@ module.exports = function (io) {
         });
 
         /**
+         * Select feature form db
+         * 
+         * @param _id - feature id
+         */
+
+        socket.on('get feature', function (featureID) {
+            async.series({
+                feature: function (callback) {
+                    feature_controller.get_feature(featureID, callback)
+                }
+            }, function (err, result) {
+                console.log(result);
+                socket.emit('get feature', featureID);
+                io.sockets.in(featureID).emit('get feature', result.feature);
+            });
+        });
+
+        /**
          * update task's status
          * 
          * @param _id - task id
