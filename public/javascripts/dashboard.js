@@ -136,24 +136,26 @@ $(function () {
     // Read task from project menu
     $('#project-directory').on('click', 'a.task', function() {
         const taskID = $(this).attr('id');
-        socket.emit('get task', taskID);
+        socket.emit('get task', taskID, projectID);
         $('#readTaskModal').modal('toggle');
     });
 
     // TODO remove the following and replace with correct calls
     $('#project-directory').on('click', 'a.feature', function() {
         const featureID = $(this).attr('id');
-        socket.emit('get feature', featureID);
+        socket.emit('get feature', featureID, projectID);
         //const featureName = $(this).val();
         //socket.emit('remove feature', featureID);
         //let feature = get_feature(featureID);
+        $('.store-id').attr("id", featureID);
+
         $('#readFeatureModal').modal('toggle');
-        
     });
     
     //delete feature from feature section
     $('#delete-featureBtn').click(function() {
-        const featureID = $(this).attr('id');
+        const featureID = $('.store-id').attr('id');
+        console.log("Deleting: " + featureID);
         socket.emit('remove feature', featureID);
     });
 
@@ -366,10 +368,16 @@ $(function () {
      * @param task
      */
     function addTaskToReadTaskDom(task) {
+        console.log(task);
+
         $('#readTaskModal').modal('toggle');
         var parentEl = $('#read_task_form_id');
-        var form = "<%= " + task + " %>";
-        parentEl.append(form);
+
+        // set form html here
+        $('#editTaskForm_name').text(task.name)
+        $('#editTaskForm_description').text(task.description);
+
+        // parentEl.append(form);
     }
 
     /**
@@ -378,7 +386,17 @@ $(function () {
      */
     function addFeatureToReadFeatureDom(feature) {
         $('#readFeatureModal').modal('toggle');
-
+        $('rem-feat-mod-id').text("Feature: " + feature.name);
+        $('read-parent').text("" + feature.parent);
+        $('read-start').text("" + feature.est_start_date);
+        $('read-end').text("" + feature.est_end_date);
+        
+        /*
+        read-parent
+        read-start
+        read-end
+        read-task-list
+        */
         //var parentEl = $('#read_task_form_id');
         //var form = "<%= " + feature + " %>";
         //parentEl.append(form);
@@ -418,7 +436,7 @@ $(function () {
     function addFeatureToFeatureModal(feature) {
         const select1 = $('#newFeatureParent');
         select1.append( $('<option>').text(feature.name).val(feature._id));
-        $('rem-feat-mod-id').text("Feature: " + feature.name);
+        
     }
 
     /**
