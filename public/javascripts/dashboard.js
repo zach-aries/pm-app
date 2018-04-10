@@ -20,6 +20,7 @@ $(function () {
         // connect function
         socket.emit('user connected', projectID, userID);
     });
+    
 
     /**
      * Messenger form submit, parses message and
@@ -76,7 +77,7 @@ $(function () {
 
             $('#newFeatureModal').modal('toggle');
 
-            let newAlertMsg = "Feature \"" + name + "\" added.";
+            var newAlertMsg = "Feature \"" + name + "\" added.";
             $('#added-alert').modal('toggle');
             $('#alert-msg').html(newAlertMsg);
 
@@ -196,9 +197,17 @@ $(function () {
         }
     });
 
-    socket.on('user connected', function (user) {
-        console.log('user connected:', user);
+    socket.on('userlist update', function (userList) {
+       // console.log('user connected:', userList);
+        var temp = '';
+        for(i=0;i<userList.length;i++) {
+            temp = temp + '<li class="online">' + userList[i];
+        }
+        $('#user-list').html(temp);
+        console.log('current user list: ', temp);
     });
+
+
 
 
     socket.on('message', function (message) {
@@ -285,6 +294,11 @@ $(function () {
 
         data.project_users.forEach(function (user) {
             $('#settings-user-list').append($('<li>').text(user.username));
+            //$('#user-list').append($('<li class="online">').text(user.username));
+        });
+
+        data.user_list.forEach(function (name) {
+            $('#user-list').append($('<li class="online">').text(name));
         });
 
         // clear newFeatureModal select and add a null option

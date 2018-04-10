@@ -31,20 +31,56 @@ module.exports = function (io) {
                 // create a tree structure out of features/tasks
                 var project = project_controller.create_project_tree(results.features);
 
+                // joing room with project ID
+                socket.join(projectID);
+
+                /*var sockets = io.in(projectID);
+                Object.keys(sockets.sockets).forEach(function (item) {
+                    console.log("TODO: Item:", sockets.sockets[item].username)
+                });*/
+
+                socket.nickname = results.connected_user.username;
+
+                var roomSockets = io.in(projectID);
+
+                console.log(socket.nickname);
+                var userList = [];
+                Object.keys(roomSockets.sockets).forEach(function (item) {
+                    userList.push(roomSockets.sockets[item].nickname);
+                    console.log("The following has just logged in", roomSockets.sockets[item].nickname);
+                });
+
                 var data = {
                     messages: results.messages,
                     project: project,
                     features: results.features,
-                    project_users: results.users
+                    project_users: results.users,
+                    user_list: userList
                 };
 
-                // joing room with project ID
-                socket.join(projectID);
                 // send confirmation to sending client only
                 socket.emit('init', data);
-                // send user connected notification to all clients in room
-                io.sockets.in(projectID).emit('user connected', results.connected_user);
+                // send updated user list notification to all clients in room
+                io.sockets.in(projectID).emit('userlist update', userList);
             });
+        });
+
+        /*
+        * Gets all the usernames of all the sockets in the room again on a disconnect
+        * Then emits it out to all the clients
+        * */
+        socket.on('disconnect', function(projectID){
+
+
+            var roomSockets = io.in(projectID);
+            var userList = [];
+
+            Object.keys(roomSockets.sockets).forEach(function (item) {
+                userList.push(roomSockets.sockets[item].nickname);
+                console.log("Still Connected:", roomSockets.sockets[item].nickname);
+            });
+            io.sockets.in(projectID).emit('userlist update', userList);
+
         });
 
         /**
