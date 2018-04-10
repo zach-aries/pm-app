@@ -166,15 +166,14 @@ module.exports = function (io) {
          * @param _id - task id
          */
 
-        socket.on('get task', function (taskID) {
+        socket.on('get task', function (taskID, projectID) {
             async.series({
                 task: function (callback) {
                     task_controller.get_taskByTaskID(taskID, callback)
                 }
             }, function (err, result) {
                 console.log(result);
-                socket.emit('get task', taskID);
-                io.sockets.in(taskID).emit('get task', result.task);
+                io.sockets.in(projectID).emit('get task', result.task);
             });
         });
 
@@ -184,7 +183,7 @@ module.exports = function (io) {
          * @param _id - feature id
          */
 
-        socket.on('get feature', function (featureID) {
+        socket.on('get feature', function (featureID, projectID) {
             async.series({
                 feature: function (callback) {
                     feature_controller.get_feature(featureID, callback)
@@ -192,7 +191,7 @@ module.exports = function (io) {
             }, function (err, result) {
                 console.log(result);
                 socket.emit('get feature', featureID);
-                io.sockets.in(featureID).emit('get feature', result.feature);
+                io.sockets.in(projectID).emit('get feature', result.feature);
             });
         });
 

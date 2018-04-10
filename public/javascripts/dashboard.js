@@ -76,7 +76,7 @@ $(function () {
 
             $('#newFeatureModal').modal('toggle');
 
-            let newAlertMsg = "Feature \"" + name + "\" added.";
+            var newAlertMsg = "Feature \"" + name + "\" added.";
             $('#added-alert').modal('toggle');
             $('#alert-msg').html(newAlertMsg);
 
@@ -135,14 +135,14 @@ $(function () {
     // Read task from project menu
     $('#project-directory').on('click', 'a.task', function() {
         const taskID = $(this).attr('id');
-        socket.emit('get task', taskID);
+        socket.emit('get task', taskID, projectID);
         $('#readTaskModal').modal('toggle');
     });
 
     // TODO remove the following and replace with correct calls
     $('#project-directory').on('click', 'a.feature', function() {
         const featureID = $(this).attr('id');
-        socket.emit('get feature', featureID);
+        socket.emit('get feature', featureID, projectID);
         //const featureName = $(this).val();
         //socket.emit('remove feature', featureID);
         //let feature = get_feature(featureID);
@@ -354,10 +354,16 @@ $(function () {
      * @param task
      */
     function addTaskToReadTaskDom(task) {
+        console.log(task);
+
         $('#readTaskModal').modal('toggle');
         var parentEl = $('#read_task_form_id');
-        var form = "<%= " + task + " %>";
-        parentEl.append(form);
+
+        // set form html here
+        $('#editTaskForm_name').text(task.name)
+        $('#editTaskForm_description').text(task.description);
+
+        // parentEl.append(form);
     }
 
     /**
