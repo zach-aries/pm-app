@@ -11,6 +11,8 @@ module.exports = function (io) {
 
     io.on('connection', function (socket) {
 
+        var room;
+
         socket.on('user connected', function (projectID, userID) {
             // get all data for dashboard
             // done in parallel as order does not matter
@@ -33,6 +35,7 @@ module.exports = function (io) {
 
                 // joing room with project ID
                 socket.join(projectID);
+                room = projectID;
 
                 /*var sockets = io.in(projectID);
                 Object.keys(sockets.sockets).forEach(function (item) {
@@ -78,10 +81,17 @@ module.exports = function (io) {
             var roomSockets = io.in(projectID);
             var userList = [];
 
+            // console.log(io.sockets.adapter.sids[socket.id]);
+
             Object.keys(roomSockets.sockets).forEach(function (item) {
-                userList.push(roomSockets.sockets[item].nickname);
-                console.log("Still Connected:", roomSockets.sockets[item].nickname);
+                var rooms = io.sockets.adapter.sids[item];
+                if( rooms[room]) {
+                    userList.push(roomSockets.sockets[item].nickname)
+                }
             });
+
+            console.log(userList);
+
             io.sockets.in(projectID).emit('userlist update', userList);
 
         });
