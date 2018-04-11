@@ -184,8 +184,8 @@ $(function () {
     });
 
     //delete task from feature section
-    $('#delete-taskBtn').on('click', 'a.task', function() {
-        const taskID = $(this).attr('id');
+    $('#delete-taskBtn').click(function() {
+        const taskID = $('.store-id').attr('id');
         socket.emit('remove task', projectID, taskID);
     });
 
@@ -232,9 +232,6 @@ $(function () {
         $('#user-list').html(temp);
         console.log('current user list: ', temp);
     });
-
-
-
 
     socket.on('message', function (message) {
         // add message to DOM
