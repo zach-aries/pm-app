@@ -60,7 +60,7 @@ exports.add_taskToFeature = function (featureID, taskID, cb) {
 
 exports.get_featureByID = function (_id, cb) {
     Feature.findOne({ _id:_id})
-        .lean()
+        //.lean()
         .exec(function (err, feature) {
             if (err) {
                 console.log(err);
