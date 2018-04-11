@@ -59,7 +59,15 @@ $(function () {
         console.log("EndDate: " + toDate);
 
         if (name.length < 1) {
-            alert("Must provide a name for new feature");
+            var newAlertMsg = "Must provide a name for new feature";
+            $('#added-alert').modal('toggle');
+            $('#alert-msg').html(newAlertMsg);
+        }
+        // Check that end date isn't before start date
+        else if (((fromDate.substring(6,10)-0) < (startDate.substring(6,10)-0)) || ((fromDate.substring(0,2)-0) < (startDate.substring(0,2)-0)) || ((fromDate.substring(3,5)-0) < (startDate.substring(3,5)-0))) {
+            var newAlertMsg = "Start date must be before end date";
+            $('#added-alert').modal('toggle');
+            $('#alert-msg').html(newAlertMsg);
         }
         else {
             console.log("feature parent: " + parentID);
@@ -78,7 +86,9 @@ $(function () {
             $('#newFeatureModal').modal('toggle');
 
             var newAlertMsg = "Feature \"" + name + "\" added.";
-            $('#added-alert').modal('toggle');
+
+            //$('#added-alert').modal('toggle');
+
             $('#alert-msg').html(newAlertMsg);
 
             //alert("Feature Added!");
@@ -147,9 +157,10 @@ $(function () {
         //const featureName = $(this).val();
         //socket.emit('remove feature', featureID);
         //let feature = get_feature(featureID);
-        $('.store-id').attr("id", featureID);
+        
 
         $('#readFeatureModal').modal('toggle');
+        $('.store-id').attr("id", featureID);
     });
     
     //delete feature from feature section
