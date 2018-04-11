@@ -90,9 +90,7 @@ module.exports = function (io) {
                 }
             });
 
-            console.log(userList);
-
-            io.sockets.in(projectID).emit('userlist update', userList);
+            io.sockets.in(room).emit('userlist update', userList);
 
         });
 
