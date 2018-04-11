@@ -69,6 +69,11 @@ $(function () {
             $('#added-alert').modal('toggle');
             $('#alert-msg').html(newAlertMsg);
         }
+        else if (toDate == "" || fromDate == "") {
+            var newAlertMsg = "You must enter both a start and end date";
+            $('#added-alert').modal('toggle');
+            $('#alert-msg').html(newAlertMsg);
+        }
         else {
             console.log("feature parent: " + parentID);
 
@@ -84,6 +89,8 @@ $(function () {
             socket.emit('add feature', name, projectID, parentID, fromDate, toDate);
 
             $('#newFeatureModal').modal('toggle');
+
+            // Make dates 
 
             //var newAlertMsg = "Feature \"" + name + "\" added.";
             //$('#added-alert').modal('toggle');
@@ -172,9 +179,7 @@ $(function () {
     
     //delete feature from feature section
     $('#delete-featureBtn').click(function() {
-        console.log("Delete attempt");
         const featureID = $('.store-id').attr('id');
-        console.log("Deleting: " + featureID);
         socket.emit('remove feature', projectID, featureID);
     });
 
@@ -407,10 +412,39 @@ $(function () {
         console.log(feature);
 
         $('#readFeatureModal').modal('toggle');
-        $('#rem-feat-mod-id').text("Feature: " + feature.name);
-        $('#read-parent').text(""+feature.parent);
-        $('#read-start').text(""+feature.est_start_date);
-        $('#read-end').text(""+feature.est_end_date);
+        $('#rem-feat-mod-id').html("Feature: <strong>" + feature.name + "</strong>");
+        if (feature.parent != null) {
+            $('#read-parent').text(""+feature.parent);
+        }
+        else {
+            $('#read-parent').text("---");
+        }
+        let startStr = ""+feature.est_start_date;
+        let endStr = ""+feature.est_end_date;
+
+        let startMon = findMonth((startStr.substring(5,7)-0));
+        let endMon = findMonth((endStr.substring(5,7)-0));
+
+        $('#read-start').text(startMon + " " + startStr.substring(8,10) + ", " + startStr.substring(0,4));
+        $('#read-end').text(endMon + " " + endStr.substring(8,10) + ", " + endStr.substring(0,4));
+
+
+        $('#read-task-list').remove();
+
+        //var li = $('<li>').text(feature.tasks[0]);
+        //$('#read-task-list').append(li);
+
+        console.log("Task List:" + feature.tasks)
+        
+        for (let i=0; i<feature.tasks.length; ++i) {
+            console.log(feature.tasks[i]);
+            var li = $('<li>').text(""+feature.tasks[i]);
+            $('#read-task-list').append(li);
+        }
+        // Loop through and add each task to list
+        //var a = $('<a>').text(feature.name)
+        //var li = $('<li>').html(a);
+        //$('#read-task-list').append
         
         /*
         read-parent
@@ -491,5 +525,44 @@ $(function () {
 
         $('#messages').append(li);
         $('#messages')[0].scrollTop = $('#messages')[0].scrollHeight;
+    }
+
+    function findMonth(numMon) {
+        if (numMon == 1){
+            return "January";
+        }
+        else if(numMon == 2) {
+            return "February";
+        }
+        else if(numMon == 3) {
+            return "March";
+        }
+        else if(numMon == 4) {
+            return "April";
+        }
+        else if(numMon == 5) {
+            return "May";
+        }
+        else if(numMon == 6) {
+            return "June";
+        }
+        else if(numMon == 7) {
+            return "July";
+        }
+        else if(numMon == 8) {
+            return "August";
+        }
+        else if(numMon == 9) {
+            return "September";
+        }
+        else if(numMon == 10) {
+            return "October";
+        }
+        else if(numMon == 11) {
+            return "November";
+        }
+        else {
+            return "December";
+        }
     }
 });
