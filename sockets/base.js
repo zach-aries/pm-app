@@ -11,6 +11,8 @@ module.exports = function (io) {
 
     io.on('connection', function (socket) {
 
+        var room;
+
         socket.on('user connected', function (projectID, userID) {
             // get all data for dashboard
             // done in parallel as order does not matter
@@ -31,20 +33,65 @@ module.exports = function (io) {
                 // create a tree structure out of features/tasks
                 var project = project_controller.create_project_tree(results.features);
 
+                // joing room with project ID
+                socket.join(projectID);
+                room = projectID;
+
+                /*var sockets = io.in(projectID);
+                Object.keys(sockets.sockets).forEach(function (item) {
+                    console.log("TODO: Item:", sockets.sockets[item].username)
+                });*/
+
+                socket.nickname = results.connected_user.username;
+
+                var roomSockets = io.in(projectID);
+
+                var userList = [];
+                Object.keys(roomSockets.sockets).forEach(function (item) {
+                    var rooms = io.sockets.adapter.sids[item];
+                    if( rooms[projectID]) {
+                        userList.push(roomSockets.sockets[item].nickname)
+                        //console.log(rooms);
+                        console.log( roomSockets.sockets[item].nickname + " has logged in to room: " + projectID);
+                    }
+                });
+
                 var data = {
                     messages: results.messages,
                     project: project,
                     features: results.features,
-                    project_users: results.users
+                    project_users: results.users,
+                    user_list: userList
                 };
 
-                // joing room with project ID
-                socket.join(projectID);
                 // send confirmation to sending client only
                 socket.emit('init', data);
-                // send user connected notification to all clients in room
-                io.sockets.in(projectID).emit('user connected', results.connected_user);
+                // send updated user list notification to all clients in room
+                io.sockets.in(projectID).emit('userlist update', userList);
             });
+        });
+
+        /*
+        * Gets all the usernames of all the sockets in the room again on a disconnect
+        * Then emits it out to all the clients
+        * */
+        socket.on('disconnect', function(projectID){
+
+
+            var roomSockets = io.in(projectID);
+            var userList = [];
+
+            // console.log(io.sockets.adapter.sids[socket.id]);
+
+            Object.keys(roomSockets.sockets).forEach(function (item) {
+                var rooms = io.sockets.adapter.sids[item];
+                if( rooms[room]) {
+                    userList.push(roomSockets.sockets[item].nickname)
+                }
+            });
+
+            io.sockets.in(room).emit('userlist update', userList);
+
         });
 
         /**
@@ -106,7 +153,7 @@ module.exports = function (io) {
                 }
             }, function (err, result) {
                 // TODO error handling
-                io.sockets.in(projectID).emit('remove feature', [featureID]);
+                io.sockets.in(projectID).emit('remove feature', featureID);
             });
         });
 
@@ -166,15 +213,14 @@ module.exports = function (io) {
          * @param _id - task id
          */
 
-        socket.on('get task', function (taskID) {
+        socket.on('get task', function (taskID, projectID) {
             async.series({
                 task: function (callback) {
                     task_controller.get_taskByTaskID(taskID, callback)
                 }
             }, function (err, result) {
                 console.log(result);
-                socket.emit('get task', taskID);
-                io.sockets.in(taskID).emit('get task', result.task);
+                io.sockets.in(projectID).emit('get task', result.task);
             });
         });
 
@@ -184,15 +230,15 @@ module.exports = function (io) {
          * @param _id - feature id
          */
 
-        socket.on('get feature', function (featureID) {
+        socket.on('get feature', function (featureID, projectID) {
             async.series({
                 feature: function (callback) {
-                    feature_controller.get_feature(featureID, callback)
+                    feature_controller.get_featureByID(featureID, callback)
                 }
             }, function (err, result) {
                 console.log(result);
-                socket.emit('get feature', featureID);
-                io.sockets.in(featureID).emit('get feature', result.feature);
+                //socket.emit('get feature', featureID);
+                io.sockets.in(projectID).emit('get feature', result.feature);
             });
         });
 
