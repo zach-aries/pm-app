@@ -237,7 +237,9 @@ module.exports = function (io) {
                 }
             }, function (err, result) {
                 console.log(result);
+
                 //socket.emit('get feature', featureID);
+              
                 io.sockets.in(projectID).emit('get feature', result.feature);
             });
         });

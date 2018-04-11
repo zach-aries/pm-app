@@ -86,7 +86,9 @@ $(function () {
             $('#newFeatureModal').modal('toggle');
 
             var newAlertMsg = "Feature \"" + name + "\" added.";
+
             //$('#added-alert').modal('toggle');
+
             $('#alert-msg').html(newAlertMsg);
 
             //alert("Feature Added!");
