@@ -57,6 +57,9 @@ $(function () {
 
         console.log("StartDate: " + fromDate);
         console.log("EndDate: " + toDate);
+        
+        let fromDateStr = "" + fromDate;
+        let toDateStr = "" + toDate;
 
         if (name.length < 1) {
             var newAlertMsg = "Must provide a name for new feature";
@@ -64,7 +67,7 @@ $(function () {
             $('#alert-msg').html(newAlertMsg);
         }
         // Check that end date isn't before start date
-        else if (((fromDate.substring(6,10)-0) < (startDate.substring(6,10)-0)) || ((fromDate.substring(0,2)-0) < (startDate.substring(0,2)-0)) || ((fromDate.substring(3,5)-0) < (startDate.substring(3,5)-0))) {
+        else if (((fromDateStr.substring(6,10)-0) < (startDateStr.substring(6,10)-0)) || ((fromDateStr.substring(0,2)-0) < (startDateStr.substring(0,2)-0)) || ((fromDateStr.substring(3,5)-0) < (startDateStr.substring(3,5)-0))) {
             var newAlertMsg = "Start date must be before end date";
             $('#added-alert').modal('toggle');
             $('#alert-msg').html(newAlertMsg);
@@ -86,9 +89,7 @@ $(function () {
             $('#newFeatureModal').modal('toggle');
 
             var newAlertMsg = "Feature \"" + name + "\" added.";
-
             //$('#added-alert').modal('toggle');
-
             $('#alert-msg').html(newAlertMsg);
 
             //alert("Feature Added!");
@@ -165,9 +166,10 @@ $(function () {
     
     //delete feature from feature section
     $('#delete-featureBtn').click(function() {
+        console.log("Delete attempt");
         const featureID = $('.store-id').attr('id');
         console.log("Deleting: " + featureID);
-        socket.emit('remove feature', featureID);
+        socket.emit('remove feature', projectID, featureID);
     });
 
     //delete task from feature section
@@ -396,6 +398,8 @@ $(function () {
      * @param feature
      */
     function addFeatureToReadFeatureDom(feature) {
+        console.log(feature);
+
         $('#readFeatureModal').modal('toggle');
         $('rem-feat-mod-id').text("Feature: " + feature.name);
         $('read-parent').text("" + feature.parent);
