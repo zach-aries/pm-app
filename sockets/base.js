@@ -43,11 +43,14 @@ module.exports = function (io) {
 
                 var roomSockets = io.in(projectID);
 
-                console.log(socket.nickname);
                 var userList = [];
                 Object.keys(roomSockets.sockets).forEach(function (item) {
-                    userList.push(roomSockets.sockets[item].nickname);
-                    console.log("The following has just logged in", roomSockets.sockets[item].nickname);
+                    var rooms = io.sockets.adapter.sids[item];
+                    if( rooms[projectID]) {
+                        userList.push(roomSockets.sockets[item].nickname)
+                        //console.log(rooms);
+                        console.log( roomSockets.sockets[item].nickname + " has logged in to room: " + projectID);
+                    }
                 });
 
                 var data = {
