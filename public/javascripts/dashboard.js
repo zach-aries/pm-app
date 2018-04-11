@@ -20,6 +20,7 @@ $(function () {
         // connect function
         socket.emit('user connected', projectID, userID);
     });
+    
 
     /**
      * Messenger form submit, parses message and
@@ -58,7 +59,15 @@ $(function () {
         console.log("EndDate: " + toDate);
 
         if (name.length < 1) {
-            alert("Must provide a name for new feature");
+            var newAlertMsg = "Must provide a name for new feature";
+            $('#added-alert').modal('toggle');
+            $('#alert-msg').html(newAlertMsg);
+        }
+        // Check that end date isn't before start date
+        else if (((fromDate.substring(6,10)-0) < (startDate.substring(6,10)-0)) || ((fromDate.substring(0,2)-0) < (startDate.substring(0,2)-0)) || ((fromDate.substring(3,5)-0) < (startDate.substring(3,5)-0))) {
+            var newAlertMsg = "Start date must be before end date";
+            $('#added-alert').modal('toggle');
+            $('#alert-msg').html(newAlertMsg);
         }
         else {
             console.log("feature parent: " + parentID);
@@ -76,8 +85,8 @@ $(function () {
 
             $('#newFeatureModal').modal('toggle');
 
-            let newAlertMsg = "Feature \"" + name + "\" added.";
-            $('#added-alert').modal('toggle');
+            var newAlertMsg = "Feature \"" + name + "\" added.";
+            //$('#added-alert').modal('toggle');
             $('#alert-msg').html(newAlertMsg);
 
             //alert("Feature Added!");
@@ -135,20 +144,21 @@ $(function () {
     // Read task from project menu
     $('#project-directory').on('click', 'a.task', function() {
         const taskID = $(this).attr('id');
-        socket.emit('get task', taskID);
+        socket.emit('get task', taskID, projectID);
         $('#readTaskModal').modal('toggle');
     });
 
     // TODO remove the following and replace with correct calls
     $('#project-directory').on('click', 'a.feature', function() {
         const featureID = $(this).attr('id');
-        socket.emit('get feature', featureID);
+        socket.emit('get feature', featureID, projectID);
         //const featureName = $(this).val();
         //socket.emit('remove feature', featureID);
         //let feature = get_feature(featureID);
-        $('.store-id').attr("id", featureID);
+        
 
         $('#readFeatureModal').modal('toggle');
+        $('.store-id').attr("id", featureID);
     });
     
     //delete feature from feature section
@@ -198,9 +208,17 @@ $(function () {
         }
     });
 
-    socket.on('user connected', function (user) {
-        console.log('user connected:', user);
+    socket.on('userlist update', function (userList) {
+       // console.log('user connected:', userList);
+        var temp = '';
+        for(i=0;i<userList.length;i++) {
+            temp = temp + '<li class="online">' + userList[i];
+        }
+        $('#user-list').html(temp);
+        console.log('current user list: ', temp);
     });
+
+
 
 
     socket.on('message', function (message) {
@@ -287,6 +305,11 @@ $(function () {
 
         data.project_users.forEach(function (user) {
             $('#settings-user-list').append($('<li>').text(user.username));
+            //$('#user-list').append($('<li class="online">').text(user.username));
+        });
+
+        data.user_list.forEach(function (name) {
+            $('#user-list').append($('<li class="online">').text(name));
         });
 
         // clear newFeatureModal select and add a null option
@@ -354,10 +377,16 @@ $(function () {
      * @param task
      */
     function addTaskToReadTaskDom(task) {
+        console.log(task);
+
         $('#readTaskModal').modal('toggle');
         var parentEl = $('#read_task_form_id');
-        var form = "<%= " + task + " %>";
-        parentEl.append(form);
+
+        // set form html here
+        $('#editTaskForm_name').text(task.name)
+        $('#editTaskForm_description').text(task.description);
+
+        // parentEl.append(form);
     }
 
     /**
@@ -366,10 +395,10 @@ $(function () {
      */
     function addFeatureToReadFeatureDom(feature) {
         $('#readFeatureModal').modal('toggle');
-        $('#rem-feat-mod-id').text("Feature: " + feature.name);
-        $('#read-parent').text("" + feature.parent);
-        $('#read-start').text("" + feature.est_start_date);
-        $('#read-end').text("" + feature.est_end_date);
+        $('rem-feat-mod-id').text("Feature: " + feature.name);
+        $('read-parent').text("" + feature.parent);
+        $('read-start').text("" + feature.est_start_date);
+        $('read-end').text("" + feature.est_end_date);
         
         /*
         read-parent
