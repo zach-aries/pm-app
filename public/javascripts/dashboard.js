@@ -1,3 +1,6 @@
+var whichUpdateFeat = -1;
+var whichUpdateTask = -1;
+
 $(function () {
     /*
 
@@ -160,6 +163,7 @@ $(function () {
     // Read task from project menu
     $('#project-directory').on('click', 'a.task', function() {
         const taskID = $(this).attr('id');
+        whichUpdateTask = 1;
         socket.emit('get task', taskID, projectID);
         $('#readTaskModal').modal('toggle');
     });
@@ -167,6 +171,7 @@ $(function () {
     // TODO remove the following and replace with correct calls
     $('#project-directory').on('click', 'a.feature', function() {
         const featureID = $(this).attr('id');
+        whichUpdateFeat = 1;
         socket.emit('get feature', featureID, projectID);
         //const featureName = $(this).val();
         //socket.emit('remove feature', featureID);
@@ -184,8 +189,8 @@ $(function () {
     });
 
     //delete task from feature section
-    $('#delete-taskBtn').click(function() {
-        const taskID = $('.store-id').attr('id');
+    $('#delete-taskBtn').on('click', 'a.task', function() {
+        const taskID = $(this).attr('id');
         socket.emit('remove task', projectID, taskID);
     });
 
@@ -233,6 +238,9 @@ $(function () {
         console.log('current user list: ', temp);
     });
 
+
+
+
     socket.on('message', function (message) {
         // add message to DOM
         addMessage(message);
@@ -266,12 +274,22 @@ $(function () {
 
     socket.on('get task', function(task) {
         //add task to DOM
-        addTaskToReadTaskDom(task);
+        if (whichUpdateTask == 1) {
+            addTaskToReadTaskDom(task);
+        }
+        else if (whichUpdateTask == 2){
+            updateTaskRead(task);
+        }
     });
     
     socket.on('get feature', function(feature) {
-        //add task to DOM
-        addFeatureToReadFeatureDom(feature);
+        if (whichUpdateFeat == 1) {  // add feature to dom
+            addFeatureToReadFeatureDom(feature);
+        }
+        else if (whichUpdateFeat == 2) {   // update read
+            addParentToRead(feature);
+        }
+        
     });
 
     socket.on('remove feature', function (featureID) {
@@ -398,7 +416,16 @@ $(function () {
         $('#editTaskForm_name').text(task.name)
         $('#editTaskForm_description').text(task.description);
 
+        //whichUpdateTask = -1;
         // parentEl.append(form);
+    }
+
+    function updateTaskRead(task) {
+        //console.log("task id?" + task);
+        var li = "<li>"+task.name+"</li>";
+        $('#read-task-list').append(li);
+        //$("read-task-list").find("#t"+task._id).text(""+);
+        //whichUpdateTask = -1;
     }
 
     /**
@@ -411,7 +438,9 @@ $(function () {
         $('#readFeatureModal').modal('toggle');
         $('#rem-feat-mod-id').html("Feature: <strong>" + feature.name + "</strong>");
         if (feature.parent != null) {
-            $('#read-parent').text(""+feature.parent);
+            whichUpdateFeat = 2;
+            socket.emit('get feature', feature.parent, projectID);
+            //$('#read-parent').text(""+feature.parent);
         }
         else {
             $('#read-parent').text("---");
@@ -426,18 +455,29 @@ $(function () {
         $('#read-end').text(endMon + " " + endStr.substring(8,10) + ", " + endStr.substring(0,4));
 
 
-        $('#read-task-list').remove();
+
+        $('#read-task-list').empty();
 
         //var li = $('<li>').text(feature.tasks[0]);
         //$('#read-task-list').append(li);
 
-        console.log("Task List:" + feature.tasks)
+        console.log("Task List:" + feature.tasks.length)
         
-        for (let i=0; i<feature.tasks.length; ++i) {
-            console.log(feature.tasks[i]);
-            var li = $('<li>').text(""+feature.tasks[i]);
+        if (feature.tasks.length == 0) {
+            var li = "No Tasks";
             $('#read-task-list').append(li);
         }
+
+        for (let i=0; i<feature.tasks.length; ++i) {
+            console.log(feature.tasks[i]);
+            //var li = $('<li>').text(""+feature.tasks[i]);
+            //var li = "<li id=\"t" + feature.tasks[i] +"\"></li>";
+            whichUpdateTask = 2;
+            socket.emit('get task', feature.tasks[i], projectID);
+            //$('#read-task-list').append(li);
+        }
+
+        //whichUpdateFeat = -1;
         // Loop through and add each task to list
         //var a = $('<a>').text(feature.name)
         //var li = $('<li>').html(a);
@@ -452,6 +492,11 @@ $(function () {
         //var parentEl = $('#read_task_form_id');
         //var form = "<%= " + feature + " %>";
         //parentEl.append(form);
+    }
+
+    function addParentToRead(feature) {
+        $('#read-parent').text(""+feature.name);
+        //whichUpdateFeat = -1;
     }
 
     function addTask(el, task) {
