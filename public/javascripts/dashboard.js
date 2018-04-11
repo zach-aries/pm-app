@@ -58,16 +58,13 @@ $(function () {
         console.log("StartDate: " + fromDate);
         console.log("EndDate: " + toDate);
         
-        let fromDateStr = "" + fromDate;
-        let toDateStr = "" + toDate;
-
         if (name.length < 1) {
             var newAlertMsg = "Must provide a name for new feature";
             $('#added-alert').modal('toggle');
             $('#alert-msg').html(newAlertMsg);
         }
         // Check that end date isn't before start date
-        else if (((fromDateStr.substring(6,10)-0) < (startDateStr.substring(6,10)-0)) || ((fromDateStr.substring(0,2)-0) < (startDateStr.substring(0,2)-0)) || ((fromDateStr.substring(3,5)-0) < (startDateStr.substring(3,5)-0))) {
+        else if (toDate < fromDate) {
             var newAlertMsg = "Start date must be before end date";
             $('#added-alert').modal('toggle');
             $('#alert-msg').html(newAlertMsg);
@@ -88,9 +85,9 @@ $(function () {
 
             $('#newFeatureModal').modal('toggle');
 
-            var newAlertMsg = "Feature \"" + name + "\" added.";
+            //var newAlertMsg = "Feature \"" + name + "\" added.";
             //$('#added-alert').modal('toggle');
-            $('#alert-msg').html(newAlertMsg);
+            //$('#alert-msg').html(newAlertMsg);
 
             //alert("Feature Added!");
         }
@@ -122,25 +119,34 @@ $(function () {
         const status = "Pending";
 
         if (taskName.length < 1) {
-            alert('task name cannot be empty');
+            var newAlertMsg = "Task name cannot be empty";
+            $('#added-alert').modal('toggle');
+            $('#alert-msg').html(newAlertMsg);
             allGood = 0;
         }
-        if(description.length < 1){
-            alert('description cannot be empty');
+        else if(description.length < 1){
+            var newAlertMsg = "Description cannot be empty";
+            $('#added-alert').modal('toggle');
+            $('#alert-msg').html(newAlertMsg);
+            
             allGood = 0;
         }
-        if (est_end_date < est_start_date) {
-            alert('To date cannot be less than From date');
+        else if (est_end_date < est_start_date) {
+            var newAlertMsg = "To date cannot be less than From date";
+            $('#added-alert').modal('toggle');
+            $('#alert-msg').html(newAlertMsg);
             allGood = 0;
         } else if (est_end_date == est_start_date) {
-            alert('To date cannot be the same as From date');
+            var newAlertMsg = "To date cannot be the same as From date";
+            $('#added-alert').modal('toggle');
+            $('#alert-msg').html(newAlertMsg);
             allGood = 0;
         }
 
         if (Boolean(allGood)) {
             socket.emit('add task', taskName, description, featureID, est_start_date, est_end_date, status);
             $('#newTaskModal').modal('toggle');
-            alert("Task added!");
+            //alert("Task added!");
         }
     });
 
