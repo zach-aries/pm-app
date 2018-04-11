@@ -179,9 +179,16 @@ $(function () {
     });
 
     //delete task from feature section
-    $('#delete-taskBtn').on('click', 'a.task', function() {
+    $('#project-directory').on('click', 'a.task', function() {
         const taskID = $(this).attr('id');
         socket.emit('remove task', projectID, taskID);
+        $('#readTaskModal').modal('toggle');
+        $('.store-id').attr("id", taskID);
+    });
+
+    $('#delete-taskBtn').click(function() {
+        const taskID = $('.store-id').attr('id');
+        socket.emit('remove feature', projectID, taskID);
     });
 
     //delete task from todo section
