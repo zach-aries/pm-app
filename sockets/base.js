@@ -153,7 +153,7 @@ module.exports = function (io) {
                 }
             }, function (err, result) {
                 // TODO error handling
-                io.sockets.in(projectID).emit('remove feature', [featureID]);
+                io.sockets.in(projectID).emit('remove feature', featureID);
             });
         });
 
@@ -233,11 +233,13 @@ module.exports = function (io) {
         socket.on('get feature', function (featureID, projectID) {
             async.series({
                 feature: function (callback) {
-                    feature_controller.get_feature(featureID, callback)
+                    feature_controller.get_featureByID(featureID, callback)
                 }
             }, function (err, result) {
                 console.log(result);
-                socket.emit('get feature', featureID);
+
+                //socket.emit('get feature', featureID);
+              
                 io.sockets.in(projectID).emit('get feature', result.feature);
             });
         });
