@@ -64,7 +64,11 @@
                                     $('#datepickerTaskS').datepicker({
                                         uiLibrary: 'bootstrap4'
                                     });
+                                    $('.input-daterange input').each(function() {
+                                        $(this).datepicker('clearDates');
+                                    });
                                     $('#datepickerTaskF').datepicker({
+                                        //maxDate: new Date(),//(new Date().setDate(todayDate + feture.est_end_date)),
                                         uiLibrary: 'bootstrap4'
                                     });
                             </script>   
@@ -73,7 +77,7 @@
                         <br />
                         <div class="modal-footer">
                             <button id="add-task" type="submit" class="btn btn-primary">Save Task</button>
-                        <!--    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>  -->
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button> 
                         </div>
                     </form>
                 </div>
