@@ -9,14 +9,13 @@ html, body {
 
 body { background: #f4f7fa; }
 
+.hidden { display: none!important; }
+
 /* text layout */
 .display-5 {
   font-size: 1.75rem;
   font-weight: 300;
   line-height: 1.2;
-}
-.lead {
-  font-size: 1rem;
 }
 
 a:hover { cursor: pointer; }
@@ -65,6 +64,15 @@ ul.hierarchy-list.main {
 
 
 .jumbotron {  border-radius: 0;  }
+
+.jumbotron button {
+  background: #28bd8b;
+  border-color: #27ae80;
+}
+.jumbotron button:hover {
+  background: #289b6c;
+  border-color: #289b6c;
+}
 
 .no-padding { padding: 0!important; }
 

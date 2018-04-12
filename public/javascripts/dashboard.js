@@ -200,6 +200,7 @@ $(function () {
     });
 
     socket.on('userlist update', function (userList) {
+        console.log('test');
        // console.log('user connected:', userList);
         var temp = '';
         for(i=0;i<userList.length;i++) {
