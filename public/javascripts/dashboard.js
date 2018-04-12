@@ -161,7 +161,9 @@ $(function () {
     $('#project-directory').on('click', 'a.task', function() {
         const taskID = $(this).attr('id');
         socket.emit('get task', taskID, projectID);
+
         $('#readTaskModal').modal('toggle');
+        $('#readTaskModal').attr('data-task-id', taskID);
     });
 
     // TODO remove the following and replace with correct calls
@@ -184,11 +186,12 @@ $(function () {
     });
 
     //delete task from feature section
-    $('#delete-taskBtn').click(function() {
-        //alert("got in on click function");
-        const taskID = $('.store-id').attr('id');
-        console.log,('test:', taskID);
-        //socket.emit('remove task', projectID, taskID);
+    $('#delete-taskBtn').click(function(event) {
+        event.preventDefault();
+        const taskID = $('#readTaskModal').attr('data-task-id');
+
+        socket.emit('remove task', projectID, taskID);
+        $('#readTaskModal').modal('toggle');
     });
 
     //delete task from todo section
