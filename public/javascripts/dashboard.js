@@ -2,14 +2,6 @@ var whichUpdateFeat = -1;
 var whichUpdateTask = -1;
 
 $(function () {
-    /*
-
-    function drawChart() {
-
-
-    }*/
-
-
     const socket = io();
 
     var initiated = false;
@@ -42,6 +34,73 @@ $(function () {
         }
 
         return false;
+    });
+
+    $('#projectSettings-form').submit(function(){
+        let name = $('#projectSettings-name').val();
+        let desc = $('#projectSettings-desc').val();
+        let errors = [];
+
+        // validation checks
+        // check if name has content
+        if ( !name.match(/\S/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please enter a valid project name'
+            });
+        }
+
+        // check if desc has content
+        if ( !desc.match(/\S/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please enter a valid project description'
+            });
+        }
+
+        // clear response div
+        $('#projectSettings-response').empty();
+
+        // submit for if no errors
+        if (errors.length === 0) {
+            // display loader
+            UI.show_loader();
+            // sent info to server
+            socket.emit('update project', projectID, name, desc);
+
+            // disable form inputs
+            toggle_form_disabled($('#projectSettings-form'));
+            // dismiss modal
+            $('#projectSettingsModal').modal('toggle');
+        } else { // otherwise handle errors
+            // create an alert for each error
+            errors.forEach(function (err) {
+               $('#projectSettings-response').append(UI.create_alert('danger', err.message));
+            });
+        }
+
+        // prevent form submit
+        return false;
+    });
+
+    $('#delete-project').click(function () {
+        const name = $('#projectSettings-name').val();
+        const name_cnfm = $('#projectSettings-delete').val();
+        let errors = [];
+
+        if (name === name_cnfm ) {
+            UI.show_loader();
+            socket.emit('delete project', projectID);
+        } else {
+            errors.push({
+                error: 'validation',
+                message: 'Please confirm project name to delete'
+            });
+
+            errors.forEach(function (err) {
+                $('#projectSettings-response').append(UI.create_alert('danger', err.message));
+            });
+        }
     });
 
     /**
@@ -106,13 +165,28 @@ $(function () {
 
     $('#add-users').click(function () {
         const user = $('#projectSettingsAddUser').val();
+        let errors = [];
 
-        // check to make sure the username includes a character
-        if (user.match(/\S/)) {
+        // validation checks
+        // check if name has content
+        if ( !user.match(/\S/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please enter a valid username'
+            });
+        }
+
+        $('#projectSettingsUsers-response').empty();
+        if (errors.length === 0) {
+            UI.show_loader();
             socket.emit('add user', user, projectID);
-
-            // clear chat entry
+            // clear input value
             $('#projectSettingsAddUser').val('');
+        } else {
+            // create an alert for each error
+            errors.forEach(function (err) {
+                $('#projectSettingsUsers-response').append(UI.create_alert('danger', err.message));
+            });
         }
     });
 
@@ -213,12 +287,20 @@ $(function () {
         const taskID = $(this).attr('id');
         const status = "Complete";
         socket.emit('update status', taskID, status);
-        $('#')
     });
 
     /*===========================================
                     Catch Events
      ===========================================*/
+    socket.on('update project', function (project_info) {
+        update_projectSettings(project_info);
+        UI.hide_loader();
+    });
+
+    socket.on('delete project', function () {
+        location.href = '/dashboard/projects';
+    });
+
     socket.on('init', function (data) {
         // prevent double initiate on lost connection
         // there is probably a better solution?
@@ -229,14 +311,12 @@ $(function () {
     });
 
     socket.on('userlist update', function (userList) {
-        console.log('test');
        // console.log('user connected:', userList);
         var temp = '';
         for(i=0;i<userList.length;i++) {
             temp = temp + '<li class="online">' + userList[i];
         }
         $('#user-list').html(temp);
-        console.log('current user list: ', temp);
     });
 
 
@@ -316,14 +396,23 @@ $(function () {
         console.log('remove task:', taskID);
     });
 
-    socket.on('add user', function (user) {
-        $('#settings-user-list').append($('<li>').text(user.username));
+    socket.on('add user', function (user, error) {
+        UI.hide_loader();
+        if (user !== null) {
+            // the variable is defined
+            $('#settings-user-list').append($('<li>').text(user.username));
+        } else {
+            $('#projectSettingsUsers-response').append(UI.create_alert('danger', error));
+        }
+
     });
 
     /*===========================================
                   General Functions
      ===========================================*/
     function init(data) {
+        update_projectSettings(data.project_info);
+
         // populate chat with messages
         data.messages.forEach(function (message) {
            addMessage(message);
@@ -354,11 +443,49 @@ $(function () {
         });
 
         GanttChart.init(data.project);
+        UI.hide_loader();
     }
 
     /*===========================================
                     DOM Functions
      ===========================================*/
+
+    /**
+     * toggles disabled attribute on all input elements for
+     * specified form.
+     * button must have data-target attribute specified for target form
+     * inputs with class "no-edit" will not be affected
+     */
+    $('button.edit').click(function (event) {
+        const form = $('#'+$(this).attr('data-target'));
+        toggle_form_disabled(form);
+    });
+
+    function toggle_form_disabled(form) {
+        form.find('.delete').each(function () {
+            $(this).toggleClass('hidden');
+        });
+
+        form.find('input, textarea, button[type=submit]').each(function () {
+            let el = $(this);
+            if (! el.hasClass('no-edit') ) {
+                if (el.attr('disabled')) {
+                    el.removeAttr('disabled');
+                } else {
+                    el.attr('disabled', '');
+                }
+            }
+        });
+    }
+
+    function update_projectSettings(project_info) {
+        $('#projectSettingsModal').attr('data-projectID', project_info._id);
+
+
+        $('#projectSettings-name').val(project_info.name);
+        $('#project-name').text(project_info.name);
+        $('#projectSettings-desc').val(project_info.description);
+    }
     /**
      * Add feature to #project-directory
      *

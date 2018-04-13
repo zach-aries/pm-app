@@ -29,8 +29,32 @@ exports.create_project = function (name, desc, owner, cb) {
     });
 };
 
-exports.remove_project = function (_id) {
-    Project.find({ _id:_id }).remove().exec();
+exports.update_project = function(_id, name, description, cb) {
+    Project.findOneAndUpdate({_id: _id}, {$set:{name:name, description: description}}, {new: true})
+        .lean()
+        .exec(function (err, project) {
+            if (err) {
+                cb(err, null);
+                return;
+            }
+
+            cb(null, project);
+        })
+};
+
+exports.remove_project = function (_id, cb) {
+    Project.findOne({ _id:_id })
+        .lean()
+        .remove()
+        .exec(function (err, project) {
+            if (err) {
+                console.log(err);
+                cb(err, null);
+                return
+            }
+            console.log('Removed Project:\n' + project);
+            cb(null, project);
+        });
 };
 
 exports.create_project_tree = function(features){

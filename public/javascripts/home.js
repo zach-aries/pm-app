@@ -1,4 +1,6 @@
 $(function () {
+    $('#loader-wrapper').toggleClass('hidden');
+
     $("#loginForm").submit(function(event) {
         event.preventDefault();
         $('#login-response').empty();
@@ -14,12 +16,12 @@ $(function () {
                 if (data.error) {
                     $('#login-response').append( UI.create_alert('danger', data.error) );
                     $( "#loginModal" ).effect( "shake" );
+                    UI.hide_loader();
                 }
 
                 if (data.url)
                     location.href = data.url;
 
-                $('#loader-wrapper').toggleClass('hidden');
             },
             error: function (jqXhr, textStatus, errorThrown) {
                 console.log(errorThrown);

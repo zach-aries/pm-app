@@ -410,5 +410,26 @@ header {
     cursor: pointer;
   }
 
+/*========================
+          Modals
+ =========================*/
+#settings-user-list {
+  background: #e9ecef;
+  border-radius: .25rem;
+  border: solid 1px #ced4da;
+  padding: 1em 1em 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+  #settings-user-list li {
+    background: #ffffff;
+    padding: 0.25em 1em;
+    border-radius: 0.25rem;
+    border: solid 1px #ced4da;
+    margin: 0 1em 1em 0;
+  }
+
 
 

@@ -11,12 +11,15 @@ module.exports = function (io) {
 
     io.on('connection', function (socket) {
 
-        var room;
+        var roomID;
 
         socket.on('user connected', function (projectID, userID) {
             // get all data for dashboard
             // done in parallel as order does not matter
             async.parallel({
+                project_info: function (callback) {
+                    project_controller.projectByID(projectID, callback);
+                },
                 messages: function (callback) {
                     message_controller.get_projectMessages(projectID, callback);
                 },
@@ -35,7 +38,7 @@ module.exports = function (io) {
 
                 // joing room with project ID
                 socket.join(projectID);
-                room = projectID;
+                roomID = projectID;
 
                 /*var sockets = io.in(projectID);
                 Object.keys(sockets.sockets).forEach(function (item) {
@@ -50,13 +53,12 @@ module.exports = function (io) {
                 Object.keys(roomSockets.sockets).forEach(function (item) {
                     var rooms = io.sockets.adapter.sids[item];
                     if( rooms[projectID]) {
-                        userList.push(roomSockets.sockets[item].nickname)
-                        //console.log(rooms);
-                        console.log( roomSockets.sockets[item].nickname + " has logged in to room: " + projectID);
+                        userList.push(roomSockets.sockets[item].nickname);
                     }
                 });
 
                 var data = {
+                    project_info: results.project_info,
                     messages: results.messages,
                     project: project,
                     features: results.features,
@@ -81,16 +83,14 @@ module.exports = function (io) {
             var roomSockets = io.in(projectID);
             var userList = [];
 
-            // console.log(io.sockets.adapter.sids[socket.id]);
-
             Object.keys(roomSockets.sockets).forEach(function (item) {
                 var rooms = io.sockets.adapter.sids[item];
-                if( rooms[room]) {
+                if( rooms[roomID]) {
                     userList.push(roomSockets.sockets[item].nickname)
                 }
             });
 
-            io.sockets.in(room).emit('userlist update', userList);
+            io.sockets.in(roomID).emit('userlist update', userList);
 
         });
 
@@ -117,6 +117,33 @@ module.exports = function (io) {
 
                 // emit message to users in room
                 io.sockets.in(projectID).emit('message', result);
+            });
+        });
+
+        socket.on('update project', function (projectID, name, description) {
+            console.log(projectID, name, description);
+            async.parallel({
+                project: function (callback) {
+                    project_controller.update_project(projectID, name, description, callback);
+                }
+            }, function (err, result) {
+                console.log('updated project:\n', result.project);
+
+                io.sockets.in(roomID).emit('update project', result.project);
+            });
+        });
+
+        socket.on('delete project', function (projectID) {
+            async.parallel({
+                project: function (callback) {
+                    project_controller.remove_project(projectID, callback);
+                }
+            }, function (err, result) {
+                if (!err) {
+                    io.sockets.in(roomID).emit('delete project');
+                } else {
+                    console.log(err);
+                }
             });
         });
 
@@ -279,13 +306,15 @@ module.exports = function (io) {
                         user = u;
                         user_controller.add_project(u._id, projectID, callback);
                     } else {
-                        callback(null, 'error');
+                        callback(null, u);
                     }
                 }
             ], function (err, result) {
-                // TODO Error handling
-                console.log('added project to user: ', result);
-                if (!err) {
+                if (!user) {
+                    var error = 'User does not exist';
+                    // send confirmation to sending client only
+                    socket.emit('add user', user, error);
+                } else {
                     io.sockets.in(projectID).emit('add user', user);
                 }
             });
