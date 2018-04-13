@@ -411,6 +411,13 @@ $(function () {
                   General Functions
      ===========================================*/
     function init(data) {
+        // Initiate Date Picker
+        $('.date-picker').each(function () {
+            $(this).datepicker({
+                uiLibrary: 'bootstrap4'
+            });
+        });
+
         update_projectSettings(data.project_info);
 
         // populate chat with messages
