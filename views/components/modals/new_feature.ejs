@@ -1,4 +1,4 @@
-<div class="modal fade" id="newFeatureModal" tabindex="-1" role="dialog" aria-labelledby="newFeatureModal" aria-hidden="true">
+<div class="modal fade" id="newFeatureModal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -8,6 +8,7 @@
                 </button>
             </div>
             <div class="modal-body">
+                <div id="newFeature-response"></div>
                 <form id="newFeatureForm" action="">
                     <div class="form-group">
                         <label for="newFeatureName">Feature Name</label>
@@ -17,26 +18,21 @@
                     <div class="form-group">
                         <label for="newFeatureParent">Parent Feature</label>
                         <select class="form-control" id="newFeatureParent">
-                            <option>(None)</option>
+                            <option>(Root)</option>
                         </select>
                     </div>
                     <br />
-                    <from method="post">
-                        <div class="row">
-                            <div class="col-sm-5" class="form-group">
-                                <label class="col" class="control-label" for="date">Estimated Start: </label>
-                                <input id="datepickerFeatureS" class="form-control date-picker" id="fromDate" name="date" placeholder="MM/DD/YYYY" type="text" />
-                            </div>
-                            <div class="col-sm-5">
-                                <label class="col" class="control-label" for="date">Estimated Finish: </label>
-                                <input id="datepickerFeatureF" class="form-control date-picker" id="toDate" placeholder="MM/DD/YYYY" type="text" />
-                            </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <label class="control-label" for="date">Estimated Start: </label>
+                            <input id="datepickerFeatureS" class="form-control date-picker" name="start date" placeholder="MM/DD/YYYY" type="text" />
                         </div>
-                    </from>
-                    <br>
-                    <div class="form-group">
-                        <a class="dropdown-item" data-toggle="modal" data-target="#newTaskModal">+Add Task</a>
+                        <div class="col-6">
+                            <label class="control-label" for="date">Estimated Finish: </label>
+                            <input id="datepickerFeatureF" class="form-control date-picker" name="end date" placeholder="MM/DD/YYYY" type="text" />
+                        </div>
                     </div>
+                    <br>
 
                     <div class="modal-footer">
                     <!--    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button> -->

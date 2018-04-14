@@ -1,12 +1,12 @@
-var whichUpdateFeat = -1;
-var whichUpdateTask = -1;
+let whichUpdateFeat = -1;
+let whichUpdateTask = -1;
 
 $(function () {
     const socket = io();
 
-    var initiated = false;
-    var userID = $('#user-info').attr('data-userID');
-    var projectID = $('#project-directory').attr('data-projectID');
+    let initiated = false;
+    let userID = $('#user-info').attr('data-userID');
+    let projectID = $('#project-directory').attr('data-projectID');
 
     /*===========================================
                     Send Events
@@ -107,59 +107,73 @@ $(function () {
      * Feature form submit
      */
     $('#newFeatureForm').submit(function(){
-        var parentID = $('#newFeatureParent').val();
+
+        // set inputs
+        let parentID = $('#newFeatureParent').val();
         const name = $('#newFeatureName').val();
+        const start_date = $('#datepickerFeatureS').val();
+        const end_date = $('#datepickerFeatureF').val();
+        const d_start_date = new Date(start_date);
+        const d_end_date = new Date(end_date);
 
-        console.log("featureParent: "+parentID);
-        console.log("featureName: " + name);
+        let errors = [];
 
-        // Dates
-        const fromDate = $('#datepickerFeatureS').val();  //.data("datepicker").getFormattedDate('yyyy-mm-dd');
-        const toDate = $('#datepickerFeatureF').val(); //.data("datepicker").getFormattedDate('yyyy-mm-dd');
+        // validation
 
-        console.log("StartDate: " + fromDate);
-        console.log("EndDate: " + toDate);
-        
-        if (name.length < 1) {
-            var newAlertMsg = "Must provide a name for new feature";
-            $('#added-alert').modal('toggle');
-            $('#alert-msg').html(newAlertMsg);
+        // check if name has content
+        if ( !name.match(/\S/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please enter a valid feature name'
+            });
         }
-        // Check that end date isn't before start date
-        else if (toDate < fromDate) {
-            var newAlertMsg = "Start date must be before end date";
-            $('#added-alert').modal('toggle');
-            $('#alert-msg').html(newAlertMsg);
-        }
-        else if (toDate == "" || fromDate == "") {
-            var newAlertMsg = "You must enter both a start and end date";
-            $('#added-alert').modal('toggle');
-            $('#alert-msg').html(newAlertMsg);
-        }
-        else {
-            console.log("feature parent: " + parentID);
 
+        // check if start date has format 00/00/0000
+        if ( !start_date.match(/\d\d\/\d\d\/\d\d\d\d/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please select an estimated start date'
+            });
+        }
+
+        // check if start date has format 00/00/0000
+        if ( !end_date.match(/\d\d\/\d\d\/\d\d\d\d/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please select an estimated start date'
+            });
+        }
+
+        if ( d_end_date < d_start_date ) {
+            errors.push({
+                error: 'validation',
+                message: 'End date cannot be before estimated start date'
+            });
+        }
+
+        $('#newFeature-response').empty();
+        // submit for if no errors
+        if (errors.length === 0) {
             // If no parent specified, send null
-            if (parentID.trim() === "(None)") {
-                console.log("Yay! NONE!");
+            if (parentID.trim() === "(Root)") {
                 parentID = null;
             }
-        
-            // Clear name field
-            document.getElementById("newFeatureName").value = "";        
 
-            socket.emit('add feature', name, projectID, parentID, fromDate, toDate);
+            // display loader
+            UI.show_loader();
+            // sent info to server
+            socket.emit('add feature', name, projectID, parentID, start_date, end_date);
 
+            // dismiss modal
             $('#newFeatureModal').modal('toggle');
-
-            // Make dates 
-
-            //var newAlertMsg = "Feature \"" + name + "\" added.";
-            //$('#added-alert').modal('toggle');
-            //$('#alert-msg').html(newAlertMsg);
-
-            //alert("Feature Added!");
+        } else { // otherwise handle errors
+            // create an alert for each error
+            errors.forEach(function (err) {
+                $('#newFeature-response').append(UI.create_alert('danger', err.message));
+            });
         }
+
+        // prevent default
         return false;
     });
 
@@ -199,29 +213,29 @@ $(function () {
         const est_start_date = $('#datepickerTaskS').val();
         const est_end_date = $('#datepickerTaskF').val();
 
-        var allGood = 1;
+        let allGood = 1;
         const status = "Pending";
 
         if (taskName.length < 1) {
-            var newAlertMsg = "Task name cannot be empty";
+            let newAlertMsg = "Task name cannot be empty";
             $('#added-alert').modal('toggle');
             $('#alert-msg').html(newAlertMsg);
             allGood = 0;
         }
         else if(description.length < 1){
-            var newAlertMsg = "Description cannot be empty";
+            let newAlertMsg = "Description cannot be empty";
             $('#added-alert').modal('toggle');
             $('#alert-msg').html(newAlertMsg);
             
             allGood = 0;
         }
         else if (est_end_date < est_start_date) {
-            var newAlertMsg = "To date cannot be less than From date";
+            let newAlertMsg = "To date cannot be less than From date";
             $('#added-alert').modal('toggle');
             $('#alert-msg').html(newAlertMsg);
             allGood = 0;
         } else if (est_end_date == est_start_date) {
-            var newAlertMsg = "To date cannot be the same as From date";
+            let newAlertMsg = "To date cannot be the same as From date";
             $('#added-alert').modal('toggle');
             $('#alert-msg').html(newAlertMsg);
             allGood = 0;
@@ -242,7 +256,14 @@ $(function () {
         $('#readTaskModal').modal('toggle');
     });
 
-    // TODO remove the following and replace with correct calls
+    $('#project-directory').on('click', 'span.caret', function(event) {
+        event.stopImmediatePropagation();
+
+        $(this).parent().parent().toggleClass('closed');
+        $(this).find('svg').toggleClass('closed');
+        console.log('test');
+    });
+
     $('#project-directory').on('click', 'a.feature', function() {
         const featureID = $(this).attr('id');
         whichUpdateFeat = 1;
@@ -255,7 +276,10 @@ $(function () {
         $('#readFeatureModal').modal('toggle');
         $('.store-id').attr("id", featureID);
     });
-    
+
+
+
+
     //delete feature from feature section
     $('#delete-featureBtn').click(function() {
         const featureID = $('.store-id').attr('id');
@@ -312,7 +336,7 @@ $(function () {
 
     socket.on('userlist update', function (userList) {
        // console.log('user connected:', userList);
-        var temp = '';
+        let temp = '';
         for(i=0;i<userList.length;i++) {
             temp = temp + '<li class="online">' + userList[i];
         }
@@ -328,8 +352,8 @@ $(function () {
     });
 
     socket.on('add feature', function (feature) {
-        // create parent var for later
-        var parentEl;
+        // create parent let for later
+        let parentEl;
         if (feature.parent !== null) {
             // if feature has a parent, then add it as a sub feature
             // get feature-list to add feature to
@@ -337,7 +361,7 @@ $(function () {
 
             // if feature-list doesnt exist, create a new one and add it to the features parent el
             if (!parentEl.length) {
-                var ul = $('<ul>').addClass('hierarchy-list feature-list');
+                let ul = $('<ul>').addClass('hierarchy-list feature-list');
                 $('#'+feature.parent).parent().append(ul);
                 parentEl = ul;
             }
@@ -351,6 +375,8 @@ $(function () {
         // add feature to both task/feature modals
         addFeatureToFeatureModal(feature);
         addFeatureToTaskModal(feature);
+
+        UI.hide_loader();
     });
 
     socket.on('get task', function(task) {
@@ -379,11 +405,11 @@ $(function () {
 
     socket.on('add task', function (task, featureID) {
         // get task-list to add task to
-        var parentEl = $('#'+featureID).parent().children('.task-list:first');
+        let parentEl = $('#'+featureID).parent().children('.task-list:first');
 
         // if task-list does not exist, create it and add it to the tasks parent el
         if (!parentEl.length) {
-            var ul = $('<ul>').addClass('hierarchy-list task-list');
+            let ul = $('<ul>').addClass('hierarchy-list task-list');
             $('#'+featureID).parent().append(ul);
             parentEl = ul;
         }
@@ -493,27 +519,31 @@ $(function () {
         $('#project-name').text(project_info.name);
         $('#projectSettings-desc').val(project_info.description);
     }
+
     /**
      * Add feature to #project-directory
      *
+     * @param el
      * @param feature
      */
     function addFeature(el, feature) {
 
         // create icon (font awesome)
-        var i = $('<i>').addClass('fas fa-caret-right');
+        let span = $('<span>')
+            .addClass('caret')
+            .html($('<i>').addClass('fas fa-caret-down'));
         // create link and prepend the icon
-        var a = $('<a>').text(feature.name)
+        let a = $('<a>').text(feature.name)
             .attr('id', feature._id)
-            .addClass('feature')
-            .prepend(i);
+            .addClass('feature closed')
+            .prepend(span);
 
         // create li and set html content to a
-        var li = $('<li>').html(a);
+        let li = $('<li>').html(a);
 
         if (typeof feature.children !== 'undefined') {
             if ( feature.children.length > 0 ){
-                var ul = $('<ul>').addClass('hierarchy-list feature-list');
+                let ul = $('<ul>').addClass('hierarchy-list feature-list');
                 feature.children.forEach(function (child) {
                     addFeature(ul, child);
                 });
@@ -524,7 +554,7 @@ $(function () {
 
         if (typeof feature.tasks !== 'undefined') {
             if (feature.tasks.length > 0) {
-                var ul = $('<ul>').addClass('hierarchy-list task-list');
+                let ul = $('<ul>').addClass('hierarchy-list task-list');
                 feature.tasks.forEach(function (task) {
                     addTask(ul, task);
                 });
@@ -545,7 +575,7 @@ $(function () {
         console.log(task);
 
         $('#readTaskModal').modal('toggle');
-        var parentEl = $('#read_task_form_id');
+        let parentEl = $('#read_task_form_id');
 
         // set form html here
         $('#editTaskForm_name').text(task.name)
@@ -557,7 +587,7 @@ $(function () {
 
     function updateTaskRead(task) {
         //console.log("task id?" + task);
-        var li = "<li>"+task.name+"</li>";
+        let li = "<li>"+task.name+"</li>";
         $('#read-task-list').append(li);
         //$("read-task-list").find("#t"+task._id).text(""+);
         //whichUpdateTask = -1;
@@ -593,20 +623,20 @@ $(function () {
 
         $('#read-task-list').empty();
 
-        //var li = $('<li>').text(feature.tasks[0]);
+        //let li = $('<li>').text(feature.tasks[0]);
         //$('#read-task-list').append(li);
 
         console.log("Task List:" + feature.tasks.length)
         
         if (feature.tasks.length == 0) {
-            var li = "No Tasks";
+            let li = "No Tasks";
             $('#read-task-list').append(li);
         }
 
         for (let i=0; i<feature.tasks.length; ++i) {
             console.log(feature.tasks[i]);
-            //var li = $('<li>').text(""+feature.tasks[i]);
-            //var li = "<li id=\"t" + feature.tasks[i] +"\"></li>";
+            //let li = $('<li>').text(""+feature.tasks[i]);
+            //let li = "<li id=\"t" + feature.tasks[i] +"\"></li>";
             whichUpdateTask = 2;
             socket.emit('get task', feature.tasks[i], projectID);
             //$('#read-task-list').append(li);
@@ -614,8 +644,8 @@ $(function () {
 
         //whichUpdateFeat = -1;
         // Loop through and add each task to list
-        //var a = $('<a>').text(feature.name)
-        //var li = $('<li>').html(a);
+        //let a = $('<a>').text(feature.name)
+        //let li = $('<li>').html(a);
         //$('#read-task-list').append
         
         /*
@@ -624,8 +654,8 @@ $(function () {
         read-end
         read-task-list
         */
-        //var parentEl = $('#read_task_form_id');
-        //var form = "<%= " + feature + " %>";
+        //let parentEl = $('#read_task_form_id');
+        //let form = "<%= " + feature + " %>";
         //parentEl.append(form);
     }
 
@@ -635,7 +665,7 @@ $(function () {
     }
 
     function addTask(el, task) {
-        var classname = '';
+        let classname = '';
         if (task.status === "Pending")
             classname = 'far fa-calendar';
         else if (task.status === "Started")
@@ -646,15 +676,15 @@ $(function () {
             classname = 'fa fa-calendar-times';
 
         // create icon (font awesome)
-        var i = $('<i>').addClass(classname);
+        let i = $('<i>').addClass(classname);
         // create link and prepend the icon
-        var a = $('<a>')
+        let a = $('<a>')
             .text(task.name)
             .attr('id', task._id)
             .addClass('task')
             .prepend(i);
         // create li and set html content to a
-        var li = $('<li>').html(a);
+        let li = $('<li>').html(a);
 
         el.append(li);
     }
@@ -687,15 +717,15 @@ $(function () {
      * @param data
      */
     function addMessage(message) {
-        var date = new Date(message.timestamp);
-        var time = $('<span class="time"></span>').text(date.toLocaleString('en-US', {
+        let date = new Date(message.timestamp);
+        let time = $('<span class="time"></span>').text(date.toLocaleString('en-US', {
             hour: 'numeric',
             minute: 'numeric',
             hour12: true
         }));
 
-        var info = $('<div>').addClass('msg-info').text(message.user.username);
-        var li = $('<li>').text(message.message);
+        let info = $('<div>').addClass('msg-info').text(message.user.username);
+        let li = $('<li>').text(message.message);
 
         info.append(time);
         li.prepend(info);
