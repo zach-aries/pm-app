@@ -126,7 +126,7 @@ var GanttChart = (function () {
         // create task list from tree
         process_data(data);
 
-        google.charts.load('current', {'packages':['timeline'], "callback": _drawGanttChart()});
+        google.charts.load('current', {'packages':['timeline'], "callback": _drawGanttChart});
         google.charts.setOnLoadCallback(_drawGanttChart);
     };
 
