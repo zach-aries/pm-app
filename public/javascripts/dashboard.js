@@ -155,7 +155,7 @@ $(function () {
         // submit for if no errors
         if (errors.length === 0) {
             // If no parent specified, send null
-            if (parentID.trim() === "(Root)") {
+            if (parentID === 'null') {
                 parentID = null;
             }
 
@@ -175,6 +175,19 @@ $(function () {
 
         // prevent default
         return false;
+    });
+
+    $('#project-directory').on('click', 'a.feature', function() {
+        const featureID = $(this).attr('id');
+        whichUpdateFeat = 1;
+        socket.emit('get feature', featureID, projectID);
+        //const featureName = $(this).val();
+        //socket.emit('remove feature', featureID);
+        //let feature = get_feature(featureID);
+
+
+        $('#readFeatureModal').modal('toggle').attr('data-featureID', featureID);
+        $('.store-id').attr("id", featureID);
     });
 
     $('#add-users').click(function () {
@@ -261,21 +274,9 @@ $(function () {
 
         $(this).parent().parent().toggleClass('closed');
         $(this).find('svg').toggleClass('closed');
-        console.log('test');
     });
 
-    $('#project-directory').on('click', 'a.feature', function() {
-        const featureID = $(this).attr('id');
-        whichUpdateFeat = 1;
-        socket.emit('get feature', featureID, projectID);
-        //const featureName = $(this).val();
-        //socket.emit('remove feature', featureID);
-        //let feature = get_feature(featureID);
-        
 
-        $('#readFeatureModal').modal('toggle');
-        $('.store-id').attr("id", featureID);
-    });
 
 
 
@@ -373,7 +374,7 @@ $(function () {
         // add feature to DOM
         addFeature(parentEl, feature);
         // add feature to both task/feature modals
-        addFeatureToFeatureModal(feature);
+        addFeatureToFeatureModals(feature);
         addFeatureToTaskModal(feature);
 
         UI.hide_loader();
@@ -390,12 +391,14 @@ $(function () {
     });
     
     socket.on('get feature', function(feature) {
-        if (whichUpdateFeat == 1) {  // add feature to dom
+        set_readModal(feature);
+
+        /*if (whichUpdateFeat == 1) {  // add feature to dom
             addFeatureToReadFeatureDom(feature);
         }
         else if (whichUpdateFeat == 2) {   // update read
             addParentToRead(feature);
-        }
+        }*/
         
     });
 
@@ -465,13 +468,9 @@ $(function () {
             $('#user-list').append($('<li class="online">').text(name));
         });
 
-        // clear newFeatureModal select and add a null option
-        $('#newFeatureFormControlSelect1').empty().append( $('<option>').text('None').val(null));
-        // clear newTaskModal select and add a null option
-        $('#newTaskFormControlSelect1').empty();
         // populate newFeatureModal with features
         data.features.forEach(function (feature) {
-            addFeatureToFeatureModal(feature);
+            addFeatureToFeatureModals(feature);
             addFeatureToTaskModal(feature);
         });
 
@@ -499,7 +498,7 @@ $(function () {
             $(this).toggleClass('hidden');
         });
 
-        form.find('input, textarea, button[type=submit]').each(function () {
+        form.find('input, select, textarea, button[type=submit], .btn-danger').each(function () {
             let el = $(this);
             if (! el.hasClass('no-edit') ) {
                 if (el.attr('disabled')) {
@@ -513,8 +512,6 @@ $(function () {
 
     function update_projectSettings(project_info) {
         $('#projectSettingsModal').attr('data-projectID', project_info._id);
-
-
         $('#projectSettings-name').val(project_info.name);
         $('#project-name').text(project_info.name);
         $('#projectSettings-desc').val(project_info.description);
@@ -541,17 +538,6 @@ $(function () {
         // create li and set html content to a
         let li = $('<li>').html(a);
 
-        if (typeof feature.children !== 'undefined') {
-            if ( feature.children.length > 0 ){
-                let ul = $('<ul>').addClass('hierarchy-list feature-list');
-                feature.children.forEach(function (child) {
-                    addFeature(ul, child);
-                });
-
-                li.append(ul);
-            }
-        }
-
         if (typeof feature.tasks !== 'undefined') {
             if (feature.tasks.length > 0) {
                 let ul = $('<ul>').addClass('hierarchy-list task-list');
@@ -563,8 +549,60 @@ $(function () {
             }
         }
 
+        if (typeof feature.children !== 'undefined') {
+            if ( feature.children.length > 0 ){
+                let ul = $('<ul>').addClass('hierarchy-list feature-list');
+                feature.children.forEach(function (child) {
+                    addFeature(ul, child);
+                });
+
+                li.append(ul);
+            }
+        }
+
+
+
         // append list item to the project list
         el.append(li);
+    }
+
+    function set_readModal(feature) {
+        const start_date = new Date(feature.est_start_date);
+        const end_date = new Date(feature.est_end_date);
+        const datepicker_s = $('#editFeature-startDate').datepicker();
+        const datepicker_e = $('#editFeature-endDate').datepicker();
+
+        datepicker_s.value(pad(start_date.getMonth()+1)+"/"+ pad(start_date.getDate())+"/"+start_date.getFullYear());
+        datepicker_e.value(pad(end_date.getMonth()+1)+"/"+ pad(end_date.getDate())+"/"+end_date.getFullYear());
+
+        $('#editFeature-name').val(feature.name);
+        if (feature.parent === null ) {
+            $('#editFeature-parent').val('null');
+        } else {
+            $('#editFeature-parent').val(feature.parent);
+        }
+
+        $('#readFeature-tasks').empty();
+        feature.tasks.forEach(function (task) {
+            let esd = new Date(task.est_start_date);
+            let eed = new Date(task.est_end_date);
+
+
+            let tr = $('<tr>')
+                .append($('<td>').text(task.name))
+                .append($('<td>').text(task.status))
+                .append($('<td>').text(pad(esd.getMonth()+1)+"/"+ pad(esd.getDate())+"/"+esd.getFullYear()))
+                .append($('<td>').text(pad(eed.getMonth()+1)+"/"+ pad(eed.getDate())+"/"+eed.getFullYear()));
+
+            $('#readFeature-tasks').append(tr);
+        });
+    }
+
+    function pad(n) {return n < 10 ? "0"+n : n;}
+
+    function addParentToRead(feature) {
+        $('#read-parent').text(""+feature.name);
+        //whichUpdateFeat = -1;
     }
 
     /**
@@ -591,77 +629,6 @@ $(function () {
         $('#read-task-list').append(li);
         //$("read-task-list").find("#t"+task._id).text(""+);
         //whichUpdateTask = -1;
-    }
-
-    /**
-     *
-     * @param feature
-     */
-    function addFeatureToReadFeatureDom(feature) {
-        console.log(feature);
-
-        $('#readFeatureModal').modal('toggle');
-        $('#rem-feat-mod-id').html("Feature: <strong>" + feature.name + "</strong>");
-        if (feature.parent != null) {
-            whichUpdateFeat = 2;
-            socket.emit('get feature', feature.parent, projectID);
-            //$('#read-parent').text(""+feature.parent);
-        }
-        else {
-            $('#read-parent').text("---");
-        }
-        let startStr = ""+feature.est_start_date;
-        let endStr = ""+feature.est_end_date;
-
-        let startMon = findMonth((startStr.substring(5,7)-0));
-        let endMon = findMonth((endStr.substring(5,7)-0));
-
-        $('#read-start').text(startMon + " " + startStr.substring(8,10) + ", " + startStr.substring(0,4));
-        $('#read-end').text(endMon + " " + endStr.substring(8,10) + ", " + endStr.substring(0,4));
-
-
-
-        $('#read-task-list').empty();
-
-        //let li = $('<li>').text(feature.tasks[0]);
-        //$('#read-task-list').append(li);
-
-        console.log("Task List:" + feature.tasks.length)
-        
-        if (feature.tasks.length == 0) {
-            let li = "No Tasks";
-            $('#read-task-list').append(li);
-        }
-
-        for (let i=0; i<feature.tasks.length; ++i) {
-            console.log(feature.tasks[i]);
-            //let li = $('<li>').text(""+feature.tasks[i]);
-            //let li = "<li id=\"t" + feature.tasks[i] +"\"></li>";
-            whichUpdateTask = 2;
-            socket.emit('get task', feature.tasks[i], projectID);
-            //$('#read-task-list').append(li);
-        }
-
-        //whichUpdateFeat = -1;
-        // Loop through and add each task to list
-        //let a = $('<a>').text(feature.name)
-        //let li = $('<li>').html(a);
-        //$('#read-task-list').append
-        
-        /*
-        read-parent
-        read-start
-        read-end
-        read-task-list
-        */
-        //let parentEl = $('#read_task_form_id');
-        //let form = "<%= " + feature + " %>";
-        //parentEl.append(form);
-    }
-
-    function addParentToRead(feature) {
-        $('#read-parent').text(""+feature.name);
-        //whichUpdateFeat = -1;
     }
 
     function addTask(el, task) {
@@ -695,9 +662,13 @@ $(function () {
      *
      * @param feature
      */
-    function addFeatureToFeatureModal(feature) {
+    function addFeatureToFeatureModals(feature) {
         const select1 = $('#newFeatureParent');
+
+        const select2 = $('#editFeature-parent');
+
         select1.append( $('<option>').text(feature.name).val(feature._id));
+        select2.append( $('<option>').text(feature.name).val(feature._id));
         
     }
 
