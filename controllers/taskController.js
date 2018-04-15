@@ -90,3 +90,20 @@ exports.update_status = function (_id, newStatus, cb) {
             cb(null, task);
         });
 };
+
+exports.update_task = function(_id, _name, _description, _est_start_date, _est_end_date, cb) {
+    Task.findOneAndUpdate({_id: _id}, {$set:{
+        name:_name,
+        description:_description,
+        est_start_date: new Date(_est_start_date),
+        est_end_date: new Date(_est_end_date)
+    }}, {new: true})
+        .lean()
+        .exec(function (err, task) {
+            if (err) {
+                cb(err, null);
+                return;
+            }
+            cb(null, task);
+        })
+};

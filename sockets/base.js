@@ -299,6 +299,15 @@ module.exports = function (io) {
             });
         });
 
+        socket.on('update task', function (_id, name, description, est_start_date, est_end_date) {
+            async.series({
+                task: function (callback) {
+                    task_controller.update_task(_id, name, description, est_start_date, est_end_date, callback);
+                }
+            }, function (err, result) {
+                io.sockets.in(roomID).emit('update task', result.task);
+            });
+        });
         /**
          * Adds user to database
          * finds user by username and pushes their id to

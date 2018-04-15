@@ -268,48 +268,165 @@ $(function () {
         }
     });
 
-    $('#add-task').click(function () {
-        const taskName = $('#taskName').val();
+    /**
+     * Task form submit
+     */
+    $('#newTaskForm').submit(function(){
+        // set inputs
+        const name = $('#taskName').val();
         const description = $('#description').val();
         const featureID = $('#featureIDForTask').val();
         // const assignedTo = $('#assignedTo').val;
         const assignedTo = 1;
-        const est_start_date = $('#datepickerTaskS').val();
-        const est_end_date = $('#datepickerTaskF').val();
-
-        let allGood = 1;
+        const start_date = $('#datepickerTaskS').val();
+        const end_date = $('#datepickerTaskF').val();
+        const d_start_date = new Date(start_date);
+        const d_end_date = new Date(end_date);
         const status = "Pending";
 
-        if (taskName.length < 1) {
-            let newAlertMsg = "Task name cannot be empty";
-            $('#added-alert').modal('toggle');
-            $('#alert-msg').html(newAlertMsg);
-            allGood = 0;
-        }
-        else if(description.length < 1){
-            let newAlertMsg = "Description cannot be empty";
-            $('#added-alert').modal('toggle');
-            $('#alert-msg').html(newAlertMsg);
-            
-            allGood = 0;
-        }
-        else if (est_end_date < est_start_date) {
-            let newAlertMsg = "To date cannot be less than From date";
-            $('#added-alert').modal('toggle');
-            $('#alert-msg').html(newAlertMsg);
-            allGood = 0;
-        } else if (est_end_date == est_start_date) {
-            let newAlertMsg = "To date cannot be the same as From date";
-            $('#added-alert').modal('toggle');
-            $('#alert-msg').html(newAlertMsg);
-            allGood = 0;
+        let errors = [];
+
+        // validation
+
+        // check if name has content
+        if ( !name.match(/\S/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please enter a valid task name'
+            });
         }
 
-        if (Boolean(allGood)) {
-            socket.emit('add task', taskName, description, featureID, est_start_date, est_end_date, status);
-            $('#newTaskModal').modal('toggle');
-            //alert("Task added!");
+        //check if description has content
+        if ( !description.match(/\S/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please enter a valid description name'
+            });
         }
+
+        // check if start date has format 00/00/0000
+        if ( !start_date.match(/\d\d\/\d\d\/\d\d\d\d/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please select an estimated start date'
+            });
+        }
+
+        // check if start date has format 00/00/0000
+        if ( !end_date.match(/\d\d\/\d\d\/\d\d\d\d/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please select an estimated start date'
+            });
+        }
+
+        if ( d_end_date < d_start_date ) {
+            errors.push({
+                error: 'validation',
+                message: 'End date cannot be before estimated start date'
+            });
+        }
+
+
+        $('#newTask-response').empty();
+        // submit for if no errors
+        if (errors.length === 0) {
+            // If no parent specified, send null
+            if (parentID === 'null') {
+                parentID = null;
+            }
+
+            // display loader
+            UI.show_loader();
+            // sent info to server
+            socket.emit('add task', taskName, description, featureID, est_start_date, est_end_date, status);
+
+            // dismiss modal
+            $('#newTaskModal').modal('toggle');
+        } else { // otherwise handle errors
+            // create an alert for each error
+            errors.forEach(function (err) {
+                $('#newTask-response').append(UI.create_alert('danger', err.message));
+            });
+        }
+
+        // prevent default
+        return false;
+    });
+
+    $('#editTask-form').submit(function(){
+        // set inputs
+        const _id = $('#readTaskModal').attr('data-taskID');
+        const name = $('#editTask-name').val();
+        const description = $('#editTask-description').val();
+        const start_date = $('#editTask-startDate').val();
+        const end_date = $('#editTask-endDate').val();
+        const d_start_date = new Date(start_date);
+        const d_end_date = new Date(end_date);
+
+        let errors = [];
+
+        // validation
+
+        // check if name has content
+        if ( !name.match(/\S/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please enter a valid task name'
+            });
+        }
+
+        if ( !description.match(/\S/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please enter a valid task description'                
+            });
+        }
+
+        // check if start date has format 00/00/0000
+        if ( !start_date.match(/\d\d\/\d\d\/\d\d\d\d/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please select an estimated start date'
+            });
+        }
+
+        // check if start date has format 00/00/0000
+        if ( !end_date.match(/\d\d\/\d\d\/\d\d\d\d/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please select an estimated start date'
+            });
+        }
+
+         // make sure start date comes before end date
+         if ( d_end_date < d_start_date ) {
+            errors.push({
+                error: 'validation',
+                message: 'End date cannot be before estimated start date'
+            });
+        }
+
+        $('#newTask-response').empty();
+        // submit for if no errors
+        if (errors.length === 0) {
+            // display loader
+            UI.show_loader();
+            // sent info to server
+            socket.emit('update task', _id, name, description, d_start_date, d_end_date);
+
+            // dismiss modal
+            $('#readTaskModal').modal('toggle');
+            // disable input
+            toggle_form_disabled($('#editTask-form'));
+        } else { // otherwise handle errors
+            // create an alert for each error
+            errors.forEach(function (err) {
+                $('#readTask-response').append(UI.create_alert('danger', err.message));
+            });
+        }
+
+        return false;
     });
 
     //delete feature from feature section
@@ -324,7 +441,7 @@ $(function () {
     $('#delete-taskBtn').click(function(event) {
         event.preventDefault();
         const taskID = $('#readTaskModal').attr('data-task-id');
-      
+        UI.show_loader();
         socket.emit('remove task', projectID, taskID);
         $('#readTaskModal').modal('toggle');
     });
@@ -420,13 +537,16 @@ $(function () {
     });
 
     socket.on('get task', function(task) {
-        //add task to DOM
-        if (whichUpdateTask == 1) {
-            addTaskToReadTaskDom(task);
-        }
-        else if (whichUpdateTask == 2){
-            updateTaskRead(task);
-        }
+        const start_date = new Date(task.est_start_date);
+        const end_date = new Date(task.est_end_date);
+        const datepicker_s = $('#editTask-startDate').datepicker();
+        const datepicker_e = $('#editTask-endDate').datepicker();
+
+        datepicker_s.value(pad(start_date.getMonth()+1)+"/"+ pad(start_date.getDate())+"/"+start_date.getFullYear());
+        datepicker_e.value(pad(end_date.getMonth()+1)+"/"+ pad(end_date.getDate())+"/"+end_date.getFullYear());
+
+        $('#editTask-name').val(task.name);
+        $('#editTask-description').val(task.description);
     });
     
     socket.on('get feature', function(feature) {
