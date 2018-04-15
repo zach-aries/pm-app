@@ -1,3 +1,5 @@
+import { start } from 'repl';
+
 var message_controller = require('../controllers/messengerController');
 var user_controller = require('../controllers/userController');
 var project_controller = require('../controllers/projectController');
@@ -311,7 +313,6 @@ module.exports = function (io) {
          * 
          * @param _id - task id
          */
-
         socket.on('update status', function (taskID, newStatus) {
             async.series({
                 task: function (callback) {
@@ -319,11 +320,30 @@ module.exports = function (io) {
                 }
             }, function (err, result) {
                 console.log(result);
-                socket.emit('update status', taskID, newStatus);
-                io.sockets.in(taskID).emit('update status', result.task);
             });
         });
 
+        socket.on('update task', function (taskID, description, start_date, end_date) {
+            console.log(taskID, description, start_date, end_date);
+            async.parallel({
+                task: function (callback) {
+                    task_controller.update_task(taskID, description, start_date, end_date, callback);
+                }
+            }, function (err, result) {
+                console.log('updated task:\n', result.project);
+                io.sockets.in(roomID).emit('update task', result.project);
+            });
+        });
+
+        socket.on('update task', function (_id, name, description, est_start_date, est_end_date) {
+            async.series({
+                task: function (callback) {
+                    task_controller.update_task(_id, name, description, est_start_date, est_end_date, callback);
+                }
+            }, function (err, result) {
+                io.sockets.in(roomID).emit('update task', result.task);
+            });
+        });
         /**
          * Adds user to database
          * finds user by username and pushes their id to
