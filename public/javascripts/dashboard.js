@@ -1,6 +1,3 @@
-let whichUpdateFeat = -1;
-let whichUpdateTask = -1;
-
 $(function () {
     const socket = io();
 
