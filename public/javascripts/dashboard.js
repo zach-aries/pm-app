@@ -268,50 +268,6 @@ $(function () {
         }
     });
 
-    $('#add-task').click(function () {
-        const taskName = $('#taskName').val();
-        const description = $('#description').val();
-        const featureID = $('#newTaskFeatureID').val();
-        // const assignedTo = $('#assignedTo').val;
-        const assignedTo = 1;
-        const est_start_date = $('#datepickerTaskS').val();
-        const est_end_date = $('#datepickerTaskF').val();
-
-        let allGood = 1;
-        const status = "Pending";
-
-        if (taskName.length < 1) {
-            let newAlertMsg = "Task name cannot be empty";
-            $('#added-alert').modal('toggle');
-            $('#alert-msg').html(newAlertMsg);
-            allGood = 0;
-        }
-        else if(description.length < 1){
-            let newAlertMsg = "Description cannot be empty";
-            $('#added-alert').modal('toggle');
-            $('#alert-msg').html(newAlertMsg);
-            
-            allGood = 0;
-        }
-        else if (est_end_date < est_start_date) {
-            let newAlertMsg = "To date cannot be less than From date";
-            $('#added-alert').modal('toggle');
-            $('#alert-msg').html(newAlertMsg);
-            allGood = 0;
-        } else if (est_end_date == est_start_date) {
-            let newAlertMsg = "To date cannot be the same as From date";
-            $('#added-alert').modal('toggle');
-            $('#alert-msg').html(newAlertMsg);
-            allGood = 0;
-        }
-
-        if (Boolean(allGood)) {
-            socket.emit('add task', taskName, description, featureID, est_start_date, est_end_date, status);
-            $('#newTaskModal').modal('toggle');
-            //alert("Task added!");
-        }
-    });
-
     /**
      * Task form submit
      */
@@ -319,11 +275,15 @@ $(function () {
         // set inputs
         const name = $('#taskName').val();
         const description = $('#description').val();
-        const featureID = $('#featureIDForTask').val();
-        // const assignedTo = $('#assignedTo').val;
-        const assignedTo = 1;
-        const start_date = $('#datepickerTaskS').val();
-        const end_date = $('#datepickerTaskF').val();
+        const featureID = $('#newTaskFeatureID').val();
+        const assignedTo = $('#newTask-assignedTo').val();
+        const start_date = $('#newTask-startDate').val();
+        const end_date = $('#newTask-endDate').val();
+
+        console.log(featureID);
+
+
+
         const d_start_date = new Date(start_date);
         const d_end_date = new Date(end_date);
         const status = "Pending";
@@ -337,6 +297,14 @@ $(function () {
             errors.push({
                 error: 'validation',
                 message: 'Please enter a valid task name'
+            });
+        }
+
+        // check if feature is assigned
+        if ( !featureID.match(/\S/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please select a parent feature'
             });
         }
 
@@ -374,16 +342,12 @@ $(function () {
 
         $('#newTask-response').empty();
         // submit for if no errors
-        if (errors.length === 0) {
-            // If no parent specified, send null
-            if (parentID === 'null') {
-                parentID = null;
-            }
-
+        if (errors.length < 1) {
+            console.log('gets here');
             // display loader
             UI.show_loader();
             // sent info to server
-            socket.emit('add task', taskName, description, featureID, est_start_date, est_end_date, status);
+            socket.emit('add task', name, description, featureID, d_start_date, d_end_date, status);
 
             // dismiss modal
             $('#newTaskModal').modal('toggle');
@@ -394,7 +358,7 @@ $(function () {
             });
         }
 
-        // prevent default
+        // prevent default*/
         return false;
     });
 
@@ -475,7 +439,7 @@ $(function () {
 
     //delete feature from feature section
     $('#delete-featureBtn').click(function() {
-        const featureID = $('.store-id').attr('id');
+        const featureID = $('#readFeatureModal').attr('data-featureID');
 
         UI.show_loader();
         socket.emit('remove feature', featureID, projectID);
@@ -617,6 +581,8 @@ $(function () {
             $('#'+featureID).parent().append(ul);
             parentEl = ul;
         }
+
+        UI.hide_loader();
 
         // add task to DOM
         addTask(parentEl, task);

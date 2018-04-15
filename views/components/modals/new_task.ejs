@@ -10,47 +10,45 @@
             </div>
             <div class="modal-body">
                 <form id="newTaskForm" action="">
+                    <div id="newTask-response"></div>
                     <div class="form-group">
-                        <form>
-                            <div class="form-group">
-                                <label for="featureName">Feature:</label>
-                                <select class="form-control" id="newTaskFeatureID"></select>
-                            </div>
-                            <div class="form-group">
-                                <label for="taskName">Task Name:</label>
-                                <input type="text" class="form-control" id="taskName">
-                            </div>
-                            <div class="form-group">
-                                <label for="description">Description:</label>
-                                <textarea class="form-control" rows="5" id="description"></textarea>
-                            </div>
-                        </form>
                         <div class="form-group">
-                            <label for="assignedTo">Assign task to: </label>
-                            <select class="form-control" id="assignedTo">
-                                <option>Person 1</option>
-                                <option>Person 2</option>
-                            </select>
+                            <label for="featureName">Feature:</label>
+                            <select class="form-control" id="newTaskFeatureID"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskName">Task Name:</label>
+                            <input type="text" class="form-control" id="taskName">
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Description:</label>
+                            <textarea class="form-control" rows="5" id="description"></textarea>
                         </div>
 
-                        <form method="post">
+                        <div class="form-group">
+                            <label for="assignedTo">Assign task to: </label>
+                            <select class="form-control" id="newTask-assignedTo" multiple>
+                                <option value="1">Person 1</option>
+                                <option value="2">Person 2</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
                             <div class="row">
                                 <div class="col-sm-6" class="form-group">
                                     <label class="col" class="control-label" for="date">Estimated Start: </label>
-                                    <input id="datepickerTaskS" class="form-control date-picker" id="fromDate" name="date" placeholder="MM/DD/YYYY" type="text" />
+                                    <input id="newTask-startDate" class="form-control date-picker" placeholder="MM/DD/YYYY" type="text" />
                                 </div>
                                 <div class="col-sm-6">
                                     <label class="col" class="control-label" for="date">Estimated Finish: </label>
-                                    <input id="datepickerTaskF" class="form-control date-picker" id="toDate" placeholder="MM/DD/YYYY" type="text" />
+                                    <input id="newTask-endDate" class="form-control date-picker" placeholder="MM/DD/YYYY" type="text" />
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
                     <br />
-                    <br />
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                         <button id="add-task" type="submit" class="btn btn-primary">Save Task</button>
-                    <!--    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>  -->
                     </div>
                 </form>
             </div>
