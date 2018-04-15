@@ -202,17 +202,23 @@ module.exports = function (io) {
          *
          * @param _id - feature id
          */
-        socket.on('remove feature', function (featureID) {
+        socket.on('remove feature', function (featureID, projectID) {
             async.series({
                 feature: function (callback) {
                     feature_controller.remove_featureAndChildren(featureID, callback);
                 },
                 tasks: function (callback) {
                     task_controller.remove_task_featureID(featureID, callback);
-                }
-            }, function (err, result) {
-                //console.log('r', result);
-                io.sockets.in(roomID).emit('remove feature', featureID);
+                },
+            }, function (err, result1) {
+                async.series({
+                    features: function (callback) {
+                        feature_controller.get_featuresByProjectID(projectID, callback);
+                    },
+                }, function (err, result2) {
+                    //console.log('r', result);
+                    io.sockets.in(roomID).emit('remove feature', featureID, result2.features);
+                });
             });
         });
 

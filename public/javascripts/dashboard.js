@@ -272,7 +272,7 @@ $(function () {
     $('#add-task').click(function () {
         const taskName = $('#taskName').val();
         const description = $('#description').val();
-        const featureID = $('#featureIDForTask').val();
+        const featureID = $('#newTaskFeatureID').val();
         // const assignedTo = $('#assignedTo').val;
         const assignedTo = 1;
         const est_start_date = $('#datepickerTaskS').val();
@@ -318,7 +318,7 @@ $(function () {
         const featureID = $('#readFeatureModal').attr('data-featureID');
 
         UI.show_loader();
-        socket.emit('remove feature', featureID);
+        socket.emit('remove feature', featureID, projectID);
         $('#readFeatureModal').modal('toggle');
 
     });
@@ -409,9 +409,11 @@ $(function () {
 
         // add feature to DOM
         addFeature(parentEl, feature);
+
         // add feature to both task/feature modals
-        addFeatureToFeatureModals(feature);
-        addFeatureToTaskModal(feature);
+        $('#newFeatureParent').append( $('<option>').text(feature.name).val(feature._id));
+        $('#editFeature-parent').append( $('<option>').text(feature.name).val(feature._id));
+        $('#newTaskFeatureID').append( $('<option>').text(feature.name).val(feature._id));
 
         UI.hide_loader();
     });
@@ -436,9 +438,9 @@ $(function () {
         set_readModal(feature);
     });
 
-    socket.on('remove feature', function (featureID) {
-        console.log('remove feature:', featureID);
+    socket.on('remove feature', function (featureID, features) {
         $('#'+featureID).parent().remove();
+        init_modal_selects(features);
 
         UI.hide_loader();
     });
@@ -493,11 +495,8 @@ $(function () {
         // initiate messenger
         init_messenger(data.messages, data.user_list);
 
-        // populate newFeatureModal with features
-        data.features.forEach(function (feature) {
-            addFeatureToFeatureModals(feature);
-            addFeatureToTaskModal(feature);
-        });
+        // init all feature selects
+        init_modal_selects(data.features);
 
         GanttChart.init(data.project);
         UI.hide_loader();
@@ -518,6 +517,29 @@ $(function () {
         // populate project directory with features & tasks
         project.forEach(function (feature) {
             addFeature($('#project-directory'), feature);
+        });
+    }
+
+    function init_modal_selects(features) {
+        // populate newFeatureModal with features
+        const newFeatureParent = $('#newFeatureParent');
+        const editFeatureParent = $('#editFeature-parent');
+        const newTaskFeatureID = $('#newTaskFeatureID');
+
+        // clear selects
+        newFeatureParent.empty();
+        editFeatureParent.empty();
+        newTaskFeatureID.empty();
+
+        // add null values for feature creation / update
+        newFeatureParent.append($('<option>').text('(Root)').val('null'));
+        editFeatureParent.append($('<option>').text('(Root)').val('null'));
+
+        // add actual features to selects
+        features.forEach(function (feature) {
+            newTaskFeatureID.append( $('<option>').text(feature.name).val(feature._id));
+            newFeatureParent.append( $('<option>').text(feature.name).val(feature._id));
+            editFeatureParent.append( $('<option>').text(feature.name).val(feature._id));
         });
     }
 
@@ -741,32 +763,6 @@ $(function () {
         let li = $('<li>').html(a);
 
         el.append(li);
-    }
-
-
-    /**
-     * Creates the options for the feature dropdown in the create feature modal
-     *
-     * @param feature
-     */
-    function addFeatureToFeatureModals(feature) {
-        const select1 = $('#newFeatureParent');
-
-        const select2 = $('#editFeature-parent');
-
-        select1.append( $('<option>').text(feature.name).val(feature._id));
-        select2.append( $('<option>').text(feature.name).val(feature._id));
-        
-    }
-
-    /**
-     * Creates the options for the feature dropdown in the create task modal
-     *
-     * @param feature
-     */
-    function addFeatureToTaskModal(feature) {
-        const select1 = $('#featureIDForTask');
-        select1.append( $('<option>').text(feature.name).val(feature._id));
     }
 
     /**
