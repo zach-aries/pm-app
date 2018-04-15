@@ -106,6 +106,7 @@ var GanttChart = (function () {
         var options = {
             height: (41 * task_list.length) + 50,    // TODO needs to be calculated
             //width: totaltime * 100,     // TODO needs to be calculated
+            width: (41 * task_list.length) + 50,
             timeline: {
                 trackHeight: 30,
                 fontName: 'Garamond'
