@@ -1,17 +1,9 @@
 $(function () {
-    /*
-
-    function drawChart() {
-
-
-    }*/
-
-
     const socket = io();
 
-    var initiated = false;
-    var userID = $('#user-info').attr('data-userID');
-    var projectID = $('#project-directory').attr('data-projectID');
+    let initiated = false;
+    let userID = $('#user-info').attr('data-userID');
+    let projectID = $('#project-directory').attr('data-projectID');
 
     /*===========================================
                     Send Events
@@ -41,75 +33,238 @@ $(function () {
         return false;
     });
 
+    $('#projectSettings-form').submit(function(){
+        let name = $('#projectSettings-name').val();
+        let desc = $('#projectSettings-desc').val();
+        let errors = [];
+
+        // validation checks
+        // check if name has content
+        if ( !name.match(/\S/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please enter a valid project name'
+            });
+        }
+
+        // check if desc has content
+        if ( !desc.match(/\S/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please enter a valid project description'
+            });
+        }
+
+        // clear response div
+        $('#projectSettings-response').empty();
+
+        // submit for if no errors
+        if (errors.length === 0) {
+            // display loader
+            UI.show_loader();
+            // sent info to server
+            socket.emit('update project', projectID, name, desc);
+
+            // disable form inputs
+            toggle_form_disabled($('#projectSettings-form'));
+            // dismiss modal
+            $('#projectSettingsModal').modal('toggle');
+        } else { // otherwise handle errors
+            // create an alert for each error
+            errors.forEach(function (err) {
+               $('#projectSettings-response').append(UI.create_alert('danger', err.message));
+            });
+        }
+
+        // prevent form submit
+        return false;
+    });
+
+    $('#delete-project').click(function () {
+        const name = $('#projectSettings-name').val();
+        const name_cnfm = $('#projectSettings-delete').val();
+        let errors = [];
+
+        if (name === name_cnfm ) {
+            UI.show_loader();
+            socket.emit('delete project', projectID);
+        } else {
+            errors.push({
+                error: 'validation',
+                message: 'Please confirm project name to delete'
+            });
+
+            errors.forEach(function (err) {
+                $('#projectSettings-response').append(UI.create_alert('danger', err.message));
+            });
+        }
+    });
+
     /**
      * Feature form submit
      */
     $('#newFeatureForm').submit(function(){
-        var parentID = $('#newFeatureParent').val();
+
+        // set inputs
+        let parentID = $('#newFeatureParent').val();
         const name = $('#newFeatureName').val();
+        const start_date = $('#datepickerFeatureS').val();
+        const end_date = $('#datepickerFeatureF').val();
+        const d_start_date = new Date(start_date);
+        const d_end_date = new Date(end_date);
 
-        console.log("featureParent: "+parentID);
-        console.log("featureName: " + name);
+        let errors = [];
 
-        // Dates
-        const fromDate = $('#datepickerFeatureS').val();  //.data("datepicker").getFormattedDate('yyyy-mm-dd');
-        const toDate = $('#datepickerFeatureF').val(); //.data("datepicker").getFormattedDate('yyyy-mm-dd');
+        // validation
 
-        console.log("StartDate: " + fromDate);
-        console.log("EndDate: " + toDate);
-        
-        if (name.length < 1) {
-            var newAlertMsg = "Must provide a name for new feature";
-            $('#added-alert').modal('toggle');
-            $('#alert-msg').html(newAlertMsg);
+        // check if name has content
+        if ( !name.match(/\S/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please enter a valid feature name'
+            });
         }
-        // Check that end date isn't before start date
-        else if (toDate < fromDate) {
-            var newAlertMsg = "Start date must be before end date";
-            $('#added-alert').modal('toggle');
-            $('#alert-msg').html(newAlertMsg);
-        }
-        else if (toDate == "" || fromDate == "") {
-            var newAlertMsg = "You must enter both a start and end date";
-            $('#added-alert').modal('toggle');
-            $('#alert-msg').html(newAlertMsg);
-        }
-        else {
-            console.log("feature parent: " + parentID);
 
+        // check if start date has format 00/00/0000
+        if ( !start_date.match(/\d\d\/\d\d\/\d\d\d\d/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please select an estimated start date'
+            });
+        }
+
+        // check if start date has format 00/00/0000
+        if ( !end_date.match(/\d\d\/\d\d\/\d\d\d\d/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please select an estimated start date'
+            });
+        }
+
+        if ( d_end_date < d_start_date ) {
+            errors.push({
+                error: 'validation',
+                message: 'End date cannot be before estimated start date'
+            });
+        }
+
+        $('#newFeature-response').empty();
+        // submit for if no errors
+        if (errors.length === 0) {
             // If no parent specified, send null
-            if (parentID.trim() === "(None)") {
-                console.log("Yay! NONE!");
+            if (parentID === 'null') {
                 parentID = null;
             }
-        
-            // Clear name field
-            document.getElementById("newFeatureName").value = "";        
 
-            socket.emit('add feature', name, projectID, parentID, fromDate, toDate);
+            // display loader
+            UI.show_loader();
+            // sent info to server
+            socket.emit('add feature', name, projectID, parentID, start_date, end_date);
 
+            // dismiss modal
             $('#newFeatureModal').modal('toggle');
-
-            // Make dates 
-
-            //var newAlertMsg = "Feature \"" + name + "\" added.";
-            //$('#added-alert').modal('toggle');
-            //$('#alert-msg').html(newAlertMsg);
-
-            //alert("Feature Added!");
+        } else { // otherwise handle errors
+            // create an alert for each error
+            errors.forEach(function (err) {
+                $('#newFeature-response').append(UI.create_alert('danger', err.message));
+            });
         }
+
+        // prevent default
+        return false;
+    });
+
+    $('#editFeature-form').submit(function(){
+        // set inputs
+        const _id = $('#readFeatureModal').attr('data-featureID');
+        const name = $('#editFeature-name').val();
+        const start_date = $('#editFeature-startDate').val();
+        const end_date = $('#editFeature-endDate').val();
+        const d_start_date = new Date(start_date);
+        const d_end_date = new Date(end_date);
+
+        let errors = [];
+
+        // validation
+
+        // check if name has content
+        if ( !name.match(/\S/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please enter a valid feature name'
+            });
+        }
+
+        // check if start date has format 00/00/0000
+        if ( !start_date.match(/\d\d\/\d\d\/\d\d\d\d/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please select an estimated start date'
+            });
+        }
+
+        // check if start date has format 00/00/0000
+        if ( !end_date.match(/\d\d\/\d\d\/\d\d\d\d/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please select an estimated start date'
+            });
+        }
+
+        // make sure start date comes before end date
+        if ( d_end_date < d_start_date ) {
+            errors.push({
+                error: 'validation',
+                message: 'End date cannot be before estimated start date'
+            });
+        }
+
+        $('#newFeature-response').empty();
+        // submit for if no errors
+        if (errors.length === 0) {
+            // display loader
+            UI.show_loader();
+            // sent info to server
+            socket.emit('update feature', _id, name, d_start_date, d_end_date);
+
+            // dismiss modal
+            $('#readFeatureModal').modal('toggle');
+            // disable input
+            toggle_form_disabled($('#editFeature-form'));
+        } else { // otherwise handle errors
+            // create an alert for each error
+            errors.forEach(function (err) {
+                $('#readFeature-response').append(UI.create_alert('danger', err.message));
+            });
+        }
+
         return false;
     });
 
     $('#add-users').click(function () {
         const user = $('#projectSettingsAddUser').val();
+        let errors = [];
 
-        // check to make sure the username includes a character
-        if (user.match(/\S/)) {
+        // validation checks
+        // check if name has content
+        if ( !user.match(/\S/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please enter a valid username'
+            });
+        }
+
+        $('#projectSettingsUsers-response').empty();
+        if (errors.length === 0) {
+            UI.show_loader();
             socket.emit('add user', user, projectID);
-
-            // clear chat entry
+            // clear input value
             $('#projectSettingsAddUser').val('');
+        } else {
+            // create an alert for each error
+            errors.forEach(function (err) {
+                $('#projectSettingsUsers-response').append(UI.create_alert('danger', err.message));
+            });
         }
     });
 
@@ -122,29 +277,29 @@ $(function () {
         const est_start_date = $('#datepickerTaskS').val();
         const est_end_date = $('#datepickerTaskF').val();
 
-        var allGood = 1;
+        let allGood = 1;
         const status = "Pending";
 
         if (taskName.length < 1) {
-            var newAlertMsg = "Task name cannot be empty";
+            let newAlertMsg = "Task name cannot be empty";
             $('#added-alert').modal('toggle');
             $('#alert-msg').html(newAlertMsg);
             allGood = 0;
         }
         else if(description.length < 1){
-            var newAlertMsg = "Description cannot be empty";
+            let newAlertMsg = "Description cannot be empty";
             $('#added-alert').modal('toggle');
             $('#alert-msg').html(newAlertMsg);
             
             allGood = 0;
         }
         else if (est_end_date < est_start_date) {
-            var newAlertMsg = "To date cannot be less than From date";
+            let newAlertMsg = "To date cannot be less than From date";
             $('#added-alert').modal('toggle');
             $('#alert-msg').html(newAlertMsg);
             allGood = 0;
         } else if (est_end_date == est_start_date) {
-            var newAlertMsg = "To date cannot be the same as From date";
+            let newAlertMsg = "To date cannot be the same as From date";
             $('#added-alert').modal('toggle');
             $('#alert-msg').html(newAlertMsg);
             allGood = 0;
@@ -157,31 +312,11 @@ $(function () {
         }
     });
 
-    // Read task from project menu
-    $('#project-directory').on('click', 'a.task', function() {
-        const taskID = $(this).attr('id');
-        socket.emit('get task', taskID, projectID);
-
-        $('#readTaskModal').modal('toggle');
-        $('#readTaskModal').attr('data-task-id', taskID);
-    });
-
-    // TODO remove the following and replace with correct calls
-    $('#project-directory').on('click', 'a.feature', function() {
-        const featureID = $(this).attr('id');
-        socket.emit('get feature', featureID, projectID);
-        //const featureName = $(this).val();
-        //socket.emit('remove feature', featureID);
-        //let feature = get_feature(featureID);
-        
-
-        $('#readFeatureModal').modal('toggle');
-        $('.store-id').attr("id", featureID);
-    });
-    
     //delete feature from feature section
     $('#delete-featureBtn').click(function() {
         const featureID = $('.store-id').attr('id');
+
+        UI.show_loader();
         socket.emit('remove feature', projectID, featureID);
     });
 
@@ -189,7 +324,7 @@ $(function () {
     $('#delete-taskBtn').click(function(event) {
         event.preventDefault();
         const taskID = $('#readTaskModal').attr('data-task-id');
-
+      
         socket.emit('remove task', projectID, taskID);
         $('#readTaskModal').modal('toggle');
     });
@@ -213,7 +348,6 @@ $(function () {
         const taskID = $(this).attr('id');
         const status = "Complete";
         socket.emit('update status', taskID, status);
-        $('#')
     });
 
     /*===========================================
@@ -228,14 +362,13 @@ $(function () {
         }
     });
 
-    socket.on('userlist update', function (userList) {
-       // console.log('user connected:', userList);
-        var temp = '';
-        for(i=0;i<userList.length;i++) {
-            temp = temp + '<li class="online">' + userList[i];
-        }
-        $('#user-list').html(temp);
-        console.log('current user list: ', temp);
+    socket.on('update project', function (project_info) {
+        update_projectSettings(project_info);
+        UI.hide_loader();
+    });
+
+    socket.on('delete project', function () {
+        location.href = '/dashboard/projects';
     });
 
     socket.on('message', function (message) {
@@ -243,9 +376,18 @@ $(function () {
         addMessage(message);
     });
 
+    socket.on('userlist update', function (userList) {
+       // console.log('user connected:', userList);
+        let temp = '';
+        for(i=0;i<userList.length;i++) {
+            temp = temp + '<li class="online">' + userList[i];
+        }
+        $('#user-list').html(temp);
+    });
+
     socket.on('add feature', function (feature) {
-        // create parent var for later
-        var parentEl;
+        // create parent let for later
+        let parentEl;
         if (feature.parent !== null) {
             // if feature has a parent, then add it as a sub feature
             // get feature-list to add feature to
@@ -253,7 +395,7 @@ $(function () {
 
             // if feature-list doesnt exist, create a new one and add it to the features parent el
             if (!parentEl.length) {
-                var ul = $('<ul>').addClass('hierarchy-list feature-list');
+                let ul = $('<ul>').addClass('hierarchy-list feature-list');
                 $('#'+feature.parent).parent().append(ul);
                 parentEl = ul;
             }
@@ -265,31 +407,45 @@ $(function () {
         // add feature to DOM
         addFeature(parentEl, feature);
         // add feature to both task/feature modals
-        addFeatureToFeatureModal(feature);
+        addFeatureToFeatureModals(feature);
         addFeatureToTaskModal(feature);
+
+        UI.hide_loader();
+    });
+
+    socket.on('update feature', function (feature) {
+        $('#'+feature._id).find('.feature-name').text(feature.name);
+
+        UI.hide_loader();
     });
 
     socket.on('get task', function(task) {
         //add task to DOM
-        addTaskToReadTaskDom(task);
+        if (whichUpdateTask == 1) {
+            addTaskToReadTaskDom(task);
+        }
+        else if (whichUpdateTask == 2){
+            updateTaskRead(task);
+        }
     });
     
     socket.on('get feature', function(feature) {
-        //add task to DOM
-        addFeatureToReadFeatureDom(feature);
+        set_readModal(feature);
     });
 
     socket.on('remove feature', function (featureID) {
         console.log('remove feature:', featureID);
+
+        UI.hide_loader();
     });
 
     socket.on('add task', function (task, featureID) {
         // get task-list to add task to
-        var parentEl = $('#'+featureID).parent().children('.task-list:first');
+        let parentEl = $('#'+featureID).parent().children('.task-list:first');
 
         // if task-list does not exist, create it and add it to the tasks parent el
         if (!parentEl.length) {
-            var ul = $('<ul>').addClass('hierarchy-list task-list');
+            let ul = $('<ul>').addClass('hierarchy-list task-list');
             $('#'+featureID).parent().append(ul);
             parentEl = ul;
         }
@@ -302,81 +458,165 @@ $(function () {
         console.log('remove task:', taskID);
     });
 
-    socket.on('add user', function (user) {
-        $('#settings-user-list').append($('<li>').text(user.username));
+    socket.on('add user', function (user, error) {
+        UI.hide_loader();
+        if (user !== null) {
+            // the variable is defined
+            $('#settings-user-list').append($('<li>').text(user.username));
+        } else {
+            $('#projectSettingsUsers-response').append(UI.create_alert('danger', error));
+        }
+
     });
 
     /*===========================================
                   General Functions
      ===========================================*/
     function init(data) {
-        // populate chat with messages
-        data.messages.forEach(function (message) {
-           addMessage(message);
+        // Initiate Date Picker
+        $('.date-picker').each(function () {
+            $(this).datepicker({
+                uiLibrary: 'bootstrap4'
+            });
         });
 
-        // populate project directory with features & tasks
-        data.project.forEach(function (feature) {
-            addFeature($('#project-directory'), feature);
-        });
+        // init project settings modal
+        init_projectSettings(data.project_info, data.project_users);
 
-        data.project_users.forEach(function (user) {
-            $('#settings-user-list').append($('<li>').text(user.username));
-            //$('#user-list').append($('<li class="online">').text(user.username));
-        });
+        // initiate project directory
+        init_projectDir(data.project);
 
-        data.user_list.forEach(function (name) {
-            $('#user-list').append($('<li class="online">').text(name));
-        });
+        // initiate messenger
+        init_messenger(data.messages, data.user_list);
 
-        // clear newFeatureModal select and add a null option
-        $('#newFeatureFormControlSelect1').empty().append( $('<option>').text('None').val(null));
-        // clear newTaskModal select and add a null option
-        $('#newTaskFormControlSelect1').empty();
         // populate newFeatureModal with features
         data.features.forEach(function (feature) {
-            addFeatureToFeatureModal(feature);
+            addFeatureToFeatureModals(feature);
             addFeatureToTaskModal(feature);
         });
 
         GanttChart.init(data.project);
+        UI.hide_loader();
+    }
+    function init_projectSettings(project_info, project_users){
+        // set project settings
+        update_projectSettings(project_info);
+
+        // set project users
+        project_users.forEach(function (user) {
+            $('#settings-user-list').append($('<li>').text(user.username));
+            //$('#user-list').append($('<li class="online">').text(user.username));
+        });
+    }
+
+    function init_projectDir(project) {
+        $('#project-directory').empty();
+        // populate project directory with features & tasks
+        project.forEach(function (feature) {
+            addFeature($('#project-directory'), feature);
+        });
+    }
+
+    function init_messenger(messages, users) {
+        // populate chat with messages
+        messages.forEach(function (message) {
+            addMessage(message);
+        });
+
+        // add online users to chat users
+        users.forEach(function (name) {
+            $('#user-list').append($('<li class="online">').text(name));
+        });
     }
 
     /*===========================================
                     DOM Functions
      ===========================================*/
+    $('#project-directory').on('click', 'span.caret', function(event) {
+        event.stopImmediatePropagation();
+
+        $(this).parent().parent().toggleClass('closed');
+        $(this).find('svg').toggleClass('closed');
+    });
+
+    $('#project-directory').on('click', 'a.feature', function() {
+        const featureID = $(this).attr('id');
+        socket.emit('get feature', featureID, projectID);
+
+
+        $('#readFeatureModal').modal('toggle').attr('data-featureID', featureID);
+        $('.store-id').attr("id", featureID);
+    });
+
+    // Read task from project menu
+    $('#project-directory').on('click', 'a.task', function() {
+        const taskID = $(this).attr('id');
+        socket.emit('get task', taskID, projectID);
+
+        $('#readTaskModal').modal('toggle');
+        $('#readTaskModal').attr('data-task-id', taskID);
+    });
+
+    /**
+     * toggles disabled attribute on all input elements for
+     * specified form.
+     * button must have data-target attribute specified for target form
+     * inputs with class "no-edit" will not be affected
+     */
+    $('button.edit').click(function (event) {
+        const form = $('#'+$(this).attr('data-target'));
+        toggle_form_disabled(form);
+    });
+
+    function toggle_form_disabled(form) {
+        form.find('.delete').each(function () {
+            $(this).toggleClass('hidden');
+        });
+
+        form.find('input, select, textarea, button[type=submit], .btn-danger').each(function () {
+            let el = $(this);
+            if (! el.hasClass('no-edit') ) {
+                if (el.attr('disabled')) {
+                    el.removeAttr('disabled');
+                } else {
+                    el.attr('disabled', '');
+                }
+            }
+        });
+    }
+
+    function update_projectSettings(project_info) {
+        $('#projectSettingsModal').attr('data-projectID', project_info._id);
+        $('#projectSettings-name').val(project_info.name);
+        $('#project-name').text(project_info.name);
+        $('#projectSettings-desc').val(project_info.description);
+    }
+
     /**
      * Add feature to #project-directory
      *
+     * @param el
      * @param feature
      */
     function addFeature(el, feature) {
 
         // create icon (font awesome)
-        var i = $('<i>').addClass('fas fa-caret-right');
+        let span = $('<span>')
+            .addClass('caret')
+            .html($('<i>').addClass('fas fa-caret-down'));
         // create link and prepend the icon
-        var a = $('<a>').text(feature.name)
+        let a = $('<a>')
+            .html($('<span>').text(feature.name).addClass('feature-name'))
             .attr('id', feature._id)
-            .addClass('feature')
-            .prepend(i);
+            .addClass('feature closed')
+            .prepend(span);
 
         // create li and set html content to a
-        var li = $('<li>').html(a);
-
-        if (typeof feature.children !== 'undefined') {
-            if ( feature.children.length > 0 ){
-                var ul = $('<ul>').addClass('hierarchy-list feature-list');
-                feature.children.forEach(function (child) {
-                    addFeature(ul, child);
-                });
-
-                li.append(ul);
-            }
-        }
+        let li = $('<li>').html(a);
 
         if (typeof feature.tasks !== 'undefined') {
             if (feature.tasks.length > 0) {
-                var ul = $('<ul>').addClass('hierarchy-list task-list');
+                let ul = $('<ul>').addClass('hierarchy-list task-list');
                 feature.tasks.forEach(function (task) {
                     addTask(ul, task);
                 });
@@ -385,8 +625,60 @@ $(function () {
             }
         }
 
+        if (typeof feature.children !== 'undefined') {
+            if ( feature.children.length > 0 ){
+                let ul = $('<ul>').addClass('hierarchy-list feature-list');
+                feature.children.forEach(function (child) {
+                    addFeature(ul, child);
+                });
+
+                li.append(ul);
+            }
+        }
+
+
+
         // append list item to the project list
         el.append(li);
+    }
+
+    function set_readModal(feature) {
+        const start_date = new Date(feature.est_start_date);
+        const end_date = new Date(feature.est_end_date);
+        const datepicker_s = $('#editFeature-startDate').datepicker();
+        const datepicker_e = $('#editFeature-endDate').datepicker();
+
+        datepicker_s.value(pad(start_date.getMonth()+1)+"/"+ pad(start_date.getDate())+"/"+start_date.getFullYear());
+        datepicker_e.value(pad(end_date.getMonth()+1)+"/"+ pad(end_date.getDate())+"/"+end_date.getFullYear());
+
+        $('#editFeature-name').val(feature.name);
+        if (feature.parent === null ) {
+            $('#editFeature-parent').val('null');
+        } else {
+            $('#editFeature-parent').val(feature.parent);
+        }
+
+        $('#readFeature-tasks').empty();
+        feature.tasks.forEach(function (task) {
+            let esd = new Date(task.est_start_date);
+            let eed = new Date(task.est_end_date);
+
+
+            let tr = $('<tr>')
+                .append($('<td>').text(task.name))
+                .append($('<td>').text(task.status))
+                .append($('<td>').text(pad(esd.getMonth()+1)+"/"+ pad(esd.getDate())+"/"+esd.getFullYear()))
+                .append($('<td>').text(pad(eed.getMonth()+1)+"/"+ pad(eed.getDate())+"/"+eed.getFullYear()));
+
+            $('#readFeature-tasks').append(tr);
+        });
+    }
+
+    function pad(n) {return n < 10 ? "0"+n : n;}
+
+    function addParentToRead(feature) {
+        $('#read-parent').text(""+feature.name);
+        //whichUpdateFeat = -1;
     }
 
     /**
@@ -397,7 +689,7 @@ $(function () {
         console.log(task);
 
         $('#readTaskModal').modal('toggle');
-        var parentEl = $('#read_task_form_id');
+        let parentEl = $('#read_task_form_id');
 
         // set form html here
         $('#editTaskForm_name').text(task.name)
@@ -414,61 +706,16 @@ $(function () {
         $('#editTaskForm_endDate').text(endMon + " " + endStr.substring(8,10) + ", " + endStr.substring(0,4));
     }
 
-    /**
-     *
-     * @param feature
-     */
-    function addFeatureToReadFeatureDom(feature) {
-        console.log(feature);
-
-        $('#readFeatureModal').modal('toggle');
-        $('#rem-feat-mod-id').html("Feature: <strong>" + feature.name + "</strong>");
-        if (feature.parent != null) {
-            $('#read-parent').text(""+feature.parent);
-        }
-        else {
-            $('#read-parent').text("---");
-        }
-        let startStr = ""+feature.est_start_date;
-        let endStr = ""+feature.est_end_date;
-
-        let startMon = findMonth((startStr.substring(5,7)-0));
-        let endMon = findMonth((endStr.substring(5,7)-0));
-
-        $('#read-start').text(startMon + " " + startStr.substring(8,10) + ", " + startStr.substring(0,4));
-        $('#read-end').text(endMon + " " + endStr.substring(8,10) + ", " + endStr.substring(0,4));
-
-
-        $('#read-task-list').remove();
-
-        //var li = $('<li>').text(feature.tasks[0]);
-        //$('#read-task-list').append(li);
-
-        console.log("Task List:" + feature.tasks)
-        
-        for (let i=0; i<feature.tasks.length; ++i) {
-            console.log(feature.tasks[i]);
-            var li = $('<li>').text(""+feature.tasks[i]);
-            $('#read-task-list').append(li);
-        }
-        // Loop through and add each task to list
-        //var a = $('<a>').text(feature.name)
-        //var li = $('<li>').html(a);
-        //$('#read-task-list').append
-        
-        /*
-        read-parent
-        read-start
-        read-end
-        read-task-list
-        */
-        //var parentEl = $('#read_task_form_id');
-        //var form = "<%= " + feature + " %>";
-        //parentEl.append(form);
+    function updateTaskRead(task) {
+        //console.log("task id?" + task);
+        let li = "<li>"+task.name+"</li>";
+        $('#read-task-list').append(li);
+        //$("read-task-list").find("#t"+task._id).text(""+);
+        //whichUpdateTask = -1;
     }
 
     function addTask(el, task) {
-        var classname = '';
+        let classname = '';
         if (task.status === "Pending")
             classname = 'far fa-calendar';
         else if (task.status === "Started")
@@ -479,15 +726,15 @@ $(function () {
             classname = 'fa fa-calendar-times';
 
         // create icon (font awesome)
-        var i = $('<i>').addClass(classname);
+        let i = $('<i>').addClass(classname);
         // create link and prepend the icon
-        var a = $('<a>')
+        let a = $('<a>')
             .text(task.name)
             .attr('id', task._id)
             .addClass('task')
             .prepend(i);
         // create li and set html content to a
-        var li = $('<li>').html(a);
+        let li = $('<li>').html(a);
 
         el.append(li);
     }
@@ -498,9 +745,13 @@ $(function () {
      *
      * @param feature
      */
-    function addFeatureToFeatureModal(feature) {
+    function addFeatureToFeatureModals(feature) {
         const select1 = $('#newFeatureParent');
+
+        const select2 = $('#editFeature-parent');
+
         select1.append( $('<option>').text(feature.name).val(feature._id));
+        select2.append( $('<option>').text(feature.name).val(feature._id));
         
     }
 
@@ -520,15 +771,15 @@ $(function () {
      * @param data
      */
     function addMessage(message) {
-        var date = new Date(message.timestamp);
-        var time = $('<span class="time"></span>').text(date.toLocaleString('en-US', {
+        let date = new Date(message.timestamp);
+        let time = $('<span class="time"></span>').text(date.toLocaleString('en-US', {
             hour: 'numeric',
             minute: 'numeric',
             hour12: true
         }));
 
-        var info = $('<div>').addClass('msg-info').text(message.user.username);
-        var li = $('<li>').text(message.message);
+        let info = $('<div>').addClass('msg-info').text(message.user.username);
+        let li = $('<li>').text(message.message);
 
         info.append(time);
         li.prepend(info);

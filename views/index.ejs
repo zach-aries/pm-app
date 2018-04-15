@@ -1,34 +1,53 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <% include partials/head.ejs %>
-</head>
-  <body>
-    <header>
-        <% include partials/header.ejs %>
-        <style>
-          #sign-up {
-            text-decoration: none;
-          }
-        </style>
-    </header>
+    <head>
+        <% include partials/head.ejs %>
+    </head>
+    <% include ./components/loader.ejs %>
+    <body>
+        <header>
+            <% include partials/header.ejs %>
+        </header>
 
-    <div class="jumbotron">
-      <div class="container" id="initial-info">
-        <h1 class="display-4">Avocado - Project Management Made Easier!</h1>
-        <p> </p>
-        <p><a class="btn btn-primary btn-lg" href="#" role="learnButton" id="learn-more-btn" onclick="changeText(this.value)">Learn more &raquo;</a></p>
-      </div>
-    </div>
+        <div class="jumbotron">
+            <div class="container" id="initial-info">
+                <h1 class="display-4">Avocado</h1>
+                <p class="lead">Project Management Made Easier!</p>
+                <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#registerModal" role="button">Register!</button>
+            </div>
+        </div>
 
-    <script type="text/javascript">
-      function changeText(value) {
-          document.getElementById('initial-info').innerHTML = "<h2>About Avocado</h2><br><p>Avocado is a web-based management application targeted at students completing group projects and professionals part of small software development teams. </p><br> <p>Avocado displays a project feature list, Gantt chart, personalized to-do list, and team messenger all on one screen for easy access. Features and tasks can easily be added to the project and nested within each other. Change will be immediately displayed in the Gantt chart and to-do lists of the people they are assigned to. </p><br><h5><a id=\"sign-up\"href=\"/register\"><strong>Make your project planning easier and join Avocado today!</a></strong></h5>";
-      }
-    </script>
+        <div class="container">
+            <div class="row mt-5">
+                <div class="col-12">
+                    <h1 class="display-4">About</h1>
+                    <hr>
+                    <p>Avocado is a web-based management application targeted at students completing group projects and
+                        professionals part of small software development teams. </p>
+                    <p>Avocado displays a project feature list, Gantt chart, personalized to-do list, and team messenger all on
+                        one screen for easy access. Features and tasks can easily be added to the project and nested within each
+                        other. Change will be immediately displayed in the Gantt chart and to-do lists of the people they are
+                        assigned to. </p>
+                    <p><a href="#" data-toggle="modal" data-target="#registerModal">Make your project planning easier and join Avocado today!</a></p>
+                </div>
+            </div>
+        </div>
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-  </body>
+        <% include ./components/modals/login.ejs %>
+        <% include ./components/modals/register.ejs %>
+
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
+                integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+                integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+                crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+                integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+                crossorigin="anonymous"></script>
+
+        <script src="/javascripts/ui.js"></script>
+        <script src="/javascripts/home.js"></script>
+    </body>
 </html>
