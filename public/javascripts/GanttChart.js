@@ -91,11 +91,16 @@ var GanttChart = (function () {
         */
         var chart = new google.visualization.Timeline(document.getElementById('timeline'));
         var data = new google.visualization.DataTable();
-
+        /*
         data.addColumn({ type: 'string', id: 'Task ID' });
         data.addColumn({ type: 'string', id: 'Task Name' });
         data.addColumn({ type: 'date', id: 'Start' });
         data.addColumn({ type: 'date', id: 'End' });
+        */
+        data.addColumn('string', 'Task ID');
+        data.addColumn('string', 'Task Name');
+        data.addColumn('date', 'Start');
+        data.addColumn('date', 'End');
 
         dataTable.addRows(task_list);
 
