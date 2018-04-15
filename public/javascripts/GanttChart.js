@@ -116,7 +116,7 @@ var GanttChart = (function () {
         };
 
         chart.clearChart();
-        chart.draw(dataTable, options);
+        chart.draw(data, options);
 
 
 
