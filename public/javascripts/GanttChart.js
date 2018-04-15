@@ -94,7 +94,7 @@ var GanttChart = (function () {
         var chart = new google.visualization.Timeline(document.getElementById('timeline'));
         var data = new google.visualization.DataTable();
 
-        data.addColumn('string', 'Task ID');
+        //data.addColumn('string', 'Task ID');
         data.addColumn('string', 'Task Name');
         //data.addColumn('string', 'Resource');
         data.addColumn('date', 'Start');
