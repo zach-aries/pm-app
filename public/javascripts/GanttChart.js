@@ -105,7 +105,7 @@ var GanttChart = (function () {
         data.addColumn('date', 'Start');
         data.addColumn('date', 'End');
 
-        dataTable.addRows(task_list);
+        data.addRows(task_list);
 
         var options = {
             height: 400,    // TODO needs to be calculated
