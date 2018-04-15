@@ -312,7 +312,6 @@ $(function () {
         }
     });
 
-
     //delete feature from feature section
     $('#delete-featureBtn').click(function() {
         const featureID = $('.store-id').attr('id');
@@ -322,15 +321,18 @@ $(function () {
     });
 
     //delete task from feature section
-    $('#delete-taskBtn').on('click', 'a.task', function() {
-        const taskID = $(this).attr('id');
+    $('#delete-taskBtn').click(function(event) {
+        event.preventDefault();
+        const taskID = $('#readTaskModal').attr('data-task-id');
+      
         socket.emit('remove task', projectID, taskID);
+        $('#readTaskModal').modal('toggle');
     });
 
     //delete task from todo section
     $('#delete-button-todo').on('click', 'a.task', function() {
-        const taskID = $(this).attr('id');
-        socket.emit('remove task', projectID, taskID);
+        //const taskID = $(this).attr('id');
+        //socket.emit('remove task', projectID, taskID);
     });
 
     //change status of a pending task into in process
@@ -546,11 +548,13 @@ $(function () {
         $('.store-id').attr("id", featureID);
     });
 
+    // Read task from project menu
     $('#project-directory').on('click', 'a.task', function() {
         const taskID = $(this).attr('id');
-        whichUpdateTask = 1;
         socket.emit('get task', taskID, projectID);
+
         $('#readTaskModal').modal('toggle');
+        $('#readTaskModal').attr('data-task-id', taskID);
     });
 
     /**
@@ -690,9 +694,16 @@ $(function () {
         // set form html here
         $('#editTaskForm_name').text(task.name)
         $('#editTaskForm_description').text(task.description);
+        $('#editTaskForm_assignTo').text(task.responsible);
 
-        //whichUpdateTask = -1;
-        // parentEl.append(form);
+        let startStr = "" + task.est_start_date;
+        let endStr = "" + task.est_end_date;
+
+        let startMon = findMonth((startStr.substring(5,7)-0));
+        let endMon = findMonth((endStr.substring(5,7)-0));
+
+        $('#editTaskForm_strDate').text(startMon + " " + startStr.substring(8,10) + ", " + startStr.substring(0,4));
+        $('#editTaskForm_endDate').text(endMon + " " + endStr.substring(8,10) + ", " + endStr.substring(0,4));
     }
 
     function updateTaskRead(task) {
