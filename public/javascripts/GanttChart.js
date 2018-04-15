@@ -54,6 +54,7 @@ var GanttChart = (function () {
     }
 
     var _drawGanttChart = function () {
+        /*
         var chart = new google.visualization.Gantt(document.getElementById('timeline'));
 
         var data = new google.visualization.DataTable();
@@ -82,6 +83,37 @@ var GanttChart = (function () {
 
         chart.clearChart();
         chart.draw(data, options);
+        */
+
+        /*
+        * TIMELINE CHART
+        *
+        */
+        var chart = new google.visualization.Timeline(document.getElementById('timeline'));
+        var data = new google.visualization.DataTable();
+
+        data.addColumn({ type: 'string', id: 'Task ID' });
+        data.addColumn({ type: 'string', id: 'Task Name' });
+        data.addColumn({ type: 'date', id: 'Start' });
+        data.addColumn({ type: 'date', id: 'End' });
+
+        dataTable.addRows(task_list);
+
+        var options = {
+            height: 400,    // TODO needs to be calculated
+            width:1000,     // TODO needs to be calculated
+            timeline: {
+                trackHeight: 30
+            }
+        };
+
+        chart.clearChart();
+        chart.draw(dataTable, options);
+
+
+
+
+
     };
 
     module.init = function (data) {
