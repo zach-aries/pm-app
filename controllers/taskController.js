@@ -48,19 +48,16 @@ exports.store_task = function (name, desc, featureID, est_start_date, est_end_da
     });
 };
 
-exports.remove_task = function (_id) {
-    Task.find({ _id:_id }).remove().exec();
-};
-
 exports.remove_task = function (_id, cb) {
-    Task.find({ _id:_id })
-        .remove()
+    Task.findOne({ _id:_id })
         .exec(function (err, task) {
             if (err) {
                 console.log(err);
                 cb(err, null);
                 return
             }
+
+            task.remove();
             console.log('Removed Task:\n' + task);
             cb(null, task);
         });
@@ -111,12 +108,13 @@ exports.update_status = function (taskID, newStatus, cb) {
         });
 };
 
-exports.update_task = function(_id, _name, _description, _est_start_date, _est_end_date, cb) {
+exports.update_task = function(_id, name, description, est_start_date, est_end_date, cb) {
+
     Task.findOneAndUpdate({_id: _id}, {$set:{
-        name:_name,
-        description:_description,
-        est_start_date: new Date(_est_start_date),
-        est_end_date: new Date(_est_end_date)
+        name:name,
+        description: description,
+        est_start_date: new Date(est_start_date),
+        est_end_date: new Date(est_end_date)
     }}, {new: true})
         .lean()
         .exec(function (err, task) {
@@ -124,6 +122,8 @@ exports.update_task = function(_id, _name, _description, _est_start_date, _est_e
                 cb(err, null);
                 return;
             }
+
+            console.log('updated task\n', task);
 
             cb(null, task);
         })

@@ -278,14 +278,14 @@ module.exports = function (io) {
          *
          * @param _id - task id
          */
-        socket.on('remove task', function (projectID, taskID) {
+        socket.on('remove task', function (taskID) {
             async.series({
                 task: function (callback) {
                     task_controller.remove_task(taskID, callback);
                 }
             }, function (err, result) {
                 //TODO Error handling
-                io.sockets.in(projectID).emit('remove task', taskID);
+                io.sockets.in(roomID).emit('remove task', result.task);
             });
         });
 
@@ -321,27 +321,19 @@ module.exports = function (io) {
             });
         });
 
-        socket.on('update task', function (taskID, description, start_date, end_date) {
-            console.log(taskID, description, start_date, end_date);
-            async.parallel({
-                task: function (callback) {
-                    task_controller.update_task(taskID, description, start_date, end_date, callback);
-                }
-            }, function (err, result) {
-                console.log('updated task:\n', result.project);
-                io.sockets.in(roomID).emit('update task', result.project);
-            });
-        });
-
         socket.on('update task', function (_id, name, description, est_start_date, est_end_date) {
+            console.log('here:', _id);
+
             async.series({
                 task: function (callback) {
                     task_controller.update_task(_id, name, description, est_start_date, est_end_date, callback);
                 }
             }, function (err, result) {
+                console.log('result', result);
                 io.sockets.in(roomID).emit('update task', result.task);
             });
         });
+
         /**
          * Adds user to database
          * finds user by username and pushes their id to

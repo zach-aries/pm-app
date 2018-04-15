@@ -104,7 +104,7 @@ var GanttChart = (function () {
 
         console.log(task_list.length);
         var options = {
-            height: (39 * task_list.length),    // TODO needs to be calculated
+            height: (41 * task_list.length) + 50,    // TODO needs to be calculated
             //width: totaltime * 100,     // TODO needs to be calculated
             timeline: {
                 trackHeight: 30,

@@ -280,10 +280,6 @@ $(function () {
         const start_date = $('#newTask-startDate').val();
         const end_date = $('#newTask-endDate').val();
 
-        console.log(featureID);
-
-
-
         const d_start_date = new Date(start_date);
         const d_end_date = new Date(end_date);
         const status = "Pending";
@@ -343,7 +339,6 @@ $(function () {
         $('#newTask-response').empty();
         // submit for if no errors
         if (errors.length < 1) {
-            console.log('gets here');
             // display loader
             UI.show_loader();
             // sent info to server
@@ -364,7 +359,7 @@ $(function () {
 
     $('#editTask-form').submit(function(){
         // set inputs
-        const _id = $('#readTaskModal').attr('data-taskID');
+        const _id = $('#readTaskModal').attr('data-task-id');
         const name = $('#editTask-name').val();
         const description = $('#editTask-description').val();
         const start_date = $('#editTask-startDate').val();
@@ -437,45 +432,6 @@ $(function () {
         return false;
     });
 
-    //delete feature from feature section
-    $('#delete-featureBtn').click(function() {
-        const featureID = $('#readFeatureModal').attr('data-featureID');
-
-        UI.show_loader();
-        socket.emit('remove feature', featureID, projectID);
-        $('#readFeatureModal').modal('toggle');
-    });
-
-    //delete task from feature section
-    $('#delete-taskBtn').click(function(event) {
-        event.preventDefault();
-        const taskID = $('#readTaskModal').attr('data-task-id');
-        
-        socket.emit('remove task', projectID, taskID);
-        $('#readTaskModal').modal('toggle');
-    });
-
-    //delete task from todo section
-    $('#delete-button-todo').on('click', 'a.task', function() {
-        //const taskID = $(this).attr('id');
-        //socket.emit('remove task', projectID, taskID);
-    });
-
-    //change status of a pending task into in process
-    $('#start-task').on('click', 'a.task', function() {
-        const taskID = $(this).attr('id');
-        const status = "Started";
-        socket.emit('update status', taskID, status);
-        $('#')
-    });
-
-    //change status of a pending task into in process
-    $('#complete-task').on('click', 'a.task', function() {
-        const taskID = $(this).attr('id');
-        const status = "Complete";
-        socket.emit('update status', taskID, status);
-    });
-
     /*===========================================
                     Catch Events
      ===========================================*/
@@ -503,7 +459,6 @@ $(function () {
     });
 
     socket.on('userlist update', function (userList) {
-       // console.log('user connected:', userList);
         let temp = '';
         for(i=0;i<userList.length;i++) {
             temp = temp + '<li class="online">' + userList[i];
@@ -588,8 +543,16 @@ $(function () {
         addTask(parentEl, task);
     });
 
+    socket.on('update task', function (task) {
+        $('#'+task._id).find('.task-name').text(task.name);
+
+        UI.hide_loader();
+    });
+
     socket.on('remove task', function (taskID) {
-        console.log('remove task:', taskID);
+        $('#'+taskID._id).parent().remove();
+
+        UI.hide_loader();
     });
 
     socket.on('add user', function (user, error) {
@@ -709,6 +672,40 @@ $(function () {
 
         $('#readTaskModal').modal('toggle');
         $('#readTaskModal').attr('data-task-id', taskID);
+    });
+
+    //delete feature from feature section
+    $('#delete-featureBtn').click(function() {
+        const featureID = $('#readFeatureModal').attr('data-featureID');
+
+        UI.show_loader();
+        socket.emit('remove feature', featureID, projectID);
+        $('#readFeatureModal').modal('toggle');
+    });
+
+    //delete task from feature section
+    $('#delete-taskBtn').click(function(event) {
+        const taskID = $('#readTaskModal').attr('data-task-id');
+
+        UI.show_loader();
+        socket.emit('remove task', taskID);
+        $('#readTaskModal').modal('toggle');
+        toggle_form_disabled($('#editTask-form'));
+    });
+
+    //change status of a pending task into in process
+    $('#start-task').on('click', 'a.task', function() {
+        const taskID = $(this).attr('id');
+        const status = "Started";
+        socket.emit('update status', taskID, status);
+        $('#')
+    });
+
+    //change status of a pending task into in process
+    $('#complete-task').on('click', 'a.task', function() {
+        const taskID = $(this).attr('id');
+        const status = "Complete";
+        socket.emit('update status', taskID, status);
     });
 
     /**
@@ -840,8 +837,6 @@ $(function () {
      * @param task
      */
     function addTaskToReadTaskDom(task) {
-        console.log(task);
-
         $('#readTaskModal').modal('toggle');
         let parentEl = $('#read_task_form_id');
 
@@ -883,7 +878,7 @@ $(function () {
         let i = $('<i>').addClass(classname);
         // create link and prepend the icon
         let a = $('<a>')
-            .text(task.name)
+            .append($('<span>').addClass('task-name').text(task.name))
             .attr('id', task._id)
             .addClass('task')
             .prepend(i);
