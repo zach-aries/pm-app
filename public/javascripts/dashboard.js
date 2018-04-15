@@ -175,6 +175,7 @@ $(function () {
     });
 
     $('#editFeature-form').submit(function(){
+        console.log('update');
         // set inputs
         const _id = $('#readFeatureModal').attr('data-featureID');
         const name = $('#editFeature-name').val();
@@ -314,10 +315,12 @@ $(function () {
 
     //delete feature from feature section
     $('#delete-featureBtn').click(function() {
-        const featureID = $('.store-id').attr('id');
+        const featureID = $('#readFeatureModal').attr('data-featureID');
 
         UI.show_loader();
-        socket.emit('remove feature', projectID, featureID);
+        socket.emit('remove feature', featureID);
+        $('#readFeatureModal').modal('toggle');
+
     });
 
     //delete task from feature section
@@ -435,6 +438,7 @@ $(function () {
 
     socket.on('remove feature', function (featureID) {
         console.log('remove feature:', featureID);
+        $('#'+featureID).parent().remove();
 
         UI.hide_loader();
     });
