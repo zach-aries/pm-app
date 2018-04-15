@@ -377,6 +377,7 @@ header {
 
   #gantt-chart .task-list {
     width: 100%;
+    overflow-x: scroll;
   }
     #gantt-chart .task-list.closed {
       height: 42px;
