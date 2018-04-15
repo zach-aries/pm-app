@@ -19,7 +19,7 @@ var GanttChart = (function () {
         var start_date = new Date(feature.est_start_date);
         var end_date = new Date(feature.est_end_date);
 
-        row.push(feature._id);  // task id
+        //row.push(feature._id);  // task id
         row.push(feature.name); // task name
         //row.push(feature._id);  // resource ID (used for grouping)
         row.push(start_date);   // start date
@@ -36,7 +36,7 @@ var GanttChart = (function () {
             var start_date = new Date(task.est_start_date);
             var end_date = new Date(task.est_end_date);
 
-            task_row.push(task._id);    // task id
+            //task_row.push(task._id);    // task id
             task_row.push(task.name);   // task name
             //task_row.push(task.feature);    // resource ID (used for grouping)
             task_row.push(start_date);  // start date
