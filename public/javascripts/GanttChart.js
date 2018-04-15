@@ -101,6 +101,7 @@ var GanttChart = (function () {
         */
         data.addColumn('string', 'Task ID');
         data.addColumn('string', 'Task Name');
+        data.addColumn('string', 'Resource');
         data.addColumn('date', 'Start');
         data.addColumn('date', 'End');
 
