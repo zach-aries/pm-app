@@ -107,7 +107,7 @@ var GanttChart = (function () {
             width:1100,     // TODO needs to be calculated
             timeline: {
                 trackHeight: 30,
-                fontName: 'Roboto Condensed'
+                fontName: 'Garamond'
             }
         };
 
