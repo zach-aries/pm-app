@@ -21,7 +21,7 @@ var GanttChart = (function () {
 
         row.push(feature._id);  // task id
         row.push(feature.name); // task name
-        row.push(feature._id);  // resource ID (used for grouping)
+        //row.push(feature._id);  // resource ID (used for grouping)
         row.push(start_date);   // start date
         row.push(end_date);     // end date
         /*
@@ -38,7 +38,7 @@ var GanttChart = (function () {
 
             task_row.push(task._id);    // task id
             task_row.push(task.name);   // task name
-            task_row.push(task.feature);    // resource ID (used for grouping)
+            //task_row.push(task.feature);    // resource ID (used for grouping)
             task_row.push(start_date);  // start date
             task_row.push(end_date);    // end date
             /*
@@ -101,7 +101,7 @@ var GanttChart = (function () {
         */
         data.addColumn('string', 'Task ID');
         data.addColumn('string', 'Task Name');
-        data.addColumn('string', 'Resource');
+        //data.addColumn('string', 'Resource');
         data.addColumn('date', 'Start');
         data.addColumn('date', 'End');
 
