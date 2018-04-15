@@ -177,17 +177,71 @@ $(function () {
         return false;
     });
 
-    $('#project-directory').on('click', 'a.feature', function() {
-        const featureID = $(this).attr('id');
-        whichUpdateFeat = 1;
-        socket.emit('get feature', featureID, projectID);
-        //const featureName = $(this).val();
-        //socket.emit('remove feature', featureID);
-        //let feature = get_feature(featureID);
+    $('#editFeature-form').submit(function(){
+        // set inputs
+        const _id = $('#readFeatureModal').attr('data-featureID');
+        const name = $('#editFeature-name').val();
+        const start_date = $('#editFeature-startDate').val();
+        const end_date = $('#editFeature-endDate').val();
+        const d_start_date = new Date(start_date);
+        const d_end_date = new Date(end_date);
 
+        let errors = [];
 
-        $('#readFeatureModal').modal('toggle').attr('data-featureID', featureID);
-        $('.store-id').attr("id", featureID);
+        // validation
+
+        // check if name has content
+        if ( !name.match(/\S/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please enter a valid feature name'
+            });
+        }
+
+        // check if start date has format 00/00/0000
+        if ( !start_date.match(/\d\d\/\d\d\/\d\d\d\d/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please select an estimated start date'
+            });
+        }
+
+        // check if start date has format 00/00/0000
+        if ( !end_date.match(/\d\d\/\d\d\/\d\d\d\d/)) {
+            errors.push({
+                error: 'validation',
+                message: 'Please select an estimated start date'
+            });
+        }
+
+        // make sure start date comes before end date
+        if ( d_end_date < d_start_date ) {
+            errors.push({
+                error: 'validation',
+                message: 'End date cannot be before estimated start date'
+            });
+        }
+
+        $('#newFeature-response').empty();
+        // submit for if no errors
+        if (errors.length === 0) {
+            // display loader
+            UI.show_loader();
+            // sent info to server
+            socket.emit('update feature', _id, name, d_start_date, d_end_date);
+
+            // dismiss modal
+            $('#readFeatureModal').modal('toggle');
+            // disable input
+            toggle_form_disabled($('#editFeature-form'));
+        } else { // otherwise handle errors
+            // create an alert for each error
+            errors.forEach(function (err) {
+                $('#readFeature-response').append(UI.create_alert('danger', err.message));
+            });
+        }
+
+        return false;
     });
 
     $('#add-users').click(function () {
@@ -261,29 +315,12 @@ $(function () {
         }
     });
 
-    // Read task from project menu
-    $('#project-directory').on('click', 'a.task', function() {
-        const taskID = $(this).attr('id');
-        whichUpdateTask = 1;
-        socket.emit('get task', taskID, projectID);
-        $('#readTaskModal').modal('toggle');
-    });
-
-    $('#project-directory').on('click', 'span.caret', function(event) {
-        event.stopImmediatePropagation();
-
-        $(this).parent().parent().toggleClass('closed');
-        $(this).find('svg').toggleClass('closed');
-    });
-
-
-
-
-
 
     //delete feature from feature section
     $('#delete-featureBtn').click(function() {
         const featureID = $('.store-id').attr('id');
+
+        UI.show_loader();
         socket.emit('remove feature', projectID, featureID);
     });
 
@@ -317,15 +354,6 @@ $(function () {
     /*===========================================
                     Catch Events
      ===========================================*/
-    socket.on('update project', function (project_info) {
-        update_projectSettings(project_info);
-        UI.hide_loader();
-    });
-
-    socket.on('delete project', function () {
-        location.href = '/dashboard/projects';
-    });
-
     socket.on('init', function (data) {
         // prevent double initiate on lost connection
         // there is probably a better solution?
@@ -335,6 +363,20 @@ $(function () {
         }
     });
 
+    socket.on('update project', function (project_info) {
+        update_projectSettings(project_info);
+        UI.hide_loader();
+    });
+
+    socket.on('delete project', function () {
+        location.href = '/dashboard/projects';
+    });
+
+    socket.on('message', function (message) {
+        // add message to DOM
+        addMessage(message);
+    });
+
     socket.on('userlist update', function (userList) {
        // console.log('user connected:', userList);
         let temp = '';
@@ -342,14 +384,6 @@ $(function () {
             temp = temp + '<li class="online">' + userList[i];
         }
         $('#user-list').html(temp);
-    });
-
-
-
-
-    socket.on('message', function (message) {
-        // add message to DOM
-        addMessage(message);
     });
 
     socket.on('add feature', function (feature) {
@@ -380,6 +414,12 @@ $(function () {
         UI.hide_loader();
     });
 
+    socket.on('update feature', function (feature) {
+        $('#'+feature._id).find('.feature-name').text(feature.name);
+
+        UI.hide_loader();
+    });
+
     socket.on('get task', function(task) {
         //add task to DOM
         if (whichUpdateTask == 1) {
@@ -392,18 +432,12 @@ $(function () {
     
     socket.on('get feature', function(feature) {
         set_readModal(feature);
-
-        /*if (whichUpdateFeat == 1) {  // add feature to dom
-            addFeatureToReadFeatureDom(feature);
-        }
-        else if (whichUpdateFeat == 2) {   // update read
-            addParentToRead(feature);
-        }*/
-        
     });
 
     socket.on('remove feature', function (featureID) {
         console.log('remove feature:', featureID);
+
+        UI.hide_loader();
     });
 
     socket.on('add task', function (task, featureID) {
@@ -447,26 +481,14 @@ $(function () {
             });
         });
 
-        update_projectSettings(data.project_info);
+        // init project settings modal
+        init_projectSettings(data.project_info, data.project_users);
 
-        // populate chat with messages
-        data.messages.forEach(function (message) {
-           addMessage(message);
-        });
+        // initiate project directory
+        init_projectDir(data.project);
 
-        // populate project directory with features & tasks
-        data.project.forEach(function (feature) {
-            addFeature($('#project-directory'), feature);
-        });
-
-        data.project_users.forEach(function (user) {
-            $('#settings-user-list').append($('<li>').text(user.username));
-            //$('#user-list').append($('<li class="online">').text(user.username));
-        });
-
-        data.user_list.forEach(function (name) {
-            $('#user-list').append($('<li class="online">').text(name));
-        });
+        // initiate messenger
+        init_messenger(data.messages, data.user_list);
 
         // populate newFeatureModal with features
         data.features.forEach(function (feature) {
@@ -477,10 +499,62 @@ $(function () {
         GanttChart.init(data.project);
         UI.hide_loader();
     }
+    function init_projectSettings(project_info, project_users){
+        // set project settings
+        update_projectSettings(project_info);
+
+        // set project users
+        project_users.forEach(function (user) {
+            $('#settings-user-list').append($('<li>').text(user.username));
+            //$('#user-list').append($('<li class="online">').text(user.username));
+        });
+    }
+
+    function init_projectDir(project) {
+        $('#project-directory').empty();
+        // populate project directory with features & tasks
+        project.forEach(function (feature) {
+            addFeature($('#project-directory'), feature);
+        });
+    }
+
+    function init_messenger(messages, users) {
+        // populate chat with messages
+        messages.forEach(function (message) {
+            addMessage(message);
+        });
+
+        // add online users to chat users
+        users.forEach(function (name) {
+            $('#user-list').append($('<li class="online">').text(name));
+        });
+    }
 
     /*===========================================
                     DOM Functions
      ===========================================*/
+    $('#project-directory').on('click', 'span.caret', function(event) {
+        event.stopImmediatePropagation();
+
+        $(this).parent().parent().toggleClass('closed');
+        $(this).find('svg').toggleClass('closed');
+    });
+
+    $('#project-directory').on('click', 'a.feature', function() {
+        const featureID = $(this).attr('id');
+        socket.emit('get feature', featureID, projectID);
+
+
+        $('#readFeatureModal').modal('toggle').attr('data-featureID', featureID);
+        $('.store-id').attr("id", featureID);
+    });
+
+    $('#project-directory').on('click', 'a.task', function() {
+        const taskID = $(this).attr('id');
+        whichUpdateTask = 1;
+        socket.emit('get task', taskID, projectID);
+        $('#readTaskModal').modal('toggle');
+    });
 
     /**
      * toggles disabled attribute on all input elements for
@@ -530,7 +604,8 @@ $(function () {
             .addClass('caret')
             .html($('<i>').addClass('fas fa-caret-down'));
         // create link and prepend the icon
-        let a = $('<a>').text(feature.name)
+        let a = $('<a>')
+            .html($('<span>').text(feature.name).addClass('feature-name'))
             .attr('id', feature._id)
             .addClass('feature closed')
             .prepend(span);

@@ -32,16 +32,36 @@ exports.store_feature = function (name, projectID, parentID, est_start_date, est
     });
 };
 
+exports.update_feature = function(_id, name, est_start_date, est_end_date, cb) {
+
+    Feature.findOneAndUpdate({_id: _id}, {$set:{
+        name:name,
+        est_start_date: new Date(est_start_date),
+        est_end_date: new Date(est_end_date)
+    }}, {new: true})
+        .lean()
+        .exec(function (err, feature) {
+            if (err) {
+                cb(err, null);
+                return;
+            }
+
+            cb(null, feature);
+        })
+};
+
 exports.remove_feature = function (_id, cb) {
-    Feature.find({ _id:_id }).remove().exec(function (err, feature) {
-        if (err) {
-            console.log(err);
-            cb(err, null);
-            return
-        }
-        console.log('Removed Feature:\n' + feature);
-        cb(null, feature);
-    });
+    Feature.find({ _id:_id })
+        .remove()
+        .exec(function (err, feature) {
+            if (err) {
+                console.log(err);
+                cb(err, null);
+                return
+            }
+            console.log('Removed Feature:\n' + feature);
+            cb(null, feature);
+        });
 };
 
 exports.add_taskToFeature = function (featureID, taskID, cb) {

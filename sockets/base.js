@@ -168,6 +168,17 @@ module.exports = function (io) {
             });
         });
 
+        socket.on('update feature', function (_id, name, est_start_date, est_end_date) {
+            async.series({
+                feature: function (callback) {
+                    feature_controller.update_feature(_id, name, est_start_date, est_end_date, callback);
+                }
+            }, function (err, result) {
+                //TODO Error handling
+                io.sockets.in(roomID).emit('update feature', result.feature);
+            });
+        });
+
         /**
          * Removes feature from database
          *
@@ -175,12 +186,31 @@ module.exports = function (io) {
          */
         socket.on('remove feature', function (projectID, featureID) {
             async.series({
-                task: function (callback) {
+                feature: function (callback) {
                     feature_controller.remove_feature(featureID, callback);
                 }
             }, function (err, result) {
                 // TODO error handling
                 io.sockets.in(projectID).emit('remove feature', featureID);
+            });
+        });
+
+        /**
+         * Select feature form db
+         *
+         * @param _id - feature id
+         */
+        socket.on('get feature', function (featureID, projectID) {
+            async.series({
+                feature: function (callback) {
+                    feature_controller.get_featureByID(featureID, callback)
+                }
+            }, function (err, result) {
+                console.log(result);
+
+                //socket.emit('get feature', featureID);
+
+                io.sockets.in(projectID).emit('get feature', result.feature);
             });
         });
 
@@ -248,26 +278,6 @@ module.exports = function (io) {
             }, function (err, result) {
                 console.log(result);
                 io.sockets.in(projectID).emit('get task', result.task);
-            });
-        });
-
-        /**
-         * Select feature form db
-         * 
-         * @param _id - feature id
-         */
-
-        socket.on('get feature', function (featureID, projectID) {
-            async.series({
-                feature: function (callback) {
-                    feature_controller.get_featureByID(featureID, callback)
-                }
-            }, function (err, result) {
-                console.log(result);
-
-                //socket.emit('get feature', featureID);
-              
-                io.sockets.in(projectID).emit('get feature', result.feature);
             });
         });
 
