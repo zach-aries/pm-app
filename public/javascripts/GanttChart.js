@@ -103,8 +103,8 @@ var GanttChart = (function () {
         data.addRows(task_list);
 
         var options = {
-            height: 400,    // TODO needs to be calculated
-            width:1000,     // TODO needs to be calculated
+            height: 600,    // TODO needs to be calculated
+            width:1200,     // TODO needs to be calculated
             timeline: {
                 trackHeight: 30
             }
