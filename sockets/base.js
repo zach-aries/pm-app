@@ -1,3 +1,5 @@
+import { start } from 'repl';
+
 var message_controller = require('../controllers/messengerController');
 var user_controller = require('../controllers/userController');
 var project_controller = require('../controllers/projectController');
@@ -137,9 +139,27 @@ module.exports = function (io) {
             async.parallel({
                 project: function (callback) {
                     project_controller.remove_project(projectID, callback);
+                },
+                features: function (callback) {
+                    feature_controller.get_featuresByProjectID(projectID, callback);
                 }
             }, function (err, result) {
                 if (!err) {
+                    // assuming openFiles is an array of file names
+                    async.each(result.features, function(feature, callback) {
+
+                        feature_controller.remove_featureAndChildren(feature._id, callback);
+                    }, function(err) {
+                        // if any of the file processing produced an error, err would equal that error
+                        if( err ) {
+                            // One of the iterations produced an error.
+                            // All processing will now stop.
+                            console.log(err);
+                        } else {
+                            console.log('All features deleted');
+                        }
+                    });
+
                     io.sockets.in(roomID).emit('delete project');
                 } else {
                     console.log(err);
@@ -184,14 +204,17 @@ module.exports = function (io) {
          *
          * @param _id - feature id
          */
-        socket.on('remove feature', function (projectID, featureID) {
+        socket.on('remove feature', function (featureID) {
             async.series({
                 feature: function (callback) {
-                    feature_controller.remove_feature(featureID, callback);
+                    feature_controller.remove_featureAndChildren(featureID, callback);
+                },
+                tasks: function (callback) {
+                    task_controller.remove_task_featureID(featureID, callback);
                 }
             }, function (err, result) {
-                // TODO error handling
-                io.sockets.in(projectID).emit('remove feature', featureID);
+                //console.log('r', result);
+                io.sockets.in(roomID).emit('remove feature', featureID);
             });
         });
 
@@ -206,9 +229,7 @@ module.exports = function (io) {
                     feature_controller.get_featureByID(featureID, callback)
                 }
             }, function (err, result) {
-                console.log(result);
-
-                //socket.emit('get feature', featureID);
+                console.log('get feature:\n',result);
 
                 io.sockets.in(projectID).emit('get feature', result.feature);
             });
@@ -286,7 +307,6 @@ module.exports = function (io) {
          * 
          * @param _id - task id
          */
-
         socket.on('update status', function (taskID, newStatus) {
             async.series({
                 task: function (callback) {
@@ -294,8 +314,18 @@ module.exports = function (io) {
                 }
             }, function (err, result) {
                 console.log(result);
-                socket.emit('update status', taskID, newStatus);
-                io.sockets.in(taskID).emit('update status', result.task);
+            });
+        });
+
+        socket.on('update task', function (taskID, description, start_date, end_date) {
+            console.log(taskID, description, start_date, end_date);
+            async.parallel({
+                task: function (callback) {
+                    task_controller.update_task(taskID, description, start_date, end_date, callback);
+                }
+            }, function (err, result) {
+                console.log('updated task:\n', result.project);
+                io.sockets.in(roomID).emit('update task', result.project);
             });
         });
 

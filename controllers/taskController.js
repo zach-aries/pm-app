@@ -53,15 +53,35 @@ exports.remove_task = function (_id) {
 };
 
 exports.remove_task = function (_id, cb) {
-    Task.find({ _id:_id }).remove().exec(function (err, task) {
-        if (err) {
-            console.log(err);
-            cb(err, null);
-            return
-        }
-        console.log('Removed Task:\n' + task);
-        cb(null, task);
-    });
+    Task.find({ _id:_id })
+        .remove()
+        .exec(function (err, task) {
+            if (err) {
+                console.log(err);
+                cb(err, null);
+                return
+            }
+            console.log('Removed Task:\n' + task);
+            cb(null, task);
+        });
+};
+
+exports.remove_task_featureID = function (featureID, cb) {
+  Task.find({feature:featureID})
+      //.remove()
+      .exec(function (err,tasks) {
+         if (err) {
+             console.log(err);
+             cb(err, null)
+         }
+
+         tasks.forEach(function (task) {
+            task.remove();
+         });
+
+         console.log('Removed Tasks:' + tasks);
+         cb(null, tasks);
+      });
 };
 
 exports.get_taskByTaskID = function (_id, cb) {
@@ -77,7 +97,7 @@ exports.get_taskByTaskID = function (_id, cb) {
         });
 };
 
-exports.update_status = function (_id, newStatus, cb) {
+exports.update_status = function (taskID, newStatus, cb) {
     Task.findOneAndUpdate({ _id: taskID}, {$push: {status: newStatus}})
         .exec(function (err, task) {
             if (err) {
@@ -104,6 +124,7 @@ exports.update_task = function(_id, _name, _description, _est_start_date, _est_e
                 cb(err, null);
                 return;
             }
+
             cb(null, task);
         })
 };

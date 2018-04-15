@@ -268,6 +268,50 @@ $(function () {
         }
     });
 
+    $('#add-task').click(function () {
+        const taskName = $('#taskName').val();
+        const description = $('#description').val();
+        const featureID = $('#featureIDForTask').val();
+        // const assignedTo = $('#assignedTo').val;
+        const assignedTo = 1;
+        const est_start_date = $('#datepickerTaskS').val();
+        const est_end_date = $('#datepickerTaskF').val();
+
+        let allGood = 1;
+        const status = "Pending";
+
+        if (taskName.length < 1) {
+            let newAlertMsg = "Task name cannot be empty";
+            $('#added-alert').modal('toggle');
+            $('#alert-msg').html(newAlertMsg);
+            allGood = 0;
+        }
+        else if(description.length < 1){
+            let newAlertMsg = "Description cannot be empty";
+            $('#added-alert').modal('toggle');
+            $('#alert-msg').html(newAlertMsg);
+            
+            allGood = 0;
+        }
+        else if (est_end_date < est_start_date) {
+            let newAlertMsg = "To date cannot be less than From date";
+            $('#added-alert').modal('toggle');
+            $('#alert-msg').html(newAlertMsg);
+            allGood = 0;
+        } else if (est_end_date == est_start_date) {
+            let newAlertMsg = "To date cannot be the same as From date";
+            $('#added-alert').modal('toggle');
+            $('#alert-msg').html(newAlertMsg);
+            allGood = 0;
+        }
+
+        if (Boolean(allGood)) {
+            socket.emit('add task', taskName, description, featureID, est_start_date, est_end_date, status);
+            $('#newTaskModal').modal('toggle');
+            //alert("Task added!");
+        }
+    });
+
     /**
      * Task form submit
      */
@@ -441,7 +485,7 @@ $(function () {
     $('#delete-taskBtn').click(function(event) {
         event.preventDefault();
         const taskID = $('#readTaskModal').attr('data-task-id');
-        UI.show_loader();
+        
         socket.emit('remove task', projectID, taskID);
         $('#readTaskModal').modal('toggle');
     });

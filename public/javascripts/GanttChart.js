@@ -19,7 +19,7 @@ var GanttChart = (function () {
         var start_date = new Date(feature.est_start_date);
         var end_date = new Date(feature.est_end_date);
 
-        row.push(feature._id);  // task id
+        //row.push(feature._id);  // task id
         row.push(feature.name); // task name
         //row.push(feature._id);  // resource ID (used for grouping)
         row.push(start_date);   // start date
@@ -36,7 +36,7 @@ var GanttChart = (function () {
             var start_date = new Date(task.est_start_date);
             var end_date = new Date(task.est_end_date);
 
-            task_row.push(task._id);    // task id
+            //task_row.push(task._id);    // task id
             task_row.push(task.name);   // task name
             //task_row.push(task.feature);    // resource ID (used for grouping)
             task_row.push(start_date);  // start date
@@ -93,13 +93,8 @@ var GanttChart = (function () {
         */
         var chart = new google.visualization.Timeline(document.getElementById('timeline'));
         var data = new google.visualization.DataTable();
-        /*
-        data.addColumn({ type: 'string', id: 'Task ID' });
-        data.addColumn({ type: 'string', id: 'Task Name' });
-        data.addColumn({ type: 'date', id: 'Start' });
-        data.addColumn({ type: 'date', id: 'End' });
-        */
-        data.addColumn('string', 'Task ID');
+
+        //data.addColumn('string', 'Task ID');
         data.addColumn('string', 'Task Name');
         //data.addColumn('string', 'Resource');
         data.addColumn('date', 'Start');
@@ -108,10 +103,11 @@ var GanttChart = (function () {
         data.addRows(task_list);
 
         var options = {
-            height: 400,    // TODO needs to be calculated
-            width:1000,     // TODO needs to be calculated
+            //height: 500,    // TODO needs to be calculated
+            //width:1100,     // TODO needs to be calculated
             timeline: {
-                trackHeight: 30
+                trackHeight: 30,
+                fontName: 'Garamond'
             }
         };
 
