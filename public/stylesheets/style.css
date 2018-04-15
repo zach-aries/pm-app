@@ -226,8 +226,14 @@ header {
 }
 
 #todo-list > ul > li > a {
-  padding: 0.5em;
+  padding: 0.5em 1em;
   display: block;
+  margin: 0;
+}
+
+.todo-task.active {
+  background: #51d2b7;
+  color: #fff!important;
 }
 
 /*========================

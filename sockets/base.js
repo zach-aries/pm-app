@@ -31,6 +31,9 @@ module.exports = function (io) {
                 },
                 connected_user: function (callback) {
                     user_controller.get_userByID(userID, callback)
+                },
+                todo_list: function (callback) {
+                    task_controller.task_list_responsible(userID, projectID, callback);
                 }
             }, function (err, results) {
                 // create a tree structure out of features/tasks
@@ -39,12 +42,6 @@ module.exports = function (io) {
                 // joing room with project ID
                 socket.join(projectID);
                 roomID = projectID;
-
-                /*var sockets = io.in(projectID);
-                Object.keys(sockets.sockets).forEach(function (item) {
-                    console.log("TODO: Item:", sockets.sockets[item].username)
-                });*/
-
                 socket.nickname = results.connected_user.username;
 
                 var roomSockets = io.in(projectID);
@@ -63,6 +60,7 @@ module.exports = function (io) {
                     project: project,
                     features: results.features,
                     project_users: results.users,
+                    todo_list: results.todo_list,
                     user_list: userList
                 };
 
@@ -255,13 +253,13 @@ module.exports = function (io) {
          *      status: {type: String, required: true, enum: ['Pending', 'Started', 'Complete', 'Overdue']}
          * }
          */
-        socket.on('add task', function (name, description, featureID, est_start_date, est_end_date, status) {
+        socket.on('add task', function (name, description, featureID, responsible, projectID, est_start_date, est_end_date, status) {
             // creates var for return value
             // lose access to task after second waterfall call
             var return_task;
             async.waterfall([
                 function (callback) {
-                    task_controller.store_task(name, description, featureID, est_start_date, est_end_date, status, callback);
+                    task_controller.store_task(name, description, featureID, responsible, projectID, est_start_date, est_end_date, status, callback);
                 },
                 function (task, callback) {
                     return_task = task;
@@ -269,7 +267,7 @@ module.exports = function (io) {
                 }
             ], function (err, result) {
                 // TODO Error handling
-                io.sockets.in(result.project).emit('add task', return_task, featureID);
+                io.sockets.in(roomID).emit('add task', return_task, featureID);
             });
         });
 
@@ -278,6 +276,7 @@ module.exports = function (io) {
          *
          * @param _id - task id
          */
+        // TODO remove task from feature as well
         socket.on('remove task', function (taskID) {
             async.series({
                 task: function (callback) {
@@ -306,6 +305,17 @@ module.exports = function (io) {
             });
         });
 
+        socket.on('get todo-list', function (userID, projectID) {
+            async.parallel({
+                todo_list: function (callback) {
+                    task_controller.task_list_responsible(userID, projectID, callback);
+                }
+            }, function (err, results) {
+                // send updated user list notification to all clients in room
+                io.sockets.in(roomID).emit('update todo-list', results.todo_list);
+            });
+        });
+
         /**
          * update task's status
          * 
@@ -321,12 +331,12 @@ module.exports = function (io) {
             });
         });
 
-        socket.on('update task', function (_id, name, description, est_start_date, est_end_date) {
+        socket.on('update task', function (_id, name, description, responsible, est_start_date, est_end_date) {
             console.log('here:', _id);
 
             async.series({
                 task: function (callback) {
-                    task_controller.update_task(_id, name, description, est_start_date, est_end_date, callback);
+                    task_controller.update_task(_id, name, description, responsible, est_start_date, est_end_date, callback);
                 }
             }, function (err, result) {
                 console.log('result', result);

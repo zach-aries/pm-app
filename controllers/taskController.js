@@ -13,6 +13,19 @@ exports.task_list = function (featureID, cb) {
         });
 };
 
+exports.task_list_responsible = function(userID, projectID, cb) {
+    Task.find({$and:[{responsible: userID},{project:projectID}]})
+        .exec(function (err,tasks) {
+            if (err) {
+                console.log(err);
+                cb(err, null)
+            }
+
+            console.log(tasks);
+            cb(null, tasks);
+        });
+};
+
 exports.add_responsible = function (userID, taskID, cb) {
     Task.findOneAndUpdate({ _id: taskID}, {$push: {responsible: userID}})
         .exec(function (err, task) {
@@ -27,11 +40,13 @@ exports.add_responsible = function (userID, taskID, cb) {
         });
 };
 
-exports.store_task = function (name, desc, featureID, est_start_date, est_end_date, status, cb) {
+exports.store_task = function (name, desc, featureID, responsible, projectID, est_start_date, est_end_date, status, cb) {
     var task = new Task({
         name: name,
         description: desc,
         feature: featureID,
+        project: projectID,
+        responsible: responsible,
         est_start_date: new Date(est_start_date),
         est_end_date: new Date(est_end_date),
         status: status
@@ -108,11 +123,12 @@ exports.update_status = function (taskID, newStatus, cb) {
         });
 };
 
-exports.update_task = function(_id, name, description, est_start_date, est_end_date, cb) {
+exports.update_task = function(_id, name, description, responsible, est_start_date, est_end_date, cb) {
 
     Task.findOneAndUpdate({_id: _id}, {$set:{
         name:name,
         description: description,
+        responsible: responsible,
         est_start_date: new Date(est_start_date),
         est_end_date: new Date(est_end_date)
     }}, {new: true})

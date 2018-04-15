@@ -342,7 +342,7 @@ $(function () {
             // display loader
             UI.show_loader();
             // sent info to server
-            socket.emit('add task', name, description, featureID, d_start_date, d_end_date, status);
+            socket.emit('add task', name, description, featureID, assignedTo, projectID, d_start_date, d_end_date, status);
 
             // dismiss modal
             $('#newTaskModal').modal('toggle');
@@ -362,6 +362,7 @@ $(function () {
         const _id = $('#readTaskModal').attr('data-task-id');
         const name = $('#editTask-name').val();
         const description = $('#editTask-description').val();
+        const responsible = $('#editTask-assignedTo').val();
         const start_date = $('#editTask-startDate').val();
         const end_date = $('#editTask-endDate').val();
         const d_start_date = new Date(start_date);
@@ -416,7 +417,7 @@ $(function () {
             // display loader
             UI.show_loader();
             // sent info to server
-            socket.emit('update task', _id, name, description, d_start_date, d_end_date);
+            socket.emit('update task', _id, name, description, responsible, d_start_date, d_end_date);
 
             // dismiss modal
             $('#readTaskModal').modal('toggle');
@@ -508,6 +509,8 @@ $(function () {
         const datepicker_s = $('#editTask-startDate').datepicker();
         const datepicker_e = $('#editTask-endDate').datepicker();
 
+        $('#editTask-assignedTo').val(task.responsible);
+
         datepicker_s.value(pad(start_date.getMonth()+1)+"/"+ pad(start_date.getDate())+"/"+start_date.getFullYear());
         datepicker_e.value(pad(end_date.getMonth()+1)+"/"+ pad(end_date.getDate())+"/"+end_date.getFullYear());
 
@@ -521,7 +524,7 @@ $(function () {
 
     socket.on('remove feature', function (featureID, features) {
         $('#'+featureID).parent().remove();
-        init_modal_selects(features);
+        init_feature_modal_selects(features);
 
         UI.hide_loader();
     });
@@ -537,10 +540,15 @@ $(function () {
             parentEl = ul;
         }
 
-        UI.hide_loader();
+        socket.emit('get todo-list', userID, projectID);
 
         // add task to DOM
         addTask(parentEl, task);
+    });
+
+    socket.on('update todo-list', function (todolist) {
+        init_todoList(todolist)
+        UI.hide_loader();
     });
 
     socket.on('update task', function (task) {
@@ -587,7 +595,13 @@ $(function () {
         init_messenger(data.messages, data.user_list);
 
         // init all feature selects
-        init_modal_selects(data.features);
+        init_feature_modal_selects(data.features);
+
+        // init all user selects
+        init_user_model_selects(data.project_users);
+
+        // init task list with responsible tasks
+        init_todoList(data.todo_list);
 
         GanttChart.init(data.project);
         UI.hide_loader();
@@ -611,7 +625,7 @@ $(function () {
         });
     }
 
-    function init_modal_selects(features) {
+    function init_feature_modal_selects(features) {
         // populate newFeatureModal with features
         const newFeatureParent = $('#newFeatureParent');
         const editFeatureParent = $('#editFeature-parent');
@@ -634,6 +648,21 @@ $(function () {
         });
     }
 
+    function init_user_model_selects(users) {
+
+        const select_newTask = $('#newTask-assignedTo');
+        const select_editTask = $('#editTask-assignedTo');
+
+        select_newTask.empty();
+        select_editTask.empty();
+
+        users.forEach(function (user) {
+            select_newTask.append($('<option>').text(user.username).val(user._id));
+            select_editTask.append($('<option>').text(user.username).val(user._id));
+        });
+
+    }
+
     function init_messenger(messages, users) {
         // populate chat with messages
         messages.forEach(function (message) {
@@ -643,6 +672,22 @@ $(function () {
         // add online users to chat users
         users.forEach(function (name) {
             $('#user-list').append($('<li class="online">').text(name));
+        });
+    }
+
+    function init_todoList(tasks) {
+        let taskList = $('#task-list');
+
+        taskList.empty();
+
+        tasks.forEach(function (task) {
+            let li = $('<li>').html(
+                $('<a>')
+                    .text(task.name)
+                    .addClass('todo-task')
+                    .attr('data-id', task._id)
+            );
+            taskList.append(li);
         });
     }
 
@@ -674,6 +719,22 @@ $(function () {
         $('#readTaskModal').attr('data-task-id', taskID);
     });
 
+    $('#task-list').on('click', 'a.todo-task', function() {
+        const name = $(this).text();
+        let msg = '';
+
+        $(this).toggleClass('active');
+        if ($(this).hasClass('active')) {
+            msg = 'Has started working on: ' + name;
+        } else {
+            msg = 'Has stopped working on: ' + name;
+        }
+
+        socket.emit('message', userID, projectID, msg);
+    });
+
+
+
     //delete feature from feature section
     $('#delete-featureBtn').click(function() {
         const featureID = $('#readFeatureModal').attr('data-featureID');
@@ -681,6 +742,7 @@ $(function () {
         UI.show_loader();
         socket.emit('remove feature', featureID, projectID);
         $('#readFeatureModal').modal('toggle');
+        toggle_form_disabled($('#editFeature-form'));
     });
 
     //delete task from feature section

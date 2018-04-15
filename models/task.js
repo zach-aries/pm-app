@@ -7,6 +7,7 @@ var TaskSchema = new Schema({
     description: {type: String, required: true, max: 512},
     responsible: [{type: Schema.ObjectId, ref: 'User', required: true}],
     feature: {type: Schema.ObjectId, ref: 'Feature', required: true},
+    project: {type: Schema.ObjectId, ref: 'Project', required: true},
     est_start_date: {type: Date, required: true},
     est_end_date: {type: Date, required: true},
     start_date: {type: Date},
