@@ -24,10 +24,11 @@ var GanttChart = (function () {
         row.push(feature._id);  // resource ID (used for grouping)
         row.push(start_date);   // start date
         row.push(end_date);     // end date
+        /*
         row.push(null);         // duration (automatically calculated)
         row.push(50);           // completion %
         row.push(null);         // dependencies (null for none)
-
+        */
         task_list.push(row); // add task to list
 
         feature.tasks.forEach(function (task) {
@@ -40,10 +41,11 @@ var GanttChart = (function () {
             task_row.push(task.feature);    // resource ID (used for grouping)
             task_row.push(start_date);  // start date
             task_row.push(end_date);    // end date
+            /*
             task_row.push(null);        // duration (automatically calculated)
             task_row.push(50);          // completion %
             task_row.push(null);        // dependencies (null for none)
-
+            */
             task_list.push(task_row); // add task to list
         });
 
