@@ -56,47 +56,15 @@ var GanttChart = (function () {
     }
 
     var _drawGanttChart = function () {
-        /*
-        var chart = new google.visualization.Gantt(document.getElementById('timeline'));
-
-        var data = new google.visualization.DataTable();
-
-        // the columns when pushing to the row array
-        data.addColumn('string', 'Task ID');
-        data.addColumn('string', 'Task Name');
-        data.addColumn('string', 'Resource');
-        data.addColumn('date', 'Start Date');
-        data.addColumn('date', 'End Date');
-        data.addColumn('number', 'Duration');
-        data.addColumn('number', 'Percent Complete');
-        data.addColumn('string', 'Dependencies');
-
-        data.addRows(task_list);
-
-        var options = {
-            height: 400, // TODO needs to be calculated
-            width:1000, // TODO needs to be calculated
-            gantt: {
-                trackHeight: 30
-            }
-        };
-
-
-
-        chart.clearChart();
-        chart.draw(data, options);
-        */
 
         /*
-        * TIMELINE CHART
-        *
+        * Google Charts - TIMELINE CHART
+        *   Reference: https://developers.google.com/chart/interactive/docs/gallery/timeline
         */
         var chart = new google.visualization.Timeline(document.getElementById('timeline'));
         var data = new google.visualization.DataTable();
 
-        //data.addColumn('string', 'Task ID');
         data.addColumn('string', 'Task Name');
-        //data.addColumn('string', 'Resource');
         data.addColumn('date', 'Start');
         data.addColumn('date', 'End');
 
@@ -126,7 +94,7 @@ var GanttChart = (function () {
         // create task list from tree
         process_data(data);
 
-        google.charts.load('current', {'packages':['timeline'], "callback": _drawGanttChart});
+        google.charts.load('current', {'packages':['timeline'], "callback": process_data(data)});
         google.charts.setOnLoadCallback(_drawGanttChart);
     };
 
