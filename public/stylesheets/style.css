@@ -144,9 +144,13 @@ header {
   #account li .nav-link.settings {  background: #e6614f;  }
   #account li .nav-link.sign-up {  background: #28bd8b;  }
   #account li .nav-link.login {  background: #282c37;  }
+  #account li a {
+    border-style: none;
+    border-radius: 0 !important;
+  }
   #account li a:hover {
     background: #6f7d95!important;
-    color: rgba(255,255,255,1);!important;
+    color: rgba(255,255,255,1)!important;
   }
     #account li a > .name {
       margin-right: 0.5em;
@@ -378,7 +382,6 @@ header {
   #gantt-chart .task-list {
     width: 100%;
     overflow-x: scroll;
-      overflow-y: scroll;
   }
     #gantt-chart .task-list.closed {
       height: 42px;
