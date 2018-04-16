@@ -64,6 +64,8 @@ var GanttChart = (function () {
         var chart = new google.visualization.Timeline(document.getElementById('timeline'));
         var data = new google.visualization.DataTable();
 
+        chart.clearChart();
+
         data.addColumn('string', 'Task Name');
         data.addColumn('date', 'Start');
         data.addColumn('date', 'End');
@@ -81,13 +83,8 @@ var GanttChart = (function () {
             }
         };
 
-        chart.clearChart();
+        //chart.clearChart();
         chart.draw(data, options);
-
-
-
-
-
     };
 
     module.init = function (data) {
