@@ -19,16 +19,10 @@ var GanttChart = (function () {
         var start_date = new Date(feature.est_start_date);
         var end_date = new Date(feature.est_end_date);
 
-        //row.push(feature._id);  // task id
         row.push(feature.name); // task name
-        //row.push(feature._id);  // resource ID (used for grouping)
         row.push(start_date);   // start date
         row.push(end_date);     // end date
-        /*
-        row.push(null);         // duration (automatically calculated)
-        row.push(50);           // completion %
-        row.push(null);         // dependencies (null for none)
-        */
+
         task_list.push(row); // add task to list
 
         feature.tasks.forEach(function (task) {
@@ -36,16 +30,10 @@ var GanttChart = (function () {
             var start_date = new Date(task.est_start_date);
             var end_date = new Date(task.est_end_date);
 
-            //task_row.push(task._id);    // task id
             task_row.push(task.name);   // task name
-            //task_row.push(task.feature);    // resource ID (used for grouping)
             task_row.push(start_date);  // start date
             task_row.push(end_date);    // end date
-            /*
-            task_row.push(null);        // duration (automatically calculated)
-            task_row.push(50);          // completion %
-            task_row.push(null);        // dependencies (null for none)
-            */
+
             task_list.push(task_row); // add task to list
         });
 
@@ -91,7 +79,7 @@ var GanttChart = (function () {
         // create task list from tree
         process_data(data);
 
-        google.charts.load('current', {'packages':['timeline'], "callback": process_data(data)});
+        google.charts.load('current', {'packages':['timeline'], "callback": _drawGanttChart});
         google.charts.setOnLoadCallback(_drawGanttChart);
     };
 
