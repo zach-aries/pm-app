@@ -161,8 +161,16 @@ $(function () {
             // sent info to server
             socket.emit('add feature', name, projectID, parentID, start_date, end_date);
 
+            
+
             // dismiss modal
             $('#newFeatureModal').modal('toggle');
+
+
+            // Clear Modal
+            $('#newFeatureName').text("");
+            $('#datepickerFeatureS').val('').datepicker('update');
+            $('#datepickerFeatureF').val('').datepicker('update');
         } else { // otherwise handle errors
             // create an alert for each error
             errors.forEach(function (err) {
@@ -344,8 +352,17 @@ $(function () {
             // sent info to server
             socket.emit('add task', name, description, featureID, assignedTo, projectID, d_start_date, d_end_date, status);
 
+            
+
             // dismiss modal
             $('#newTaskModal').modal('toggle');
+
+            // Clear modals
+            $('#description').text("");
+            $('#newTaskFeatureID').text("");
+            $('#newTask-assignedTo').text("");
+            $('#newTask-startDate').val('').datepicker('update');
+            $('#newTask-endDate').val('').datepicker('update');
         } else { // otherwise handle errors
             // create an alert for each error
             errors.forEach(function (err) {
