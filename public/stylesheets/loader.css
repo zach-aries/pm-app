@@ -1,4 +1,4 @@
-#loader-wrapper {
+.loader-wrapper {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -12,6 +12,11 @@
 
   color: #fff;
   z-index: 9999;
+}
+
+#gantt-loader {
+  background: #282c37;
+  z-index: 999;
 }
 
 .sk-folding-cube {
@@ -46,18 +51,6 @@
   transform-origin: 100% 100%;
 }
 
-/*.sk-folding-cube .sk-cube:nth-child(1):before {
-  background: #1de5c0 !important;
-}
-.sk-folding-cube .sk-cube:nth-child(2):before {
-  background: #1abc9c!important;
-}
-.sk-folding-cube .sk-cube:nth-child(3):before {
-  background: #138e78 !important;
-}
-.sk-folding-cube .sk-cube:nth-child(4):before {
-  background: #16a084 !important;
-}*/
 .sk-folding-cube .sk-cube2 {
   -webkit-transform: scale(1.1) rotateZ(90deg);
   transform: scale(1.1) rotateZ(90deg);

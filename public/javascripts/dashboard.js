@@ -454,6 +454,10 @@ $(function () {
         location.href = '/dashboard/projects';
     });
 
+    socket.on('update project-tree', function (project) {
+        GanttChart.init(project);
+    });
+
     socket.on('message', function (message) {
         // add message to DOM
         addMessage(message);

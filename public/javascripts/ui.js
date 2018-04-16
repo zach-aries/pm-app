@@ -2,17 +2,18 @@ var UI = (function () {
     var module = {};
 
     module.show_loader = function () {
-        let loader = $('#loader-wrapper');
+        let loader = $('#main-loader');
         if( loader.hasClass('hidden') )
             loader.removeClass('hidden');
     };
 
     module.hide_loader = function () {
+
         setTimeout(function() {
-            let loader = $('#loader-wrapper');
+            let loader = $('#main-loader');
             if( !loader.hasClass('hidden') )
                 loader.addClass('hidden');
-        }, 500);
+        }, 300);
     };
 
     module.create_alert = function (type, message) {

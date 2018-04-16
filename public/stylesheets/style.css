@@ -29,6 +29,7 @@ a:hover { cursor: pointer; }
 /* custom lists */
 ul.hierarchy-list.main {
   padding: 0;
+  margin-bottom: 50px;
 }
   ul.hierarchy-list {
     list-style: none;
@@ -326,6 +327,15 @@ header {
 /*========================
           Gantt
  =========================*/
+#timeline-placeholder {
+  position: absolute;
+  z-index: 99;
+  background: #e9ecef;
+  height: 100%;
+  width: 100%;
+  padding: 2em;
+}
+
 #gantt {
   overflow-x: auto;
 }

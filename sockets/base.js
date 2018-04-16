@@ -1,17 +1,17 @@
-var message_controller = require('../controllers/messengerController');
-var user_controller = require('../controllers/userController');
-var project_controller = require('../controllers/projectController');
-var feature_controller = require('../controllers/featureController');
-var task_controller = require('../controllers/taskController');
+let message_controller = require('../controllers/messengerController');
+let user_controller = require('../controllers/userController');
+let project_controller = require('../controllers/projectController');
+let feature_controller = require('../controllers/featureController');
+let task_controller = require('../controllers/taskController');
 
-var async = require('async');
+let async = require('async');
 
 module.exports = function (io) {
 
 
     io.on('connection', function (socket) {
 
-        var roomID;
+        let roomID;
 
         socket.on('user connected', function (projectID, userID) {
             // get all data for dashboard
@@ -37,24 +37,24 @@ module.exports = function (io) {
                 }
             }, function (err, results) {
                 // create a tree structure out of features/tasks
-                var project = project_controller.create_project_tree(results.features);
+                let project = project_controller.create_project_tree(results.features);
 
                 // joing room with project ID
                 socket.join(projectID);
                 roomID = projectID;
                 socket.nickname = results.connected_user.username;
 
-                var roomSockets = io.in(projectID);
+                let roomSockets = io.in(projectID);
 
-                var userList = [];
+                let userList = [];
                 Object.keys(roomSockets.sockets).forEach(function (item) {
-                    var rooms = io.sockets.adapter.sids[item];
+                    let rooms = io.sockets.adapter.sids[item];
                     if( rooms[projectID]) {
                         userList.push(roomSockets.sockets[item].nickname);
                     }
                 });
 
-                var data = {
+                let data = {
                     project_info: results.project_info,
                     messages: results.messages,
                     project: project,
@@ -78,11 +78,11 @@ module.exports = function (io) {
         socket.on('disconnect', function(projectID){
 
 
-            var roomSockets = io.in(projectID);
-            var userList = [];
+            let roomSockets = io.in(projectID);
+            let userList = [];
 
             Object.keys(roomSockets.sockets).forEach(function (item) {
-                var rooms = io.sockets.adapter.sids[item];
+                let rooms = io.sockets.adapter.sids[item];
                 if( rooms[roomID]) {
                     userList.push(roomSockets.sockets[item].nickname)
                 }
@@ -98,7 +98,7 @@ module.exports = function (io) {
          *
          */
         socket.on('message', function (userID, projectID, msg) {
-            var timestamp = new Date();
+            let timestamp = new Date();
 
             // must use waterfall as get message depends on storing the message first.
             async.waterfall([
@@ -181,6 +181,18 @@ module.exports = function (io) {
             }, function (err, result) {
                 //TODO Error handling
                 io.sockets.in(projectID).emit('add feature', result.feature);
+
+                async.parallel({
+                    features: function (callback) {
+                        feature_controller.get_featuresByProjectID(projectID, callback);
+                    }
+                }, function (err, results) {
+                    // create a tree structure out of features/tasks
+                    let project = project_controller.create_project_tree(results.features);
+
+                    // send updated user list notification to all clients in room
+                    io.sockets.in(roomID).emit('update project-tree', project);
+                });
             });
         });
 
@@ -192,6 +204,18 @@ module.exports = function (io) {
             }, function (err, result) {
                 //TODO Error handling
                 io.sockets.in(roomID).emit('update feature', result.feature);
+
+                async.parallel({
+                    features: function (callback) {
+                        feature_controller.get_featuresByProjectID(roomID, callback);
+                    }
+                }, function (err, results) {
+                    // create a tree structure out of features/tasks
+                    let project = project_controller.create_project_tree(results.features);
+
+                    // send updated user list notification to all clients in room
+                    io.sockets.in(roomID).emit('update project-tree', project);
+                });
             });
         });
 
@@ -216,6 +240,18 @@ module.exports = function (io) {
                 }, function (err, result2) {
                     //console.log('r', result);
                     io.sockets.in(roomID).emit('remove feature', featureID, result2.features);
+
+                    async.parallel({
+                        features: function (callback) {
+                            feature_controller.get_featuresByProjectID(projectID, callback);
+                        }
+                    }, function (err, results) {
+                        // create a tree structure out of features/tasks
+                        let project = project_controller.create_project_tree(results.features);
+
+                        // send updated user list notification to all clients in room
+                        io.sockets.in(roomID).emit('update project-tree', project);
+                    });
                 });
             });
         });
@@ -233,7 +269,7 @@ module.exports = function (io) {
             }, function (err, result) {
                 console.log('get feature:\n',result);
 
-                io.sockets.in(projectID).emit('get feature', result.feature);
+                io.sockets.in(roomID).emit('get feature', result.feature);
             });
         });
 
@@ -254,9 +290,9 @@ module.exports = function (io) {
          * }
          */
         socket.on('add task', function (name, description, featureID, responsible, projectID, est_start_date, est_end_date, status) {
-            // creates var for return value
+            // creates let for return value
             // lose access to task after second waterfall call
-            var return_task;
+            let return_task;
             async.waterfall([
                 function (callback) {
                     task_controller.store_task(name, description, featureID, responsible, projectID, est_start_date, est_end_date, status, callback);
@@ -268,6 +304,18 @@ module.exports = function (io) {
             ], function (err, result) {
                 // TODO Error handling
                 io.sockets.in(roomID).emit('add task', return_task, featureID);
+
+                async.parallel({
+                    features: function (callback) {
+                        feature_controller.get_featuresByProjectID(projectID, callback);
+                    }
+                }, function (err, results) {
+                    // create a tree structure out of features/tasks
+                    let project = project_controller.create_project_tree(results.features);
+
+                    // send updated user list notification to all clients in room
+                    io.sockets.in(roomID).emit('update project-tree', project);
+                });
             });
         });
 
@@ -285,6 +333,18 @@ module.exports = function (io) {
             }, function (err, result) {
                 //TODO Error handling
                 io.sockets.in(roomID).emit('remove task', result.task);
+
+                async.parallel({
+                    features: function (callback) {
+                        feature_controller.get_featuresByProjectID(roomID, callback);
+                    }
+                }, function (err, results) {
+                    // create a tree structure out of features/tasks
+                    let project = project_controller.create_project_tree(results.features);
+
+                    // send updated user list notification to all clients in room
+                    io.sockets.in(roomID).emit('update project-tree', project);
+                });
             });
         });
 
@@ -301,7 +361,7 @@ module.exports = function (io) {
                 }
             }, function (err, result) {
                 console.log(result);
-                io.sockets.in(projectID).emit('get task', result.task);
+                io.sockets.in(roomID).emit('get task', result.task);
             });
         });
 
@@ -341,6 +401,18 @@ module.exports = function (io) {
             }, function (err, result) {
                 console.log('result', result);
                 io.sockets.in(roomID).emit('update task', result.task);
+
+                async.parallel({
+                    features: function (callback) {
+                        feature_controller.get_featuresByProjectID(roomID, callback);
+                    }
+                }, function (err, results) {
+                    // create a tree structure out of features/tasks
+                    let project = project_controller.create_project_tree(results.features);
+
+                    // send updated user list notification to all clients in room
+                    io.sockets.in(roomID).emit('update project-tree', project);
+                });
             });
         });
 
@@ -351,7 +423,7 @@ module.exports = function (io) {
          *
          */
         socket.on('add user', function (username, projectID) {
-            var user;
+            let user;
             async.waterfall([
                 function (callback) {
                     user_controller.get_userByUsername(username, callback);
@@ -366,11 +438,11 @@ module.exports = function (io) {
                 }
             ], function (err, result) {
                 if (!user) {
-                    var error = 'User does not exist';
+                    let error = 'User does not exist';
                     // send confirmation to sending client only
                     socket.emit('add user', user, error);
                 } else {
-                    io.sockets.in(projectID).emit('add user', user);
+                    io.sockets.in(roomID).emit('add user', user);
                 }
             });
         });

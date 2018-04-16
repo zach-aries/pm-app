@@ -1,10 +1,10 @@
 $(function () {
-    $('#loader-wrapper').toggleClass('hidden');
+    UI.hide_loader();
 
     $("#loginForm").submit(function(event) {
         event.preventDefault();
         $('#login-response').empty();
-        $('#loader-wrapper').toggleClass('hidden');
+        UI.show_loader();
 
         $.ajax({
             url: '/login',
@@ -33,7 +33,7 @@ $(function () {
     $("#registerForm").submit(function(event) {
         event.preventDefault();
         $('#register-response').empty();
-        $('#loader-wrapper').toggleClass('hidden');
+        UI.show_loader();
 
         $.ajax({
             url: '/register',
